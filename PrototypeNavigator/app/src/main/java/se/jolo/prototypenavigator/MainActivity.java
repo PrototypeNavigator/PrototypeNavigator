@@ -1,12 +1,5 @@
 package se.jolo.prototypenavigator;
 
-<<<<<<< HEAD
-import android.app.Activity;
-import android.os.Bundle;
-import com.mapbox.mapboxsdk.constants.Style;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.views.MapView;
-=======
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -35,16 +28,11 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
->>>>>>> DIRECTIONS
 
-public class MainActivity extends Activity {
-
-    private MapView mapView = null;
+public class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = "MainActivity";
-
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
-
     private MapView mapView = null;
     private DirectionsRoute currentRoute = null;
 
@@ -53,13 +41,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-<<<<<<< HEAD
-        mapView = (MapView) findViewById(R.id.mapboxMapView);
-        mapView.setStyleUrl(Style.MAPBOX_STREETS);
-        mapView.setCenterCoordinate(new LatLng(40.73581, -73.99155));
-        mapView.setZoomLevel(11);
-        mapView.onCreate(savedInstanceState);
-=======
         // Dupont Circle (Washington, DC)
         Waypoint origin = new Waypoint(-77.04341, 38.90962);
 
@@ -180,7 +161,6 @@ public class MainActivity extends Activity {
 
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
->>>>>>> DIRECTIONS
     }
 
     @Override

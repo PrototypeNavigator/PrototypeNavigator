@@ -27,4 +27,5 @@ dependencies {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'xpp3', module: 'xpp3'
     }
+    androidTestCompile 'junit:junit:4.12'
 }

@@ -45,13 +45,18 @@ public class MainActivity extends AppCompatActivity {
         Waypoint origin = new Waypoint(-77.04341, 38.90962);
 
         // The White House (Washington, DC)
-        Waypoint destination = new Waypoint(-77.0365, 38.8977);
+        Waypoint destination = new Waypoint(-118.497930, 34.021880);
 
         // The White House (Washington, DC)
         Waypoint destination2 = new Waypoint(-77.1365, 38.8977);
 
-        List<Waypoint> waypoints = new ArrayList<Waypoint>();
+        Waypoint santaMonica = new Waypoint(-118.499711, 34.026539);
 
+
+
+        List<Waypoint> waypoints = new ArrayList<>();
+
+        waypoints.add(santaMonica);
         waypoints.add(destination2);
         waypoints.add(origin);
         waypoints.add(destination);
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         mapView.setStyleUrl(Style.MAPBOX_STREETS);
         mapView.setCenterCoordinate(centroid);
 
-        mapView.setZoomLevel(10);
+        //mapView.setZoomLevel(10);
         mapView.onCreate(savedInstanceState);
 
         // We're gonna use this to demo off-route detection
@@ -96,11 +101,18 @@ public class MainActivity extends AppCompatActivity {
                 .title("Destination2")
                 .snippet("The White House2"));
 
+        mapView.addMarker(new MarkerOptions()
+                .position(new LatLng(santaMonica.getLatitude(), santaMonica.getLongitude()))
+                .title("st monica")
+                .snippet("Lincon blv"));
+
+
         // Get route from API
         getRoute(waypoints);
 
 
-        //mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(destination.getLatitude(),destination.getLongitude()),11,45,11)));
+
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid,16,45,0)));
 
     }
 
@@ -149,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 .add(point)
                 .color(Color.parseColor("#3887be"))
                 .width(5));
+
     }
 
     private void checkOffRoute(Waypoint target) {

@@ -11,10 +11,10 @@ import java.util.Date;
 @Root
 public final class AuditInfo {
 
-    @Element
+    @Element(required = false)
     private Date createdAt;
 
-    @Element
+    @Element(required = false)
     private String createdBy;
 
     public AuditInfo() {}

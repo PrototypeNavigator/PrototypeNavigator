@@ -11,19 +11,19 @@ import java.util.UUID;
 @Root
 public class StopPoint {
 
-    @Element
+    @Element(required = false)
     private float easting;
 
-    @Element
+    @Element(required = false)
     private float northing;
 
-    @Element
+    @Element(required = false)
     private String type;
 
-    @Element
-    private UUID uuid;
+    @Element(required = false)
+    private String uuid;
 
-    @Element
+    @Element(required = false)
     private String freeText;
 
     public StopPoint() {}
@@ -40,7 +40,7 @@ public class StopPoint {
         return type;
     }
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 

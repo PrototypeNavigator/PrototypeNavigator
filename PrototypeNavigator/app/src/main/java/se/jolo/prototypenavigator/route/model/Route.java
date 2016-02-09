@@ -4,6 +4,7 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,29 +14,29 @@ import java.util.UUID;
 @Root
 public final class Route {
 
-    @Element
+    @Element(required = false)
     private AuditInfo auditInfo;
 
-    @Element
+    @Element(required = false)
     private DeliveryOffice deliveryOffice;
 
-    @Element
+    @Element(required = false)
     private int name;
 
-    @Element
+    @Element(required = false)
     private String type;
 
-    @Element
-    private UUID uuid;
+    @Element(required = false)
+    private String uuid;
 
-    @Element
+    @Element(required = false)
     private int validityDays;
 
-    @ElementList
-    private Map<Integer, RouteItem> routeItems;
+    @ElementList(required = false)
+    private List<RouteItem> routeItems;
 
-    @ElementList
-    private Map<UUID, StopPointItem> stopPointItems;
+    @ElementList(required = false)
+    private List<StopPointItem> stopPointItems;
 
     public Route() {}
 
@@ -55,7 +56,7 @@ public final class Route {
         return type;
     }
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
@@ -63,11 +64,11 @@ public final class Route {
         return validityDays;
     }
 
-    public Map<Integer, RouteItem> getRouteItems() {
+    public List<RouteItem> getRouteItems() {
         return routeItems;
     }
 
-    public Map<UUID, StopPointItem> getStopPointItems() {
+    public List<StopPointItem> getStopPointItems() {
         return stopPointItems;
     }
 }

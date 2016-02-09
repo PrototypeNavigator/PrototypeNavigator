@@ -10,25 +10,25 @@ import org.simpleframework.xml.Root;
 @Root
 public class Service {
 
-    @Element
+    @Element(required = false)
     private String agreementArrivalTime;    // should be time
 
-    @Element
+    @Element(required = false)
     private String agreementDepartureTime;  // should be time
 
-    @Element
+    @Element(required = false)
     private boolean delivery;
 
-    @Element
+    @Element(required = false)
     private boolean pickup;
 
-    @Element
+    @Element(required = false)
     private String products;
 
-    @Element
+    @Element(required = false)
     private String serviceCode;
 
-    @Element
+    @Element(required = false)
     private String serviceName;
 
     public Service() {}

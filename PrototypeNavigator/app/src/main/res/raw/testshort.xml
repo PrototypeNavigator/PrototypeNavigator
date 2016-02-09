@@ -1,0 +1,231 @@
+<?xml version="1.1" encoding="utf-8"?>
+<route>
+    <auditInfo>
+        <createdAt>2012-01-25</createdAt>
+        <createdBy>peno300</createdBy>
+    </auditInfo>
+    <deliveryOffice>
+        <name>VÄSTERHANINGE</name>
+        <uuid>2035770</uuid>
+    </deliveryOffice>
+    <name>13757</name>
+    <type>POSTAL_ROUTE</type>
+    <uuid>222695088</uuid>
+    <validityDays>31</validityDays>
+    <routeItems>
+        <routeItem>
+            <order>1</order>
+            <primaryStopPointItemUuid>1</primaryStopPointItemUuid>
+            <stopPoint>
+                <easting>18.045609</easting>
+                <northing>59.102956</northing>
+                <type>MAIL_STOP_POINT</type>
+                <uuid>323035486</uuid>
+                <freeText></freeText>
+            </stopPoint>
+
+            <stopPointItems>
+
+                <!-- ISU utdelningsadress Allévägen 8 -->
+                <stopPointItem>
+                    <uuid>1</uuid>
+                    <type>MAIL_DELIVERY_ADDRESS</type>
+                    <name>ALLÉVÄGEN 8</name>
+                    <deliveryAddress>STORGÅRDSVÄGEN 3</deliveryAddress>
+                    <deliveryPostalCode>13756</deliveryPostalCode>
+                    <easting>18.045609</easting>
+                    <northing>59.102956</northing>
+                    <freeText></freeText>
+                    <plannedArrivalTime>12:00</plannedArrivalTime>
+                    <plannedDepartureTime>12:00</plannedDepartureTime>
+                    <validityDays>31</validityDays>
+                    <deliveryPoints>
+                        <deliveryPoint>
+                            <odr>false</odr>
+                            <odrRecipients>
+                                <odrRecipient>
+                                    <amount>1</amount>
+                                    <type>F</type>
+                                </odrRecipient>
+                            </odrRecipients>
+                            <residents>
+                                <resident>
+                                    <firstname></firstname>
+                                    <lastname>Sassa-grillen</lastname>
+                                </resident>
+                            </residents>
+                        </deliveryPoint>
+                    </deliveryPoints>
+                </stopPointItem>
+
+                <!-- Buntåda -->
+                <stopPointItem>
+                    <uuid>2</uuid>
+                    <type>BUNDLE_BOX</type>
+                    <name>BUNTLÅDA</name>
+                    <deliveryAddress>ALLÉVÄGEN 8</deliveryAddress>
+                    <deliveryPostalCode>13756</deliveryPostalCode>
+                    <easting>18.045609</easting>
+                    <northing>59.102956</northing>
+                    <freeText>Buntar till 13756</freeText>
+                    <plannedArrivalTime></plannedArrivalTime>
+                    <plannedDepartureTime></plannedDepartureTime>
+                    <validityDays>31</validityDays>
+                    <deliveryPoints>
+                    </deliveryPoints>
+                </stopPointItem>
+
+                <!-- Brevlåda -->
+                <stopPointItem>
+                    <uuid>3</uuid>
+                    <name>BREVLÅDA</name>
+                    <deliveryAddress>ALLÉVÄGEN 8</deliveryAddress>
+                    <deliveryPostalCode>13756</deliveryPostalCode>
+                    <easting>18.045609</easting>
+                    <northing>59.102956</northing>
+                    <freeText></freeText>
+                    <plannedArrivalTime>16:00</plannedArrivalTime>
+                    <type>LETTER_BOX</type>
+                    <validityDays>31</validityDays>
+                    <deliveryPoints>
+
+                    </deliveryPoints>
+                </stopPointItem>
+
+                <!-- Postombud sassa-grillen -->
+                <stopPointItem>
+                    <uuid>2</uuid>
+                    <name>Postombud sassa-grillen</name>
+                    <deliveryAddress>ALLÉVÄGEN 8</deliveryAddress>
+                    <deliveryPostalCode>13756</deliveryPostalCode>
+                    <easting>18.045609</easting>
+                    <northing>59.102956</northing>
+                    <freeText>Buntar till 13756</freeText>
+                    <plannedArrivalTime></plannedArrivalTime>
+                    <plannedDepartureTime></plannedDepartureTime>
+                    <type>OTHER_TRANSPORT</type>
+                    <validityDays>31</validityDays>
+                    <deliveryPoints></deliveryPoints>
+                </stopPointItem>
+
+                <!-- Schneider electric -->
+                <stopPointItem>
+                    <uuid>4</uuid>
+                    <name>Schneider electric</name>
+                    <deliveryAddress>ALLÉVÄGEN 8</deliveryAddress>
+                    <deliveryPostalCode>13756</deliveryPostalCode>
+                    <easting>18.045609</easting>
+                    <northing>59.102956</northing>
+                    <freeText>Medtag Express 07:00</freeText>
+                    <plannedArrivalTime>15:41</plannedArrivalTime>
+                    <plannedDepartureTime></plannedDepartureTime>
+                    <type>PICKUP_DELIVERY_TASK</type>
+                    <validityDays>31</validityDays>
+                    <deliveryPoints></deliveryPoints>
+                    <service>
+                        <agreementArrivalTime>15:30</agreementArrivalTime>
+                        <agreementDepartureTime>16:00</agreementDepartureTime>
+                        <delivery>FALSE</delivery>
+                        <pickup>TRUE</pickup>
+                        <products>B,R</products>
+                        <serviceCode>N</serviceCode>
+                        <serviceName>Sen Hämtning</serviceName>
+                    </service>
+                </stopPointItem>
+            </stopPointItems>
+        </routeItem>
+
+        <routeItem>
+            <order>3</order>
+            <primaryStopPointItemUuid>2049599</primaryStopPointItemUuid>
+            <stopPoint>
+                <easting>18.038216408474682</easting>
+                <northing>59.09950231564634</northing>
+                <type>MAIL_STOP_POINT</type>
+                <uuid>323035486</uuid>
+                <freeText></freeText>
+            </stopPoint>
+            <stopPointItems>
+                <stopPointItem>
+                    <name>STORGÅRDSVÄGEN 3</name>
+                    <deliveryAddress>STORGÅRDSVÄGEN 3</deliveryAddress>
+                    <deliveryPostalCode>13757</deliveryPostalCode>
+                    <easting>18.037576856165806</easting>
+                    <northing>59.0994600296001</northing>
+                    <freeText></freeText>
+                    <plannedArrivalTime>12:00</plannedArrivalTime>
+                    <type>MAIL_DELIVERY_ADDRESS</type>
+                    <uuid>2049599</uuid>
+                    <validityDays>31</validityDays>
+                    <deliveryPoints>
+                        <deliveryPoint>
+                            <odr>true</odr>
+                            <odrRecipients>
+                                <odrRecipient>
+                                    <amount>2</amount>
+                                    <type>F</type>
+                                </odrRecipient>
+                                <odrRecipient>
+                                    <amount>2</amount>
+                                    <type>V</type>
+                                </odrRecipient>
+                            </odrRecipients>
+                            <residents>
+                                <resident>
+                                    <firstname>Kalle</firstname>
+                                    <lastname>Anka</lastname>
+                                </resident>
+                            </residents>
+                        </deliveryPoint>
+                    </deliveryPoints>
+                </stopPointItem>
+            </stopPointItems>
+        </routeItem>
+        <routeItem>
+            <order>4</order>
+            <primaryStopPointItemUuid>2049608</primaryStopPointItemUuid>
+            <stopPoint>
+                <easting>18.037001168051837</easting>
+                <northing>59.09780694511885</northing>
+                <type>MAIL_STOP_POINT</type>
+                <uuid>323035487</uuid>
+                <freeText></freeText>
+            </stopPoint>
+            <stopPointItems>
+                <stopPointItem>
+                    <name>SÖDERBYVÄGEN 18</name>
+                    <deliveryAddress>SÖDERBYVÄGEN 18</deliveryAddress>
+                    <deliveryPostalCode>13757</deliveryPostalCode>
+                    <easting>18.03639121473513</easting>
+                    <northing>59.098014563057525</northing>
+                    <freeText></freeText>
+                    <plannedArrivalTime>12:00</plannedArrivalTime>
+                    <type>MAIL_DELIVERY_ADDRESS</type>
+                    <uuid>2049608</uuid>
+                    <validityDays>31</validityDays>
+                    <deliveryPoints>
+                        <deliveryPoint>
+                            <odr>true</odr>
+                            <odrRecipients>
+                                <odrRecipient>
+                                    <amount>2</amount>
+                                    <type>F</type>
+                                </odrRecipient>
+                                <odrRecipient>
+                                    <amount>2</amount>
+                                    <type>V</type>
+                                </odrRecipient>
+                            </odrRecipients>
+                            <residents>
+                                <resident>
+                                    <firstname>Kalle</firstname>
+                                    <lastname>Anka</lastname>
+                                </resident>
+                            </residents>
+                        </deliveryPoint>
+                    </deliveryPoints>
+                </stopPointItem>
+            </stopPointItems>
+        </routeItem>
+    </routeItems>
+</route>

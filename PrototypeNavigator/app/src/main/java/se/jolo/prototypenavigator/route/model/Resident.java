@@ -9,19 +9,19 @@ import org.simpleframework.xml.Root;
 @Root
 public class Resident {
 
-    @Element
-    private String firstName;
+    @Element(required = false)
+    private String firstname;
 
-    @Element
-    private String lastName;
+    @Element(required = false)
+    private String lastname;
 
     public Resident() {}
 
     public String getFirstName() {
-        return firstName;
+        return firstname;
     }
 
     public String getLastName() {
-        return lastName;
+        return lastname;
     }
 }

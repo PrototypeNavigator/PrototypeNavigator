@@ -11,11 +11,11 @@ import java.util.UUID;
 @Root
 public class DeliveryOffice {
 
-    @Element
+    @Element(required = false)
     private String name;
 
-    @Element
-    private UUID uuid;
+    @Element(required = false)
+    private String uuid;
 
     public DeliveryOffice() {}
 
@@ -23,7 +23,7 @@ public class DeliveryOffice {
         return name;
     }
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 }

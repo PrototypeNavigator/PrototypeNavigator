@@ -9,10 +9,10 @@ import org.simpleframework.xml.Root;
 @Root
 public class OdrRecipient {
 
-    @Element
+    @Element(required = false)
     private int amount;
 
-    @Element
+    @Element(required = false)
     private String type;
 
     public OdrRecipient() {}

@@ -12,13 +12,13 @@ import java.util.List;
 @Root
 public class DeliveryPoint {
 
-    @Element
+    @Element(required = false)
     private boolean odr;
 
-    @ElementList
+    @ElementList(required = false)
     private List<OdrRecipient> odrRecipients;
 
-    @ElementList
+    @ElementList(required = false)
     private List<Resident> residents;
 
     public DeliveryPoint() {}

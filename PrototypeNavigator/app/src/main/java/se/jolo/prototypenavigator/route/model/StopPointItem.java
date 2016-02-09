@@ -13,48 +13,48 @@ import java.util.UUID;
 @Root
 public class StopPointItem {
 
-    @Element
-    private UUID uuid;
+    @Element(required = false)
+    private String uuid;
 
-    @Element
+    @Element(required = false)
     private String type;
 
-    @Element
+    @Element(required = false)
     private String name;
 
-    @Element
+    @Element(required = false)
     private String deliveryAddress;
 
-    @Element
+    @Element(required = false)
     private int deliveryPostalCode;
 
-    @Element
+    @Element(required = false)
     private float easting;
 
-    @Element
+    @Element(required = false)
     private float northing;
 
-    @Element
+    @Element(required = false)
     private String freeText;
 
-    @Element
+    @Element(required = false)
     private String plannedArrivalTime;      // should be some sort of time
 
-    @Element
+    @Element(required = false)
     private String plannedDepartureTime;    // should be some sort of time
 
-    @Element
+    @Element(required = false)
     private int validityDays;
 
-    @ElementList
+    @ElementList(required = false)
     private List<DeliveryPoint> deliveryPoints;
 
-    @Element
+    @Element(required = false)
     private Service service;
 
     public StopPointItem() {}
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 

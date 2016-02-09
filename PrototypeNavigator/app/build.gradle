@@ -19,6 +19,10 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
@@ -28,4 +32,10 @@ dependencies {
         exclude group: 'xpp3', module: 'xpp3'
     }
     androidTestCompile 'junit:junit:4.12'
+    compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:3.2.0@aar'){
+        transitive=true
+    }
+    compile ('com.mapbox.mapboxsdk:mapbox-android-directions:1.0.0@aar'){
+        transitive=true
+    }
 }

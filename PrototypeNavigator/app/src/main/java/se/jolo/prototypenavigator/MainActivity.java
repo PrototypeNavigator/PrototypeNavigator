@@ -1,9 +1,10 @@
 package se.jolo.prototypenavigator;
 
-import android.app.Activity;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,32 +12,28 @@ import com.mapbox.directions.DirectionsCriteria;
 import com.mapbox.directions.MapboxDirections;
 import com.mapbox.directions.service.models.DirectionsResponse;
 import com.mapbox.directions.service.models.DirectionsRoute;
+import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdate;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import se.jolo.prototypenavigator.route.model.Route;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = "MainActivity";
-
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
-
     private MapView mapView = null;
     private DirectionsRoute currentRoute = null;
 
@@ -45,27 +42,22 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // testing xlm -> obj
-        justForNow();
-
-
-        mapView = (MapView) findViewById(R.id.mapboxMapView);
-        mapView.setStyleUrl(Style.MAPBOX_STREETS);
-        mapView.setCenterCoordinate(new LatLng(40.73581, -73.99155));
-        mapView.setZoomLevel(11);
-        mapView.onCreate(savedInstanceState);
-
         // Dupont Circle (Washington, DC)
         Waypoint origin = new Waypoint(-77.04341, 38.90962);
 
         // The White House (Washington, DC)
-        Waypoint destination = new Waypoint(-77.0365, 38.8977);
+        Waypoint destination = new Waypoint(-118.497930, 34.021880);
 
         // The White House (Washington, DC)
         Waypoint destination2 = new Waypoint(-77.1365, 38.8977);
 
-        List<Waypoint> waypoints = new ArrayList<Waypoint>();
+        Waypoint santaMonica = new Waypoint(-118.499711, 34.026539);
 
+
+
+        List<Waypoint> waypoints = new ArrayList<>();
+
+        waypoints.add(santaMonica);
         waypoints.add(destination2);
         waypoints.add(origin);
         waypoints.add(destination);
@@ -82,7 +74,7 @@ public class MainActivity extends Activity {
         mapView.setStyleUrl(Style.MAPBOX_STREETS);
         mapView.setCenterCoordinate(centroid);
 
-        mapView.setZoomLevel(10);
+        //mapView.setZoomLevel(10);
         mapView.onCreate(savedInstanceState);
 
         // We're gonna use this to demo off-route detection
@@ -110,34 +102,24 @@ public class MainActivity extends Activity {
                 .title("Destination2")
                 .snippet("The White House2"));
 
+        mapView.addMarker(new MarkerOptions()
+                .position(new LatLng(santaMonica.getLatitude(), santaMonica.getLongitude()))
+                .title("st monica")
+                .snippet("Lincon blv"));
+
+
         // Get route from API
         getRoute(waypoints);
 
+//        List <RouteStep> routeSteps = currentRoute.getSteps();
 
-        //mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(destination.getLatitude(),destination.getLongitude()),11,45,11)));
 
+
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid, 16, 45, 0)));
 
     }
 
-    private void justForNow() {
-
-        InputStream fileIn = getResources().openRawResource(getResources()
-                .getIdentifier("routexmltest", "raw", getPackageName()));
-
-        Route route = null;
-
-        Serializer serializer = new Persister();
-        try {
-            route = serializer.read(Route.class, fileIn);
-            Toast.makeText(this, route.getType(), Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Log.e("file ", route.getType());
-    }
-
-    private void getRoute(List<Waypoint> waypoints) {
+    private void getRoute(List<Waypoint>waypoints) {
         MapboxDirections md = new MapboxDirections.Builder()
                 .setAccessToken(MAPBOX_ACCESS_TOKEN)
                 .setWaypoints(waypoints)
@@ -182,6 +164,7 @@ public class MainActivity extends Activity {
                 .add(point)
                 .color(Color.parseColor("#3887be"))
                 .width(5));
+
     }
 
     private void checkOffRoute(Waypoint target) {
@@ -209,7 +192,7 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public void onPause() {
+    public void onPause()  {
         super.onPause();
         mapView.onPause();
     }

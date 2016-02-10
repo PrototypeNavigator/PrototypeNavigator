@@ -17,6 +17,11 @@ public class OdrRecipient {
 
     public OdrRecipient() {}
 
+    public OdrRecipient(int amount, String type) {
+        this.amount = amount;
+        this.type = type;
+    }
+
     public int getAmount() {
         return amount;
     }

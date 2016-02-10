@@ -26,6 +26,14 @@ public class RouteItem {
 
     public RouteItem() {}
 
+    public RouteItem(int order, int primaryStopPointItemUuid,
+                     StopPoint stopPoint, List<StopPointItem> stopPointItems) {
+        this.order = order;
+        this.primaryStopPointItemUuid = primaryStopPointItemUuid;
+        this.stopPoint = stopPoint;
+        this.stopPointItems = stopPointItems;
+    }
+
     public int getOrder() {
         return order;
     }

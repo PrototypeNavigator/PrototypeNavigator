@@ -22,8 +22,10 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,7 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.utils.FileLoader;
+import se.jolo.prototypenavigator.utils.JsonToObject;
 import se.jolo.prototypenavigator.utils.XmlToJson;
 
 public class MainActivity extends AppCompatActivity {
@@ -123,8 +126,11 @@ public class MainActivity extends AppCompatActivity {
         FileLoader fileLoader = new FileLoader(this);
 
         try {
-            Log.e(LOG_TAG, XmlToJson.stringToJson(fileLoader.xmlToString()).toString() + "success");
-        } catch (IOException | JSONException e) {
+            String xmlString = fileLoader.xmlToString();
+            JSONObject json = XmlToJson.stringToJson(xmlString);
+            Route route = JsonToObject.jsonToRoute(json);
+            Log.e(LOG_TAG, "route: " + route.getType() + " " + route.getDeliveryOffice());
+        } catch (IOException | JSONException | ParseException e) {
             e.printStackTrace();
         }
         // TEST

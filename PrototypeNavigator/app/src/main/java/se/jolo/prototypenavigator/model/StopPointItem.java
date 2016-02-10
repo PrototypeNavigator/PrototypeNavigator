@@ -53,6 +53,25 @@ public class StopPointItem {
 
     public StopPointItem() {}
 
+    public StopPointItem(String uuid, String type, String name, String deliveryAddress,
+                         int deliveryPostalCode, float easting, float northing, String freeText,
+                         String plannedArrivalTime, String plannedDepartureTime,
+                         int validityDays, List<DeliveryPoint> deliveryPoints, Service service) {
+        this.uuid = uuid;
+        this.type = type;
+        this.name = name;
+        this.deliveryAddress = deliveryAddress;
+        this.deliveryPostalCode = deliveryPostalCode;
+        this.easting = easting;
+        this.northing = northing;
+        this.freeText = freeText;
+        this.plannedArrivalTime = plannedArrivalTime;
+        this.plannedDepartureTime = plannedDepartureTime;
+        this.validityDays = validityDays;
+        this.deliveryPoints = deliveryPoints;
+        this.service = service;
+    }
+
     public String getUuid() {
         return uuid;
     }

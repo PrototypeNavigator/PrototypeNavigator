@@ -17,6 +17,11 @@ public class DeliveryOffice {
 
     public DeliveryOffice() {}
 
+    public DeliveryOffice(String name, String uuid) {
+        this.name = name;
+        this.uuid = uuid;
+    }
+
     public String getName() {
         return name;
     }

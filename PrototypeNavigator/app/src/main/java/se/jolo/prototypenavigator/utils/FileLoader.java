@@ -45,19 +45,4 @@ public final class FileLoader {
         return context.getResources().openRawResource(context.getResources()
                 .getIdentifier("routexmltest", "raw", context.getPackageName()));
     }
-
-    public Route routeDeserialize() {
-        Serializer serializer = new Persister();
-        Route route = null;
-
-        Log.v(TAG, "inside Desirializer");
-        try {
-            route = serializer.read(Route.class, loadFile());
-            Log.v(TAG, route.getType());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return route;
-    }
 }

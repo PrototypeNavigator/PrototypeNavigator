@@ -33,6 +33,17 @@ public class Service {
 
     public Service() {}
 
+    public Service(String agreementArrivalTime, String agreementDepartureTime, boolean delivery,
+                   boolean pickup, String products, String serviceCode, String serviceName) {
+        this.agreementArrivalTime = agreementArrivalTime;
+        this.agreementDepartureTime = agreementDepartureTime;
+        this.delivery = delivery;
+        this.pickup = pickup;
+        this.products = products;
+        this.serviceCode = serviceCode;
+        this.serviceName = serviceName;
+    }
+
     public String getAgreementArrivalTime() {
         return agreementArrivalTime;
     }

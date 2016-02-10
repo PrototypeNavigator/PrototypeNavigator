@@ -38,6 +38,19 @@ public final class Route {
 
     public Route() {}
 
+    public Route(AuditInfo auditInfo, DeliveryOffice deliveryOffice,
+                 int name, String type, String uuid, int validityDays,
+                 List<RouteItem> routeItems, List<StopPointItem> stopPointItems) {
+        this.auditInfo = auditInfo;
+        this.deliveryOffice = deliveryOffice;
+        this.name = name;
+        this.type = type;
+        this.uuid = uuid;
+        this.validityDays = validityDays;
+        this.routeItems = routeItems;
+        this.stopPointItems = stopPointItems;
+    }
+
     public AuditInfo getAuditInfo() {
         return auditInfo;
     }

@@ -16,7 +16,6 @@ import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -28,6 +27,8 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import se.jolo.prototypenavigator.model.Route;
+import se.jolo.prototypenavigator.utils.FileLoader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -113,6 +114,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid,16,45,0)));
+
+        // TEST
+        FileLoader fileLoader = new FileLoader(this);
+        Route route = fileLoader.routeDeserialize();
+        Log.v(LOG_TAG, route.getType() + "success");
+        // TEST
 
     }
 

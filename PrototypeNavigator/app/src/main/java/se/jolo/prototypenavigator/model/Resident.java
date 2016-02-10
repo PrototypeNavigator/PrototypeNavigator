@@ -7,21 +7,21 @@ import org.simpleframework.xml.Root;
  * Created by Joel on 2016-02-08.
  */
 @Root
-public class DeliveryOffice {
+public class Resident {
 
     @Element(required = false)
-    private String name;
+    private String firstname;
 
     @Element(required = false)
-    private String uuid;
+    private String lastname;
 
-    public DeliveryOffice() {}
+    public Resident() {}
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstname;
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getLastName() {
+        return lastname;
     }
 }

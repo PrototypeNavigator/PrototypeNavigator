@@ -1,0 +1,17 @@
+{
+    "route": {
+        "auditInfo": {
+            "createdAt": "2012-01-25",
+            "createdBy": "peno300"
+        },
+        "deliveryOffice": {
+            "name": "VÄSTERHANINGE",
+            "uuid": "2035770"
+        },
+        "name": "13757",
+        "type": "POSTAL_ROUTE",
+        "uuid": "222695088",
+        "validityDays": "31",
+        "routeItems": "\n"
+    }
+}

@@ -10,13 +10,23 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 import se.jolo.prototypenavigator.model.AuditInfo;
+import se.jolo.prototypenavigator.model.DeliveryOffice;
+import se.jolo.prototypenavigator.model.DeliveryPoint;
+import se.jolo.prototypenavigator.model.OdrRecipient;
+import se.jolo.prototypenavigator.model.Resident;
 import se.jolo.prototypenavigator.model.Route;
+import se.jolo.prototypenavigator.model.RouteItem;
+import se.jolo.prototypenavigator.model.Service;
+import se.jolo.prototypenavigator.model.StopPoint;
+import se.jolo.prototypenavigator.model.StopPointItem;
 import se.jolo.prototypenavigator.utils.FileLoader;
+import se.jolo.prototypenavigator.utils.FulHack;
 
 /**
  * Created by Joel on 2016-02-11.
@@ -32,15 +42,22 @@ public final class JsonMapper {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Route.class, new RouteAdapter());
         builder.registerTypeAdapter(AuditInfo.class, new AuditInfoAdapter());
-        builder.serializeNulls();
+        builder.registerTypeAdapter(DeliveryOffice.class, new DeliveryOfficeAdapter());
+        builder.registerTypeAdapter(DeliveryPoint.class, new DeliveryPointAdapter());
+        builder.registerTypeAdapter(OdrRecipient.class, new OdrRecipientAdapter());
+        builder.registerTypeAdapter(Resident.class, new ResidentAdapter());
+        builder.registerTypeAdapter(RouteItem.class, new RouteItemAdapter());
+        builder.registerTypeAdapter(Service.class, new ServiceAdapter());
+        builder.registerTypeAdapter(StopPoint.class, new StopPointAdapter());
+        builder.registerTypeAdapter(StopPointItem.class, new StopPointItemAdapter());
         gson = builder.create();
         this.context = context;
         fileLoader = new FileLoader(context);
     }
 
     public void objectify() throws IOException, JSONException {
-        JSONObject json = fileLoader.getAsJson();
-        Route route = gson.fromJson(json.toString(), Route.class);
-        Log.v(TAG, route.getType());
+        //JSONObject json = fileLoader.getAsJson();
+        Route route = gson.fromJson(fileLoader.xmlToString(), Route.class);
+        Log.e(TAG, route.getType());
     }
 }

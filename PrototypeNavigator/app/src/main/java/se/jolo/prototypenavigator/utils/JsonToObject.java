@@ -60,7 +60,7 @@ public final class JsonToObject {
         }
         Log.v(TAG, "inside JSON: " + name + type + uuid);
         return new Route(auditInfo, deliveryOffice, name, type,
-                uuid, validityDays, routeItems, stopPointItems);
+                uuid, validityDays, routeItems);
     }
 
     public static AuditInfo jsonToAuditInfo(JSONObject json)

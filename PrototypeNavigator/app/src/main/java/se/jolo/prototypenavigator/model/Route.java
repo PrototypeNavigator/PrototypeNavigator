@@ -33,14 +33,11 @@ public final class Route {
     @ElementList(required = false)
     private List<RouteItem> routeItems;
 
-    @ElementList(required = false)
-    private List<StopPointItem> stopPointItems;
-
     public Route() {}
 
     public Route(AuditInfo auditInfo, DeliveryOffice deliveryOffice,
                  int name, String type, String uuid, int validityDays,
-                 List<RouteItem> routeItems, List<StopPointItem> stopPointItems) {
+                 List<RouteItem> routeItems) {
         this.auditInfo = auditInfo;
         this.deliveryOffice = deliveryOffice;
         this.name = name;
@@ -48,7 +45,6 @@ public final class Route {
         this.uuid = uuid;
         this.validityDays = validityDays;
         this.routeItems = routeItems;
-        this.stopPointItems = stopPointItems;
     }
 
     public AuditInfo getAuditInfo() {
@@ -77,9 +73,5 @@ public final class Route {
 
     public List<RouteItem> getRouteItems() {
         return routeItems;
-    }
-
-    public List<StopPointItem> getStopPointItems() {
-        return stopPointItems;
     }
 }

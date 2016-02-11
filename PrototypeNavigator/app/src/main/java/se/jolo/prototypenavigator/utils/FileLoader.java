@@ -1,6 +1,7 @@
 package se.jolo.prototypenavigator.utils;
 
 import android.content.Context;
+import android.renderscript.ScriptGroup;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -11,6 +12,9 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,7 +35,7 @@ public final class FileLoader {
 
     public String xmlToString() throws IOException {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(loadFile()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(loadJsonFile()));
         StringBuilder builder = new StringBuilder();
         String receiver;
 
@@ -40,8 +44,13 @@ public final class FileLoader {
         }
 
         reader.close();
-
+Log.e(TAG, builder.toString());
         return builder.toString();
+    }
+
+    public InputStream loadJsonFile() {
+        return context.getResources().openRawResource(context.getResources()
+                .getIdentifier("codebeautify", "raw", context.getPackageName()));
     }
 
     public InputStream loadFile() {
@@ -49,7 +58,13 @@ public final class FileLoader {
                 .getIdentifier("routexmltest", "raw", context.getPackageName()));
     }
 
-    public JSONObject getAsJson() throws IOException, JSONException {
-        return XML.toJSONObject(xmlToString());
+    public File getAsJson() throws IOException, JSONException {
+        String content = XML.toJSONObject(xmlToString()).toString();
+        File file = new File(context.getResources().toString());
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
+        writer.write(content);
+        writer.close();
+        Log.v(TAG, content);
+        return file;
     }
 }

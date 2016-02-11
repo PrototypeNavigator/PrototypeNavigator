@@ -49,14 +49,14 @@ public class StopPointItem {
     private List<DeliveryPoint> deliveryPoints;
 
     @Element(required = false)
-    private Service service;
+    private Service service = null;
 
     public StopPointItem() {}
 
     public StopPointItem(String uuid, String type, String name, String deliveryAddress,
                          int deliveryPostalCode, float easting, float northing, String freeText,
                          String plannedArrivalTime, String plannedDepartureTime,
-                         int validityDays, List<DeliveryPoint> deliveryPoints, Service service) {
+                         int validityDays,List <DeliveryPoint> deliveryPoint, Service service) {
         this.uuid = uuid;
         this.type = type;
         this.name = name;
@@ -116,7 +116,7 @@ public class StopPointItem {
         return validityDays;
     }
 
-    public List<DeliveryPoint> getDeliveryPoints() {
+    public List <DeliveryPoint> getDeliveryPoints() {
         return deliveryPoints;
     }
 

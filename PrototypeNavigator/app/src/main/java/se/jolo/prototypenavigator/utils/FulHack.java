@@ -48,6 +48,124 @@ public final class FulHack {
         return new Route(auditInfo, deliveryOffice, name, type, uuid, validityDays, routeItem);
     }
 
+    public static RouteItem jsonToRouteItem(JsonObject json) {
+
+        int order = json.get("order").getAsInt();
+        int primaryStopPointItemUuid = json.get("primaryStopPointItemUuid").getAsInt();
+        StopPoint stopPoint = jsonToStopPoint(json.getAsJsonObject("stopPoint"));
+
+        JsonObject jsonObjectStop = json.getAsJsonObject("stopPointItems");
+
+        List<StopPointItem> stopPointItems = new ArrayList<>();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /////////  stopPointItem kan vara  ett jsonObjekt och  en jsonArray                /////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        if(jsonObjectStop.get("stopPointItem").isJsonArray()) {
+            JsonArray jsonStopPointItems = jsonObjectStop.getAsJsonArray("stopPointItem");
+            for (int i = 0; i < jsonStopPointItems.size(); i++) {
+                JsonObject jsonStop = jsonStopPointItems.get(i).getAsJsonObject();
+                stopPointItems.add(jsonToStopPointItem(jsonStop));
+            }
+        }else {
+            JsonObject jsonStopPointItemAsObject = jsonObjectStop.getAsJsonObject("stopPointItem");
+            stopPointItems.add(jsonToStopPointItem(jsonStopPointItemAsObject));
+        }
+        return new RouteItem(order, primaryStopPointItemUuid, stopPoint, stopPointItems);
+    }
+
+    public static DeliveryPoint jsonToDeliveryPoint(JsonObject json) {
+
+        boolean odr = json.get("odr").getAsBoolean();
+
+        JsonObject jsonOdrRecipients = json.getAsJsonObject("odrRecipients");
+
+        List<OdrRecipient> odrRecipients = new ArrayList<>();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /////////      OdrRecipients kan vara  ett jsonObjekt och  en jsonArray            /////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        if(jsonOdrRecipients.get("odrRecipient").isJsonArray()) {
+            JsonArray jsonOdrRecipientsAsJsonArray = jsonOdrRecipients.getAsJsonArray("odrRecipient");
+            for (int i = 0; i < jsonOdrRecipientsAsJsonArray.size(); i++) {
+                JsonObject jsonObject = jsonOdrRecipientsAsJsonArray.get(i).getAsJsonObject();
+                odrRecipients.add(jsonToOdrRecipient(jsonObject));
+            }
+        }else{
+            JsonObject jsonOdrRecipientsAsObject = jsonOdrRecipients.getAsJsonObject("odrRecipient");
+            odrRecipients.add(jsonToOdrRecipient(jsonOdrRecipientsAsObject));
+        }
+
+        JsonObject jsonResident = json.getAsJsonObject("residents");
+
+        List<Resident> residents = new ArrayList<>();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /////////      resident kan vara  ett jsonObjekt och  en jsonArray                 /////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        if(jsonResident.get("resident").isJsonArray()) {
+            JsonArray jsonResidentArray = jsonResident.getAsJsonArray("resident");
+            for (int i = 0; i < jsonResidentArray.size(); i++) {
+                JsonObject jsonObject = jsonResidentArray.get(i).getAsJsonObject();
+                residents.add(jsonToResident(jsonObject));
+            }
+        }else{
+            JsonObject jsonObjectResident = jsonResident.getAsJsonObject("resident");
+            residents.add(jsonToResident(jsonObjectResident));
+        }
+
+        return new DeliveryPoint(odr, odrRecipients, residents);
+    }
+
+    public static StopPointItem jsonToStopPointItem(JsonObject json) {
+
+        Service service = null;
+        String uuid = json.get("uuid").getAsString();
+        String type = json.get("type").getAsString();
+        String name = json.get("name").getAsString();
+        String deliveryAddress = json.get("deliveryAddress").getAsString();
+        int deliveryPostalCode = json.get("deliveryPostalCode").getAsInt();
+        float easting = json.get("easting").getAsFloat();
+        float northing = json.get("northing").getAsFloat();
+        String freeText = json.get("freeText").getAsString();
+        String plannedArrivalTime = json.get("plannedArrivalTime").getAsString();
+        String plannedDepartureTime = null;
+        int validityDays = json.get("validityDays").getAsInt();
+
+        if(json.get("plannedDepartureTime")!=null){
+            plannedDepartureTime = json.get("plannedDepartureTime").getAsString();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ////  deliveryPoint kan vara  ett jsonObjekt eller  en jsonArray eller en primitiv    //////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        
+        List <DeliveryPoint> deliveryPoints = new ArrayList<>();
+        if(json.get("deliveryPoints").isJsonObject()) {
+            JsonObject jsonDeliveryPoint = json.getAsJsonObject("deliveryPoints");
+            if(jsonDeliveryPoint.get("deliveryPoint").isJsonArray()){
+                JsonArray jsonDeliverPointArray = jsonDeliveryPoint.getAsJsonArray("deliveryPoint");
+                for (int i = 0; i < jsonDeliverPointArray.size(); i++) {
+                    JsonObject jsonObject = jsonDeliverPointArray.get(i).getAsJsonObject();
+                    deliveryPoints.add(jsonToDeliveryPoint(jsonObject));
+                }
+            }else {
+            JsonObject jsonDeliveryPoints = jsonDeliveryPoint.getAsJsonObject("deliveryPoint");
+            deliveryPoints.add(jsonToDeliveryPoint(jsonDeliveryPoints));}
+        }
+        if(json.get("service")!=null){
+         service = jsonToService(json.getAsJsonObject("service"));
+        }
+
+        return new StopPointItem(uuid, type, name, deliveryAddress, deliveryPostalCode,
+                easting, northing, freeText, plannedArrivalTime, plannedDepartureTime,
+                validityDays, deliveryPoints, service);
+    }
+
+
     public static AuditInfo jsonToAuditInfo(JsonObject json) throws ParseException {
 
         Date createdAt = stringToDate(json.get("createdAt").getAsString());
@@ -64,26 +182,7 @@ public final class FulHack {
         return new DeliveryOffice(name, uuid);
     }
 
-    public static DeliveryPoint jsonToDeliveryPoint(JsonObject json) {
 
-        boolean odr = json.get("odr").getAsBoolean();
-
-        List<OdrRecipient> odrRecipients = new ArrayList<>();
-        JsonArray jsonOdrRecipients = json.getAsJsonArray("odrRecipients");
-        for (int i = 0; i < jsonOdrRecipients.size(); i++) {
-            JsonObject jsonObject = jsonOdrRecipients.get(i).getAsJsonObject();
-            odrRecipients.add(jsonToOdrRecipient(jsonObject.getAsJsonObject("odrRecipient")));
-        }
-
-        List<Resident> residents = new ArrayList<>();
-        JsonArray jsonResidents = json.getAsJsonArray("residents");
-        for (int i = 0; i < jsonResidents.size(); i++) {
-            JsonObject jsonObject = jsonResidents.get(i).getAsJsonObject();
-            residents.add(jsonToResident(jsonObject.getAsJsonObject("residents")));
-        }
-
-        return new DeliveryPoint(odr, odrRecipients, residents);
-    }
 
     public static OdrRecipient jsonToOdrRecipient(JsonObject json) {
 
@@ -101,23 +200,7 @@ public final class FulHack {
         return new Resident(firstname, lastname);
     }
 
-    public static RouteItem jsonToRouteItem(JsonObject json) {
 
-        //JsonObject jsonObjectBajs = json.getAsJsonObject("routeItem"); //
-
-        int order = json.get("order").getAsInt();
-        int primaryStopPointItemUuid = json.get("primaryStopPointItemUuid").getAsInt();
-        StopPoint stopPoint = jsonToStopPoint(json.getAsJsonObject("stopPoint"));
-
-        List<StopPointItem> stopPointItems = new ArrayList<>();
-        JsonArray jsonStopPointItems = json.getAsJsonArray("stopPointItems");
-        for (int i = 0; i < jsonStopPointItems.size(); i++) {
-            JsonObject jsonObject = json.get("stopPointItem").getAsJsonObject();
-            stopPointItems.add(jsonToStopPointItem(jsonObject.getAsJsonObject("stopPointItem")));
-        }
-
-        return new RouteItem(order, primaryStopPointItemUuid, stopPoint, stopPointItems);
-    }
 
     public static Service jsonToService(JsonObject json) {
 
@@ -144,33 +227,7 @@ public final class FulHack {
         return new StopPoint(easting, northing, type, uuid, freeText);
     }
 
-    public static StopPointItem jsonToStopPointItem(JsonObject json) {
 
-        String uuid = json.get("uuid").getAsString();
-        String type = json.get("type").getAsString();
-        String name = json.get("name").getAsString();
-        String deliveryAddress = json.get("deliveryAddress").getAsString();
-        int deliveryPostalCode = json.get("deliveryPostalCode").getAsInt();
-        float easting = json.get("easting").getAsFloat();
-        float northing = json.get("northing").getAsFloat();
-        String freeText = json.get("freeText").getAsString();
-        String plannedArrivalTime = json.get("plannedArrivalTime").getAsString();
-        String plannedDepartureTime = json.get("plannedDepartureTime").getAsString();
-        int validityDays = json.get("validityDays").getAsInt();
-
-        List<DeliveryPoint> deliveryPoints = new ArrayList<>();
-        JsonArray jsonDeliveryPoints = json.getAsJsonArray("deliveryPoints");
-        for (int i = 0; i < jsonDeliveryPoints.size(); i++) {
-            JsonObject jsonObject = jsonDeliveryPoints.get(i).getAsJsonObject();
-            deliveryPoints.add(jsonToDeliveryPoint(jsonObject.getAsJsonObject("deliveryPoint")));
-        }
-
-        Service service = jsonToService(json.getAsJsonObject("service"));
-
-        return new StopPointItem(uuid, type, name, deliveryAddress, deliveryPostalCode,
-                easting, northing, freeText, plannedArrivalTime, plannedDepartureTime,
-                validityDays, deliveryPoints, service);
-    }
 
     public static Date stringToDate(String dateString) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

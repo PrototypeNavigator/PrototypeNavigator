@@ -169,17 +169,13 @@ public final class JsonToObject {
         String plannedDepartureTime = json.getString("plannedDepartureTime");
         int validityDays = json.getInt("validityDays");
 
-        List<DeliveryPoint> deliveryPoints = new ArrayList<>();
-        JSONArray jsonDeliveryPoints = json.getJSONArray("deliveryPoints");
-        for (int i = 0; i < jsonDeliveryPoints.length(); i++) {
-            deliveryPoints.add(jsonToDeliveryPoint(jsonDeliveryPoints.getJSONObject(i)));
-        }
+        List <DeliveryPoint> deliveryPoint=null;
 
         Service service = jsonToService(json.getJSONObject("service"));
 
         return new StopPointItem(uuid, type, name, deliveryAddress, deliveryPostalCode,
                 easting, northing, freeText, plannedArrivalTime, plannedDepartureTime,
-                validityDays, deliveryPoints, service);
+                validityDays, deliveryPoint, service);
     }
 
 

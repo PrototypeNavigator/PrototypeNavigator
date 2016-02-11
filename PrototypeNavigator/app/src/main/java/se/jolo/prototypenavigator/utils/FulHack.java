@@ -42,7 +42,7 @@ public final class FulHack {
         JsonArray jsonRouteItem = routeItems.getAsJsonArray("routeItem");
         for (int i = 0; i < jsonRouteItem.size(); i++) {
             JsonObject jsonObject = jsonRouteItem.get(i).getAsJsonObject();
-            routeItem.add(jsonToRouteItem(jsonObject.getAsJsonObject("routeItem")));
+            routeItem.add(jsonToRouteItem(jsonObject));
         }
 
         return new Route(auditInfo, deliveryOffice, name, type, uuid, validityDays, routeItem);
@@ -103,9 +103,9 @@ public final class FulHack {
 
     public static RouteItem jsonToRouteItem(JsonObject json) {
 
-        JsonObject jsonObjectBajs = json.getAsJsonObject("routeItem"); //
+        //JsonObject jsonObjectBajs = json.getAsJsonObject("routeItem"); //
 
-        int order = jsonObjectBajs.get("order").getAsInt();
+        int order = json.get("order").getAsInt();
         int primaryStopPointItemUuid = json.get("primaryStopPointItemUuid").getAsInt();
         StopPoint stopPoint = jsonToStopPoint(json.getAsJsonObject("stopPoint"));
 

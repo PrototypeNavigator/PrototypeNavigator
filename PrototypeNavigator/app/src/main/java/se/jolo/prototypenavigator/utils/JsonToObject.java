@@ -1,5 +1,10 @@
 package se.jolo.prototypenavigator.utils;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +31,10 @@ import se.jolo.prototypenavigator.model.StopPointItem;
  */
 public final class JsonToObject {
 
+    private static final String TAG = "Json";
+
+    Gson gson = new Gson();
+
     private JsonToObject() {}
 
     public static Route jsonToRoute(JSONObject json)
@@ -49,7 +58,7 @@ public final class JsonToObject {
         for (int i = 0; i < jsonStopPointItems.length(); i++) {
             stopPointItems.add(jsonToStopPointItem(jsonStopPointItems.getJSONObject(i)));
         }
-
+        Log.v(TAG, "inside JSON: " + name + type + uuid);
         return new Route(auditInfo, deliveryOffice, name, type,
                 uuid, validityDays, routeItems, stopPointItems);
     }

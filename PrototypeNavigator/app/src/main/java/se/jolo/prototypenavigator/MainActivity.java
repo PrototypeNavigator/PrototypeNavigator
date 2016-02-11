@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.mapbox.directions.DirectionsCriteria;
 import com.mapbox.directions.MapboxDirections;
 import com.mapbox.directions.service.models.DirectionsResponse;
@@ -32,6 +33,7 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import se.jolo.prototypenavigator.deserializers.JsonMapper;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.utils.FileLoader;
 import se.jolo.prototypenavigator.utils.JsonToObject;
@@ -126,11 +128,13 @@ public class MainActivity extends AppCompatActivity {
         FileLoader fileLoader = new FileLoader(this);
 
         try {
-            String xmlString = fileLoader.xmlToString();
-            JSONObject json = XmlToJson.stringToJson(xmlString);
-            Route route = JsonToObject.jsonToRoute(json);
-            Log.e(LOG_TAG, "route: " + route.getType() + " " + route.getDeliveryOffice());
-        } catch (IOException | JSONException | ParseException e) {
+            JsonMapper jm = new JsonMapper(this);
+            jm.objectify();
+            //String xmlString = fileLoader.xmlToString();
+            //JSONObject json = XmlToJson.getAsJson(xmlString);
+            //Route route = JsonToObject.jsonToRoute(json);
+            //Log.e(LOG_TAG, "route: " + route.getType() + " " + route.getDeliveryOffice());
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         // TEST

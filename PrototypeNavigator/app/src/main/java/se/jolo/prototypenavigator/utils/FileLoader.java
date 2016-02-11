@@ -4,6 +4,9 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
@@ -44,5 +47,9 @@ public final class FileLoader {
     public InputStream loadFile() {
         return context.getResources().openRawResource(context.getResources()
                 .getIdentifier("routexmltest", "raw", context.getPackageName()));
+    }
+
+    public JSONObject getAsJson() throws IOException, JSONException {
+        return XML.toJSONObject(xmlToString());
     }
 }

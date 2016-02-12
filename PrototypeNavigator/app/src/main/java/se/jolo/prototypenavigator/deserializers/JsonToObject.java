@@ -34,7 +34,6 @@ public final class JsonToObject {
         String uuid = json.get("uuid").getAsString();
         int validityDays = json.get("validityDays").getAsInt();
 
-
         JsonObject routeItems = json.getAsJsonObject("routeItems");
 
         List<RouteItem> routeItem = new ArrayList<>();

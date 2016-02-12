@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.annotations.JsonAdapter;
 import com.mapbox.directions.DirectionsCriteria;
 import com.mapbox.directions.MapboxDirections;
 import com.mapbox.directions.service.models.DirectionsResponse;
@@ -23,21 +22,16 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import se.jolo.prototypenavigator.deserializers.JsonMapper;
+import se.jolo.prototypenavigator.utils.JsonMapper;
 import se.jolo.prototypenavigator.model.Route;
-import se.jolo.prototypenavigator.utils.FileLoader;
-import se.jolo.prototypenavigator.utils.JsonToObject;
-import se.jolo.prototypenavigator.utils.XmlToJson;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -125,15 +119,12 @@ public class MainActivity extends AppCompatActivity {
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid,16,45,0)));
 
         // TEST
-        FileLoader fileLoader = new FileLoader(this);
 
         try {
             JsonMapper jm = new JsonMapper(this);
-            jm.objectify();
-            //String xmlString = fileLoader.xmlToString();
-            //JSONObject json = XmlToJson.getAsJson(xmlString);
-            //Route route = JsonToObject.jsonToRoute(json);
-            //Log.e(LOG_TAG, "route: " + route.getType() + " " + route.getDeliveryOffice());
+            Route route = jm.objectifyRoute();
+            Toast.makeText(this, "route object: " + route.getName() + route.getRouteItems().get(0).getStopPoint().getUuid(), Toast.LENGTH_LONG).show();
+            Log.v(LOG_TAG, "route object: " + route.getName() + route.getRouteItems().get(0).getStopPoint().getUuid());
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }

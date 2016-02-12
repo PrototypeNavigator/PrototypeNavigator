@@ -18,34 +18,56 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 
 import se.jolo.prototypenavigator.model.Route;
 
 /**
  * Created by Joel on 2016-02-09.
  */
-public final class FileLoader {
+public final class FileLoadAndConvert {
 
     private static final String TAG = "XmlDeserializer";
     private Context context;
 
-    public FileLoader(Context context) {
+    public FileLoadAndConvert(Context context) {
         this.context = context;
     }
 
-    public String xmlToString() throws IOException {
+    public String xmlToString() {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(loadJsonFile()));
-        StringBuilder builder = new StringBuilder();
-        String receiver;
+        StringBuilder builder = null;
 
-        while ((receiver = reader.readLine()) != null) {
-            builder.append(receiver);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(loadFile()))) {
+
+            builder = new StringBuilder();
+            String receiver;
+
+            while ((receiver = reader.readLine()) != null) {
+                builder.append(receiver);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        reader.close();
-Log.e(TAG, builder.toString());
+        Log.e(TAG, builder.toString());
+
         return builder.toString();
+    }
+
+    // sarar för den är fin och vem vet, kanske behövs.
+    public Reader xmlToReader() {
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(loadFile()))) {
+
+            return reader;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public InputStream loadJsonFile() {
@@ -58,13 +80,7 @@ Log.e(TAG, builder.toString());
                 .getIdentifier("routexmltest", "raw", context.getPackageName()));
     }
 
-    public File getAsJson() throws IOException, JSONException {
-        String content = XML.toJSONObject(xmlToString()).toString();
-        File file = new File(context.getResources().toString());
-        BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
-        writer.write(content);
-        writer.close();
-        Log.v(TAG, content);
-        return file;
+    public String xmlToJson() throws IOException, JSONException {
+        return XML.toJSONObject(xmlToString()).toString();
     }
 }

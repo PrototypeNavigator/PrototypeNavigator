@@ -77,27 +77,6 @@ public class MainActivity extends AppCompatActivity {
         return fewerWaypoints;
     }
 
-    private void newOnCreate(Bundle savedInstanceState) {
-        if (loadRoute() == null) {
-            showMessage("Failed to load route");
-        } else {
-
-            Route route = loadRoute();
-            List<Waypoint> waypoints = loadWaypoints(route);
-
-            // centroid goes here
-            LatLng centroid = new LatLng(
-                    (waypoints.get(0).getLatitude() + waypoints.get(waypoints.size() - 1).getLatitude()) / 2,
-                    (waypoints.get(0).getLongitude() + waypoints.get(waypoints.size() - 1).getLongitude()) / 2);
-
-            // initialize the mapView
-            mapView = loadMap(savedInstanceState, centroid, waypoints);
-
-            // get route from API
-            getRoute(waypoints);
-        }
-    }
-
     private Route loadRoute() {
 
         JsonMapper jsonMapper = new JsonMapper(this);
@@ -257,90 +236,4 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
-
-    private void oldOnCreate(Bundle savedInstanceState) {
-        // Dupont Circle (Washington, DC)
-        Waypoint origin = new Waypoint(-77.04341, 38.90962);
-
-        // The White House (Washington, DC)
-        Waypoint destination = new Waypoint(-118.497930, 34.021880);
-
-        // The White House (Washington, DC)
-        Waypoint destination2 = new Waypoint(-77.1365, 38.8977);
-
-        Waypoint santaMonica = new Waypoint(-118.499711, 34.026539);
-
-
-        List<Waypoint> waypoints = new ArrayList<>();
-
-        waypoints.add(santaMonica);
-        waypoints.add(destination2);
-        waypoints.add(origin);
-        waypoints.add(destination);
-
-
-        // Centroid
-        LatLng centroid = new LatLng(
-                (origin.getLatitude() + destination.getLatitude()) / 2,
-                (origin.getLongitude() + destination.getLongitude()) / 2);
-
-        // Set up a standard Mapbox map
-        mapView = (MapView) findViewById(R.id.mapboxMapView);
-        mapView.setAccessToken(MAPBOX_ACCESS_TOKEN);
-        mapView.setStyleUrl(Style.MAPBOX_STREETS);
-        mapView.setCenterCoordinate(centroid);
-
-        //mapView.setZoomLevel(10);
-        mapView.onCreate(savedInstanceState);
-
-        // We're gonna use this to demo off-route detection
-        mapView.setOnMapClickListener(new MapView.OnMapClickListener() {
-            @Override
-            public void onMapClick(@NonNull LatLng point) {
-                Waypoint target = new Waypoint(point.getLongitude(), point.getLatitude());
-                checkOffRoute(target);
-            }
-        });
-
-        // Add origin and destination to the map
-        mapView.addMarker(new MarkerOptions()
-                .position(new LatLng(origin.getLatitude(), origin.getLongitude()))
-                .title("Origin")
-                .snippet("Dupont Circle"));
-
-        mapView.addMarker(new MarkerOptions()
-                .position(new LatLng(destination.getLatitude(), destination.getLongitude()))
-                .title("Destination")
-                .snippet("The White House"));
-
-        mapView.addMarker(new MarkerOptions()
-                .position(new LatLng(destination2.getLatitude(), destination2.getLongitude()))
-                .title("Destination2")
-                .snippet("The White House2"));
-
-        mapView.addMarker(new MarkerOptions()
-                .position(new LatLng(santaMonica.getLatitude(), santaMonica.getLongitude()))
-                .title("st monica")
-                .snippet("Lincon blv"));
-
-
-        // Get route from API
-        getRoute(waypoints);
-
-
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid, 16, 45, 0)));
-
-        // TEST
-
-        try {
-            JsonMapper jm = new JsonMapper(this);
-            Route route = jm.objectifyRoute();
-            Toast.makeText(this, "route object: " + route.getName() + route.getRouteItems().get(0).getStopPoint().getUuid(), Toast.LENGTH_LONG).show();
-            Log.v(LOG_TAG, "route object: " + route.getName() + route.getRouteItems().get(0).getStopPoint().getUuid());
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-        // TEST
-    }
-
 }

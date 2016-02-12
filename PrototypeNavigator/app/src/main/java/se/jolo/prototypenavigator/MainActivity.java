@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.Response;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private List<Waypoint> loadWaypoints(Route route) {
+
         List<Waypoint> waypoints = new ArrayList<>(); // kanske går med en HashMap för Order...
         List<RouteItem> routeItems = route.getRouteItems();
 
@@ -223,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         mapView.onStop();
     }
-
 
     @Override
     protected void onDestroy() {

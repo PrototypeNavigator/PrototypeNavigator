@@ -26,6 +26,14 @@ public class StopPoint {
 
     public StopPoint() {}
 
+    public StopPoint(float easting, float northing, String type, String uuid, String freeText) {
+        this.easting = easting;
+        this.northing = northing;
+        this.type = type;
+        this.uuid = uuid;
+        this.freeText = freeText;
+    }
+
     public float getEasting() {
         return easting;
     }

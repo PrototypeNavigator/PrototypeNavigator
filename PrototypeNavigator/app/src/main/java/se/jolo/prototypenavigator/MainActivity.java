@@ -1,6 +1,5 @@
 package se.jolo.prototypenavigator;
 
-
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,14 +20,21 @@ import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import se.jolo.prototypenavigator.model.RouteItem;
+import se.jolo.prototypenavigator.model.StopPoint;
+import se.jolo.prototypenavigator.utils.JsonMapper;
 import se.jolo.prototypenavigator.model.Route;
-import se.jolo.prototypenavigator.utils.FileLoader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,42 +48,72 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Dupont Circle (Washington, DC)
-        Waypoint origin = new Waypoint(-77.04341, 38.90962);
+        if (loadRoute() == null) {
+            showMessage("Failed to load route");
+        } else {
 
-        // The White House (Washington, DC)
-        Waypoint destination = new Waypoint(-118.497930, 34.021880);
+            Route route = loadRoute();
+            List<Waypoint> waypoints = loadWaypoints(route);
 
-        // The White House (Washington, DC)
-        Waypoint destination2 = new Waypoint(-77.1365, 38.8977);
+            // centroid goes here
+            LatLng centroid = new LatLng(
+                    (waypoints.get(0).getLatitude() + waypoints.get(waypoints.size() - 1).getLatitude()) / 2,
+                    (waypoints.get(0).getLongitude() + waypoints.get(waypoints.size() - 1).getLongitude()) / 2);
 
-        Waypoint santaMonica = new Waypoint(-118.499711, 34.026539);
+            // initialize the mapView
+            mapView = loadMap(savedInstanceState, centroid, waypoints);
 
+            // get route from API
+            getRoute(fewerWaypointsPlis(waypoints));
+        }
+    }
 
+    public List<Waypoint> fewerWaypointsPlis(List<Waypoint> allWaypoints) {
 
-        List<Waypoint> waypoints = new ArrayList<>();
+        List<Waypoint> fewerWaypoints = new ArrayList<>();
 
-        waypoints.add(santaMonica);
-        waypoints.add(destination2);
-        waypoints.add(origin);
-        waypoints.add(destination);
+        fewerWaypoints.add(allWaypoints.get(0));
+        fewerWaypoints.add(allWaypoints.get(1));
 
+        return fewerWaypoints;
+    }
 
-        // Centroid
-        LatLng centroid = new LatLng(
-                (origin.getLatitude() + destination.getLatitude()) / 2,
-                (origin.getLongitude() + destination.getLongitude()) / 2);
+    private Route loadRoute() {
 
-        // Set up a standard Mapbox map
+        JsonMapper jsonMapper = new JsonMapper(this);
+
+        try {
+            return jsonMapper.objectifyRoute();
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private List<Waypoint> loadWaypoints(Route route) {
+
+        List<Waypoint> waypoints = new ArrayList<>(); // kanske går med en HashMap för Order...
+        List<RouteItem> routeItems = route.getRouteItems();
+
+        for (RouteItem ri : routeItems) {
+            waypoints.add(new Waypoint(
+                    ri.getStopPoint().getEasting(),
+                    ri.getStopPoint().getNorthing()));  // altitude can be set as a third parameter
+        }
+
+        return waypoints;
+    }
+
+    private MapView loadMap(Bundle savedInstanceState, LatLng centroid, List<Waypoint> waypoints) {
+
         mapView = (MapView) findViewById(R.id.mapboxMapView);
         mapView.setAccessToken(MAPBOX_ACCESS_TOKEN);
         mapView.setStyleUrl(Style.MAPBOX_STREETS);
         mapView.setCenterCoordinate(centroid);
 
-        //mapView.setZoomLevel(10);
         mapView.onCreate(savedInstanceState);
 
-        // We're gonna use this to demo off-route detection
         mapView.setOnMapClickListener(new MapView.OnMapClickListener() {
             @Override
             public void onMapClick(@NonNull LatLng point) {
@@ -86,44 +122,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Add origin and destination to the map
-        mapView.addMarker(new MarkerOptions()
-                .position(new LatLng(origin.getLatitude(), origin.getLongitude()))
-                .title("Origin")
-                .snippet("Dupont Circle"));
+        for (Waypoint w : waypoints) {
+            mapView.addMarker(new MarkerOptions()
+                    .position(new LatLng(w.getLatitude(), w.getLongitude())));
+        }
 
-        mapView.addMarker(new MarkerOptions()
-                .position(new LatLng(destination.getLatitude(), destination.getLongitude()))
-                .title("Destination")
-                .snippet("The White House"));
+        // set camera angle
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid, 16, 45, 0)));
 
-        mapView.addMarker(new MarkerOptions()
-                .position(new LatLng(destination2.getLatitude(), destination2.getLongitude()))
-                .title("Destination2")
-                .snippet("The White House2"));
-
-        mapView.addMarker(new MarkerOptions()
-                .position(new LatLng(santaMonica.getLatitude(), santaMonica.getLongitude()))
-                .title("st monica")
-                .snippet("Lincon blv"));
-
-
-        // Get route from API
-        getRoute(waypoints);
-
-
-
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid,16,45,0)));
-
-        // TEST
-        FileLoader fileLoader = new FileLoader(this);
-        Route route = fileLoader.routeDeserialize();
-        Log.v(LOG_TAG, route.getType() + "success");
-        // TEST
-
+        return mapView;
     }
 
-    private void getRoute(List<Waypoint>waypoints) {
+    private void getRoute(List<Waypoint> waypoints) {
         MapboxDirections md = new MapboxDirections.Builder()
                 .setAccessToken(MAPBOX_ACCESS_TOKEN)
                 .setWaypoints(waypoints)
@@ -133,8 +143,17 @@ public class MainActivity extends AppCompatActivity {
         md.enqueue(new Callback<DirectionsResponse>() {
             @Override
             public void onResponse(Response<DirectionsResponse> response, Retrofit retrofit) {
+
                 // You can get generic HTTP info about the response
-                Log.d(LOG_TAG, "Response code: " + response.code());
+                if (!response.isSuccess()) {
+                    try {
+                        Log.d(LOG_TAG, "Error " + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.d(LOG_TAG, "Response code: " + response.code());
+                }
 
                 // Print some info about the route
                 currentRoute = response.body().getRoutes().get(0);
@@ -196,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onPause()  {
+    public void onPause() {
         super.onPause();
         mapView.onPause();
     }
@@ -206,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         mapView.onStop();
     }
-
 
     @Override
     protected void onDestroy() {

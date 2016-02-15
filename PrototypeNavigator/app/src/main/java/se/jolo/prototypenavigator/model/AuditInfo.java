@@ -19,6 +19,11 @@ public final class AuditInfo {
 
     public AuditInfo() {}
 
+    public AuditInfo(Date createdAt, String createdBy) {
+        this.createdAt = createdAt;
+        this.createdBy = createdBy;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }

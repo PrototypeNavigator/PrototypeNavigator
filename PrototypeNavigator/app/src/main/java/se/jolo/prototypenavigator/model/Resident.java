@@ -17,6 +17,11 @@ public class Resident {
 
     public Resident() {}
 
+    public Resident(String firstname, String lastname) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
+
     public String getFirstName() {
         return firstname;
     }

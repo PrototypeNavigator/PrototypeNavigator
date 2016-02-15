@@ -5,8 +5,8 @@ package se.jolo.prototypenavigator.model;
  */
 public class Service {
 
-    private String agreementArrivalTime;    // should be time
-    private String agreementDepartureTime;  // should be time
+    private String agreementArrivalTime;
+    private String agreementDepartureTime;
     private boolean delivery;
     private boolean pickup;
     private String products;

@@ -56,7 +56,7 @@ public final class FileLoadAndConvert {
         return builder.toString();
     }
 
-    // sarar för den är fin och vem vet, kanske behövs.
+    // sparar för den är fin och vem vet, kanske behövs.
     public Reader xmlToReader() {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(loadFile()))) {

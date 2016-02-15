@@ -1,33 +1,21 @@
 package se.jolo.prototypenavigator.model;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
-
 import java.util.List;
 
 /**
  * Created by Joel on 2016-02-08.
  */
-@Root
 public class RouteItem {
 
-    @Element(required = false)
     private int order;
-
-    @Element(required = false)
     private int primaryStopPointItemUuid;
-
-    @Element(required = false)
     private StopPoint stopPoint;
-
-    @ElementList(required = false)
     private List<StopPointItem> stopPointItems;
 
     public RouteItem() {}
 
-    public RouteItem(int order, int primaryStopPointItemUuid,
-                     StopPoint stopPoint, List<StopPointItem> stopPointItems) {
+    public RouteItem(int order, int primaryStopPointItemUuid, StopPoint stopPoint,
+                     List<StopPointItem> stopPointItems) {
         this.order = order;
         this.primaryStopPointItemUuid = primaryStopPointItemUuid;
         this.stopPoint = stopPoint;

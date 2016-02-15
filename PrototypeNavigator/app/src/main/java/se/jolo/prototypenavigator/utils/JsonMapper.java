@@ -15,7 +15,7 @@ import se.jolo.prototypenavigator.model.Route;
 /**
  * Created by Joel on 2016-02-11.
  */
-public final class JsonMapper {
+public class JsonMapper {
 
     private static final String TAG = "JsonMapper";
     private final Gson gson;

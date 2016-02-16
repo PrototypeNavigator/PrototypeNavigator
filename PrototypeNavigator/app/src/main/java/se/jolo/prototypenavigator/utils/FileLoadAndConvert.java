@@ -14,6 +14,7 @@ import org.simpleframework.xml.core.Persister;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,14 +32,13 @@ public final class FileLoadAndConvert {
     private Context context;
 
     public FileLoadAndConvert(Context context) {
-        this.context = context;
     }
 
-    public String xmlToString() {
+    public String xmlToString(String xmlPath) {
 
         StringBuilder builder = null;
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(loadFile()))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(loadFile(xmlPath)))) {
 
             builder = new StringBuilder();
             String receiver;
@@ -56,31 +56,12 @@ public final class FileLoadAndConvert {
         return builder.toString();
     }
 
-    // sarar för den är fin och vem vet, kanske behövs.
-    public Reader xmlToReader() {
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(loadFile()))) {
-
-            return reader;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    public InputStream loadFile(String xmlPath) throws IOException{
+        InputStream inputStream = new FileInputStream(xmlPath);
+        return  inputStream;
     }
 
-    public InputStream loadJsonFile() {
-        return context.getResources().openRawResource(context.getResources()
-                .getIdentifier("codebeautify", "raw", context.getPackageName()));
-    }
-
-    public InputStream loadFile() {
-        return context.getResources().openRawResource(context.getResources()
-                .getIdentifier("routexmltest", "raw", context.getPackageName()));
-    }
-
-    public String xmlToJson() throws IOException, JSONException {
-        return XML.toJSONObject(xmlToString()).toString();
+    public String xmlToJson(String xmlPath) throws IOException, JSONException {
+        return XML.toJSONObject(xmlToString(xmlPath)).toString();
     }
 }

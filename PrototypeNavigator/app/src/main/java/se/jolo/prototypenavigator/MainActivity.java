@@ -1,5 +1,6 @@
 package se.jolo.prototypenavigator;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +32,7 @@ import java.util.Map;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import se.jolo.prototypenavigator.activities.FileBrowser;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.model.StopPoint;
 import se.jolo.prototypenavigator.utils.JsonMapper;
@@ -40,31 +42,41 @@ public class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = "MainActivity";
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
-    private MapView mapView = null;
+    private MapView mapView;
     private DirectionsRoute currentRoute = null;
+    private List<Waypoint> waypoints = null;
+    private String xmlPath;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mapView = new MapView(this,MAPBOX_ACCESS_TOKEN);
+        Intent intent = getIntent();
+        if (!getIntent().hasExtra("xmlPath")) {
+            Intent switchToFileBrowser = new Intent(getBaseContext(), FileBrowser.class);
+            startActivity(switchToFileBrowser);
+        }else {
+            xmlPath = intent.getStringExtra("xmlPath");
+            if (loadRoute(xmlPath) == null) {
+                showMessage("Failed to load route");
+            } else {
+                Route route = loadRoute(xmlPath);
+                waypoints = loadWaypoints(route);
 
-        if (loadRoute() == null) {
-            showMessage("Failed to load route");
-        } else {
+                // centroid goes here
+                LatLng centroid = new LatLng(
+                        (waypoints.get(0).getLatitude() + waypoints.get(waypoints.size() - 1).getLatitude()) / 2,
+                        (waypoints.get(0).getLongitude() + waypoints.get(waypoints.size() - 1).getLongitude()) / 2);
 
-            Route route = loadRoute();
-            List<Waypoint> waypoints = loadWaypoints(route);
+                // initialize the mapView
+                mapView = loadMap(savedInstanceState, centroid, waypoints);
 
-            // centroid goes here
-            LatLng centroid = new LatLng(
-                    (waypoints.get(0).getLatitude() + waypoints.get(waypoints.size() - 1).getLatitude()) / 2,
-                    (waypoints.get(0).getLongitude() + waypoints.get(waypoints.size() - 1).getLongitude()) / 2);
+                // get route from API
+                getRoute(fewerWaypointsPlis(waypoints));
+            }
 
-            // initialize the mapView
-            mapView = loadMap(savedInstanceState, centroid, waypoints);
-
-            // get route from API
-            getRoute(fewerWaypointsPlis(waypoints));
         }
     }
 
@@ -78,12 +90,12 @@ public class MainActivity extends AppCompatActivity {
         return fewerWaypoints;
     }
 
-    private Route loadRoute() {
+    private Route loadRoute(String xmlPath) {
 
         JsonMapper jsonMapper = new JsonMapper(this);
 
         try {
-            return jsonMapper.objectifyRoute();
+            return jsonMapper.objectifyRoute(xmlPath);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -201,6 +213,8 @@ public class MainActivity extends AppCompatActivity {
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
+
 
     @Override
     protected void onStart() {

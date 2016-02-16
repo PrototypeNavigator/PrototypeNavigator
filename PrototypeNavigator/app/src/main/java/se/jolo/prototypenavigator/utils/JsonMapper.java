@@ -28,7 +28,7 @@ public final class JsonMapper {
         fileLoadAndConvert = new FileLoadAndConvert(context);
     }
 
-    public Route objectifyRoute() throws IOException, JSONException {
-        return gson.fromJson(fileLoadAndConvert.xmlToJson(), Route.class);
+    public Route objectifyRoute(String xmlPath) throws IOException, JSONException {
+        return gson.fromJson(fileLoadAndConvert.xmlToJson(xmlPath), Route.class);
     }
 }

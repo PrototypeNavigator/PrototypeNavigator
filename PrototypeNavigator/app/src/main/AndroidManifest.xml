@@ -4,9 +4,9 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -20,6 +20,16 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".activities.FileBrowser">
+            <activity android:name="ShareActivity">
+                <!-- This activity handles "SEND" actions with text data -->
+                <intent-filter>
+                    <action android:name="android.intent.action.SEND"/>
+                    <category android:name="android.intent.category.DEFAULT"/>
+                    <data android:mimeType="text/plain"/>
+                </intent-filter>
+            </activity>
         </activity>
     </application>
 

@@ -2,6 +2,7 @@ package se.jolo.prototypenavigator;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -25,16 +26,13 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import se.jolo.prototypenavigator.activities.FileBrowser;
 import se.jolo.prototypenavigator.model.RouteItem;
-import se.jolo.prototypenavigator.model.StopPoint;
 import se.jolo.prototypenavigator.utils.JsonMapper;
 import se.jolo.prototypenavigator.model.Route;
 
@@ -45,24 +43,25 @@ public class MainActivity extends AppCompatActivity {
     private MapView mapView;
     private DirectionsRoute currentRoute = null;
     private List<Waypoint> waypoints = null;
-    private String xmlPath;
+    private String xmlString;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mapView = new MapView(this,MAPBOX_ACCESS_TOKEN);
+        mapView = loadMap(savedInstanceState);
+
         Intent intent = getIntent();
-        if (!getIntent().hasExtra("xmlPath")) {
-            Intent switchToFileBrowser = new Intent(getBaseContext(), FileBrowser.class);
+        if (savedInstanceState==null) {
+            Intent switchToFileBrowser = new Intent(this, FileBrowser.class);
             startActivity(switchToFileBrowser);
         }else {
-            xmlPath = intent.getStringExtra("xmlPath");
-            if (loadRoute(xmlPath) == null) {
+            xmlString = intent.getStringExtra("xmlString");
+            if (loadRoute(xmlString) == null) {
                 showMessage("Failed to load route");
             } else {
-                Route route = loadRoute(xmlPath);
+                Route route = loadRoute(xmlString);
                 waypoints = loadWaypoints(route);
 
                 // centroid goes here
@@ -70,9 +69,8 @@ public class MainActivity extends AppCompatActivity {
                         (waypoints.get(0).getLatitude() + waypoints.get(waypoints.size() - 1).getLatitude()) / 2,
                         (waypoints.get(0).getLongitude() + waypoints.get(waypoints.size() - 1).getLongitude()) / 2);
 
-                // initialize the mapView
-                mapView = loadMap(savedInstanceState, centroid, waypoints);
-
+                setCentroid(centroid);
+                addMarkers(waypoints);
                 // get route from API
                 getRoute(fewerWaypointsPlis(waypoints));
             }
@@ -90,12 +88,12 @@ public class MainActivity extends AppCompatActivity {
         return fewerWaypoints;
     }
 
-    private Route loadRoute(String xmlPath) {
+    private Route loadRoute(String xmlString) {
 
         JsonMapper jsonMapper = new JsonMapper(this);
 
         try {
-            return jsonMapper.objectifyRoute(xmlPath);
+            return jsonMapper.objectifyRoute(xmlString);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -117,12 +115,11 @@ public class MainActivity extends AppCompatActivity {
         return waypoints;
     }
 
-    private MapView loadMap(Bundle savedInstanceState, LatLng centroid, List<Waypoint> waypoints) {
+    private MapView loadMap(Bundle savedInstanceState) {
 
         mapView = (MapView) findViewById(R.id.mapboxMapView);
         mapView.setAccessToken(MAPBOX_ACCESS_TOKEN);
         mapView.setStyleUrl(Style.MAPBOX_STREETS);
-        mapView.setCenterCoordinate(centroid);
 
         mapView.onCreate(savedInstanceState);
 
@@ -134,15 +131,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        return mapView;
+    }
+
+    private void addMarkers(List<Waypoint> waypoints){
         for (Waypoint w : waypoints) {
             mapView.addMarker(new MarkerOptions()
                     .position(new LatLng(w.getLatitude(), w.getLongitude())));
+            Log.d("marker",w.toString());
         }
 
+    }
+
+    private void setCentroid(LatLng centroid){
+        mapView.setCenterCoordinate(centroid);
         // set camera angle
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid, 16, 45, 0)));
-
-        return mapView;
     }
 
     private void getRoute(List<Waypoint> waypoints) {

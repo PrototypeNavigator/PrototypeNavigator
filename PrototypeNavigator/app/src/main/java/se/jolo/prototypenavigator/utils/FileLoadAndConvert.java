@@ -15,11 +15,13 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
 
 import se.jolo.prototypenavigator.model.Route;
 
@@ -31,37 +33,12 @@ public final class FileLoadAndConvert {
     private static final String TAG = "XmlDeserializer";
     private Context context;
 
+
     public FileLoadAndConvert(Context context) {
+        this.context = context;
     }
 
-    public String xmlToString(String xmlPath) {
 
-        StringBuilder builder = null;
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(loadFile(xmlPath)))) {
 
-            builder = new StringBuilder();
-            String receiver;
-
-            while ((receiver = reader.readLine()) != null) {
-                builder.append(receiver);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Log.e(TAG, builder.toString());
-
-        return builder.toString();
-    }
-
-    public InputStream loadFile(String xmlPath) throws IOException{
-        InputStream inputStream = new FileInputStream(xmlPath);
-        return  inputStream;
-    }
-
-    public String xmlToJson(String xmlPath) throws IOException, JSONException {
-        return XML.toJSONObject(xmlToString(xmlPath)).toString();
-    }
 }

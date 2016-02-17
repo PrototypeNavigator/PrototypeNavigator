@@ -38,4 +38,5 @@ dependencies {
         transitive = true
     }
     compile files('lib/java-json.jar')
+    compile 'commons-io:commons-io:2.4'
 }

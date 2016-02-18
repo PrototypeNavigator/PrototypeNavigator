@@ -1,13 +1,19 @@
 package se.jolo.prototypenavigator.activities;
 
-import android.content.Intent;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.mapbox.directions.DirectionsCriteria;
@@ -19,8 +25,11 @@ import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.location.LocationListener;
+import com.mapbox.mapboxsdk.location.LocationServices;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import java.io.IOException;
@@ -31,41 +40,51 @@ import java.util.concurrent.ExecutionException;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import se.jolo.prototypenavigator.MainActivity;
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 
-public class Map extends AppCompatActivity {
+public class Map extends AppCompatActivity implements LocationListener {
 
     private final static String LOG_TAG = "MapActivity";
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
+    private final static int PERMISSIONS_LOCATION = 0;
     private MapView mapView;
+    private FloatingActionButton findMeBtn;
+    private LocationServices locationService;
     private DirectionsRoute currentRoute = null;
     private List<Waypoint> waypoints = null;
     private Uri uri;
     private Route route;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        mapView = loadMap(savedInstanceState);
-
         Bundle extras = getIntent().getExtras();
-
-        uri = (Uri) extras.get("uri");
-
         Loader loader = new Loader(this);
-        loader.execute(uri);
 
+        findMeBtn = (FloatingActionButton) findViewById(R.id.findMeBtn);
+        mapView = loadMap(savedInstanceState);
+        uri = (Uri) extras.get("uri");
+        locationService = LocationServices.getLocationServices(this);
+
+        loader.execute(uri);
         try {
             route = loader.get();
             Log.d(LOG_TAG, "in Map " + route.getUuid());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_LOCATION);
+        } else {
+            mapView.setMyLocationEnabled(true);
         }
 
         waypoints = loadWaypoints(route);
@@ -81,6 +100,32 @@ public class Map extends AppCompatActivity {
 
         // get route from API
         getRoute(fewerWaypointsPlis(waypoints));
+
+        findMeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findMe(mapView.getMyLocation());
+                toggleTracking();
+            }
+        });
+
+        mapView.onCreate(savedInstanceState);
+    }
+
+    public void toggleTracking() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_LOCATION);
+        } else {
+            mapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
+        }
+    }
+
+    public void findMe(Location location) {
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 16, 45, 0)));
     }
 
     public List<Waypoint> fewerWaypointsPlis(List<Waypoint> allWaypoints) {
@@ -92,7 +137,6 @@ public class Map extends AppCompatActivity {
 
         return fewerWaypoints;
     }
-
 
     private List<Waypoint> loadWaypoints(Route route) {
 
@@ -165,12 +209,12 @@ public class Map extends AppCompatActivity {
                 }
 
                 // Print some info about the route
-                currentRoute = response.body().getRoutes().get(0);
-                Log.d(LOG_TAG, "Distance: " + currentRoute.getDistance());
-                showMessage(String.format("Route is %d meters long.", currentRoute.getDistance()));
+                //currentRoute = response.body().getRoutes().get(0);
+                //Log.d(LOG_TAG, "Distance: " + currentRoute.getDistance());
+                //showMessage(String.format("Route is %d meters long.", currentRoute.getDistance()));
 
                 // Draw the route on the map
-                drawRoute(currentRoute);
+                //drawRoute(currentRoute);
             }
 
             @Override
@@ -211,6 +255,10 @@ public class Map extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        findMe(location);
+    }
 
     @Override
     protected void onStart() {

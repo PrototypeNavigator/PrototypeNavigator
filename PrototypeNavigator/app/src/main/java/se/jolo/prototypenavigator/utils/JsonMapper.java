@@ -20,13 +20,11 @@ public final class JsonMapper {
 
     private static final String TAG = "JsonMapper";
     private final Gson gson;
-    private final FileLoadAndConvert fileLoadAndConvert;
 
-    public JsonMapper(Context context) {
+    public JsonMapper() {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Route.class, new RouteAdapter());
         gson = builder.create();
-        fileLoadAndConvert = new FileLoadAndConvert(context);
     }
 
     public Route objectifyRoute(String xmlString) throws IOException, JSONException {

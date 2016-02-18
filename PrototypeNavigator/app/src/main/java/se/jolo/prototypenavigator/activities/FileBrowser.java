@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -49,38 +48,10 @@ public class FileBrowser extends AppCompatActivity {
 
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_ID && data != null) {
             currentUri = data.getData();
-            try {
-                String content =
-                        readFileContent(currentUri);
-                intent.putExtra("xmlString", content);
+                intent.putExtra("uri", currentUri);
                 startActivity(intent);
 
-            } catch (IOException e) {
-                // Handle error here
-            }
-
         }
     }
-
-    private String readFileContent(Uri uri) throws IOException {
-
-        InputStream inputStream = getContentResolver().openInputStream(uri);
-
-        String xmlFromFile = FileUtils.readFileToString(streamToFile(inputStream));
-
-        return xmlFromFile;
-
-
-    }
-
-    private File streamToFile(InputStream in) throws IOException {
-        final File tempFile = File.createTempFile("temp", ".tmp");
-        tempFile.deleteOnExit();
-        try (FileOutputStream out = new FileOutputStream(tempFile)) {
-            IOUtils.copy(in, out);
-        }
-        return tempFile;
-    }
-
 
 }

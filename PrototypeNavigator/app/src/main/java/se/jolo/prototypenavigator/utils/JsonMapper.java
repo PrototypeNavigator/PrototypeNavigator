@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
+import org.json.XML;
 
 import java.io.IOException;
 
@@ -19,16 +20,18 @@ public final class JsonMapper {
 
     private static final String TAG = "JsonMapper";
     private final Gson gson;
-    private final FileLoadAndConvert fileLoadAndConvert;
 
-    public JsonMapper(Context context) {
+    public JsonMapper() {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Route.class, new RouteAdapter());
         gson = builder.create();
-        fileLoadAndConvert = new FileLoadAndConvert(context);
     }
 
-    public Route objectifyRoute() throws IOException, JSONException {
-        return gson.fromJson(fileLoadAndConvert.xmlToJson(), Route.class);
+    public Route objectifyRoute(String xmlString) throws IOException, JSONException {
+        return gson.fromJson(xmlToJson(xmlString), Route.class);
+    }
+
+    public String xmlToJson(String xmlString) throws IOException, JSONException {
+        return XML.toJSONObject(xmlString).toString();
     }
 }

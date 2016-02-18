@@ -48,7 +48,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
     @Override
     protected void onPostExecute(Route route) {
         super.onPostExecute(route);
-        Log.d("route", "" + route.getName());
+        Log.d("route", "in Loader " + route.getName());
     }
 
 

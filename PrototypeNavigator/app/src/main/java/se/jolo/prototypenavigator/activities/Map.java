@@ -26,6 +26,7 @@ import com.mapbox.mapboxsdk.views.MapView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import retrofit.Callback;
 import retrofit.Response;
@@ -42,29 +43,44 @@ public class Map extends AppCompatActivity {
     private MapView mapView;
     private DirectionsRoute currentRoute = null;
     private List<Waypoint> waypoints = null;
-    private String xmlString;
     private Uri uri;
+    private Route route;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_map);
+
         mapView = loadMap(savedInstanceState);
 
+        Bundle extras = getIntent().getExtras();
 
-       // waypoints = loadWaypoints(route);
+        uri = (Uri) extras.get("uri");
+
+        Loader loader = new Loader(this);
+        loader.execute(uri);
+
+        try {
+            route = loader.get();
+            Log.d(LOG_TAG, "in Map " + route.getUuid());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        waypoints = loadWaypoints(route);
+
         // centroid goes here
-        //LatLng centroid = new LatLng(
-          //      (waypoints.get(0).getLatitude() + waypoints.get(waypoints.size() - 1).getLatitude()) / 2,
-               // (waypoints.get(0).getLongitude() + waypoints.get(waypoints.size() - 1).getLongitude()) / 2);
+        LatLng centroid = new LatLng(
+                (waypoints.get(0).getLatitude() + waypoints.get(waypoints.size() - 1).getLatitude()) / 2,
+                (waypoints.get(0).getLongitude() + waypoints.get(waypoints.size() - 1).getLongitude()) / 2);
 
-        //setCentroid(centroid);
-        //addMarkers(waypoints);
+        setCentroid(centroid);
+
+        addMarkers(waypoints);
+
         // get route from API
-        //getRoute(fewerWaypointsPlis(waypoints));
-
-
+        getRoute(fewerWaypointsPlis(waypoints));
     }
 
     public List<Waypoint> fewerWaypointsPlis(List<Waypoint> allWaypoints) {

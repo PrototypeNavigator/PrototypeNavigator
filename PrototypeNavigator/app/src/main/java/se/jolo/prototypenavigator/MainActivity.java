@@ -30,20 +30,19 @@ public final class MainActivity extends AppCompatActivity {
         if (extras == null) {
             Intent switchToFileBrowser = new Intent(this, FileBrowser.class);
             startActivity(switchToFileBrowser);
-        }else {
+        } else {
             uri = (Uri) extras.get("uri");
 
-            loader.execute(uri);
-            try {
-                Route route = loader.get();
-                Log.d(LOG_TAG, route.getUuid());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            Intent mapIntent = new Intent(this, Map.class).putExtra("uri", uri);
+            startActivity(mapIntent);
+            //loader.execute(uri);
+//            try {
+//                Route route = loader.get();
+//                Log.d(LOG_TAG, "in MainActivity " + route.getUuid());
+//            } catch (InterruptedException | ExecutionException e) {
+//                e.printStackTrace();
+//            }
         }
-
     }
 
     public static Loader getLoader(){

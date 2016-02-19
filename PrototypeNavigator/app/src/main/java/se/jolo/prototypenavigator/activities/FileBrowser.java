@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -28,7 +29,7 @@ public class FileBrowser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_browser);
         openFileBrowser();
-
+        Log.e("FileBrowser", (savedInstanceState == null) ? "FileB: savedState is null" : "FileB: savedState not null");
     }
 
     private void openFileBrowser(){

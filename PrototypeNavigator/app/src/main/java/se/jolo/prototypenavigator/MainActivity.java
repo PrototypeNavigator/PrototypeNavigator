@@ -10,14 +10,8 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.mapbox.mapboxsdk.location.LocationServices;
-
-import java.util.concurrent.ExecutionException;
-
 import se.jolo.prototypenavigator.activities.FileBrowser;
-import se.jolo.prototypenavigator.activities.Loader;
 import se.jolo.prototypenavigator.activities.Map;
-import se.jolo.prototypenavigator.model.Route;
 
 
 public final class MainActivity extends AppCompatActivity {
@@ -33,7 +27,17 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState != null) {
+
+            Log.e(LOG_TAG, "Main: savedState not null");
+
+            isGpsEnabled = savedInstanceState.getBoolean("gps");
+            allowInit = savedInstanceState.getBoolean("init");
+        }
+
         initGps();
+
+        Log.e(LOG_TAG, "Main: savedState is null");
 
         if (allowInit) {
             init();
@@ -130,6 +134,9 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("gps", isGpsEnabled);
+        outState.putBoolean("init", allowInit);
+
         super.onSaveInstanceState(outState);
     }
 }

@@ -13,9 +13,7 @@ public class DeliveryPoint {
 
     public DeliveryPoint() {}
 
-    public DeliveryPoint(boolean odr,
-                         List<OdrRecipient> odrRecipients,
-                         List<Resident> residents) {
+    public DeliveryPoint(boolean odr, List<OdrRecipient> odrRecipients, List<Resident> residents) {
         this.odr = odr;
         this.odrRecipients = odrRecipients;
         this.residents = residents;

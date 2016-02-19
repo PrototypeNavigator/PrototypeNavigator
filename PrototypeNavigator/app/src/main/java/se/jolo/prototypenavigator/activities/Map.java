@@ -50,7 +50,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     private final static int PERMISSIONS_LOCATION = 0;
     private MapView mapView;
     private FloatingActionButton findMeBtn;
-    private LocationServices locationService;
+    private static LocationServices locationService;
     private DirectionsRoute currentRoute = null;
     private List<Waypoint> waypoints = null;
     private Uri uri;
@@ -103,7 +103,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         findMeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                findMe(mapView.getMyLocation());
+                animateCamera(new LatLng(mapView.getLatLng()));
                 toggleTracking();
             }
         });
@@ -122,9 +122,8 @@ public class Map extends AppCompatActivity implements LocationListener {
         }
     }
 
-    public void findMe(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 11, 45, 0)));
+    public void animateCamera(LatLng latLng) {
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 16, 45, 0)));
     }
 
     public List<Waypoint> fewerWaypointsPlis(List<Waypoint> allWaypoints) {
@@ -183,8 +182,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     private void setCentroid(LatLng centroid) {
         mapView.setCenterCoordinate(centroid);
-        // set camera angle
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid, 11, 45, 0)));
+        animateCamera(centroid);
     }
 
     private void getRoute(List<Waypoint> waypoints) {
@@ -258,7 +256,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        findMe(location);
+        animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
     }
 
     @Override

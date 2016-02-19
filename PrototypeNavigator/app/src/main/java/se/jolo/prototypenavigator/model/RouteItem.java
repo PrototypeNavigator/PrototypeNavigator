@@ -5,8 +5,7 @@ import java.util.List;
 /**
  * Created by Joel on 2016-02-08.
  */
-
-public class RouteItem implements Comparable<RouteItem> {
+public final class RouteItem implements Comparable<RouteItem> {
 
     private int order;
     private int primaryStopPointItemUuid;
@@ -15,8 +14,8 @@ public class RouteItem implements Comparable<RouteItem> {
 
     public RouteItem() {}
 
-    public RouteItem(int order, int primaryStopPointItemUuid,
-                     StopPoint stopPoint, List<StopPointItem> stopPointItems) {
+    public RouteItem(int order, int primaryStopPointItemUuid, StopPoint stopPoint,
+                     List<StopPointItem> stopPointItems) {
         this.order = order;
         this.primaryStopPointItemUuid = primaryStopPointItemUuid;
         this.stopPoint = stopPoint;

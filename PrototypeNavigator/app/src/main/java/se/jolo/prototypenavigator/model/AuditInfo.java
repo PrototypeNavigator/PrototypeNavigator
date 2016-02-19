@@ -7,6 +7,7 @@ import java.util.Date;
  */
 public final class AuditInfo {
 
+
     private Date createdAt;
     private String createdBy;
 

@@ -5,7 +5,6 @@ import java.util.List;
 /**
  * Created by Joel on 2016-02-08.
  */
-
 public final class Route {
 
     private AuditInfo auditInfo;
@@ -18,9 +17,8 @@ public final class Route {
 
     public Route() {}
 
-    public Route(AuditInfo auditInfo, DeliveryOffice deliveryOffice,
-                 int name, String type, String uuid, int validityDays,
-                 List<RouteItem> routeItems) {
+    public Route(AuditInfo auditInfo, DeliveryOffice deliveryOffice, int name, String type,
+                 String uuid, int validityDays, List<RouteItem> routeItems) {
         this.auditInfo = auditInfo;
         this.deliveryOffice = deliveryOffice;
         this.name = name;

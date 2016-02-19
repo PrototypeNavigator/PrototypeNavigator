@@ -16,7 +16,6 @@ import java.util.List;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.model.StopPoint;
-import se.jolo.prototypenavigator.utils.FileLoadAndConvert;
 import se.jolo.prototypenavigator.utils.JsonMapper;
 
 import static junit.framework.Assert.assertEquals;
@@ -33,9 +32,6 @@ public class ObjectTest {
 
     @Mock
     Context mockContext;
-
-    @Mock
-    private FileLoadAndConvert flac;
 
     @Mock
     private JsonMapper jm;
@@ -60,9 +56,9 @@ public class ObjectTest {
 
     @Test
     public void testRouteNotNull() throws IOException, JSONException {
-        when(jm.objectifyRoute()).thenReturn(new Route());
+        when(jm.objectifyRoute("")).thenReturn(new Route());
 
-        route = jm.objectifyRoute();
+        route = jm.objectifyRoute("");
 
         assertNotNull(route);
     }

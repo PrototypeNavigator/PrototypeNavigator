@@ -1,27 +1,16 @@
 package se.jolo.prototypenavigator.model;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
-
 import java.util.List;
 
 /**
  * Created by Joel on 2016-02-08.
  */
-@Root
-public class RouteItem {
 
-    @Element(required = false)
+public class RouteItem implements Comparable<RouteItem> {
+
     private int order;
-
-    @Element(required = false)
     private int primaryStopPointItemUuid;
-
-    @Element(required = false)
     private StopPoint stopPoint;
-
-    @ElementList(required = false)
     private List<StopPointItem> stopPointItems;
 
     public RouteItem() {}
@@ -49,4 +38,20 @@ public class RouteItem {
     public List<StopPointItem> getStopPointItems() {
         return stopPointItems;
     }
+
+
+    @Override
+    public int compareTo(RouteItem another) {
+
+        if (order > another.order) {
+            return 1;
+        }
+        else if (order <  another.order) {
+            return -1;
+        }
+        else {
+            return 0;
+        }
+    }
+
 }

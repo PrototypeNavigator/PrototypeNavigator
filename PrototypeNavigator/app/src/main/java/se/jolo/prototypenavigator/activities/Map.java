@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.mapbox.directions.DirectionsCriteria;
@@ -125,7 +124,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     public void findMe(Location location) {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 16, 45, 0)));
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 11, 45, 0)));
     }
 
     public List<Waypoint> fewerWaypointsPlis(List<Waypoint> allWaypoints) {
@@ -142,6 +141,8 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         List<Waypoint> waypoints = new ArrayList<>(); // kanske går med en HashMap för Order...
         List<RouteItem> routeItems = route.getRouteItems();
+
+        
 
         for (RouteItem ri : routeItems) {
             waypoints.add(new Waypoint(
@@ -183,7 +184,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     private void setCentroid(LatLng centroid) {
         mapView.setCenterCoordinate(centroid);
         // set camera angle
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid, 16, 45, 0)));
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(centroid, 11, 45, 0)));
     }
 
     private void getRoute(List<Waypoint> waypoints) {
@@ -209,12 +210,12 @@ public class Map extends AppCompatActivity implements LocationListener {
                 }
 
                 // Print some info about the route
-                //currentRoute = response.body().getRoutes().get(0);
+                currentRoute = response.body().getRoutes().get(0);
                 //Log.d(LOG_TAG, "Distance: " + currentRoute.getDistance());
                 //showMessage(String.format("Route is %d meters long.", currentRoute.getDistance()));
 
                 // Draw the route on the map
-                //drawRoute(currentRoute);
+                drawRoute(currentRoute);
             }
 
             @Override

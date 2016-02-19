@@ -1,36 +1,19 @@
 package se.jolo.prototypenavigator.model;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
-
 import java.util.List;
 
 /**
  * Created by Joel on 2016-02-08.
  */
-@Root
+
 public final class Route {
 
-    @Element(required = false)
     private AuditInfo auditInfo;
-
-    @Element(required = false)
     private DeliveryOffice deliveryOffice;
-
-    @Element(required = false)
     private int name;
-
-    @Element(required = false)
     private String type;
-
-    @Element(required = false)
     private String uuid;
-
-    @Element(required = false)
     private int validityDays;
-
-    @ElementList(required = false)
     private List<RouteItem> routeItems;
 
     public Route() {}

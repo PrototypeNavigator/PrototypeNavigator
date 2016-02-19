@@ -1,54 +1,24 @@
 package se.jolo.prototypenavigator.model;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
-
 import java.util.List;
 
 /**
  * Created by Joel on 2016-02-08.
  */
-@Root
 public class StopPointItem {
 
-    @Element(required = false)
     private String uuid;
-
-    @Element(required = false)
     private String type;
-
-    @Element(required = false)
     private String name;
-
-    @Element(required = false)
     private String deliveryAddress;
-
-    @Element(required = false)
     private int deliveryPostalCode;
-
-    @Element(required = false)
     private float easting;
-
-    @Element(required = false)
     private float northing;
-
-    @Element(required = false)
     private String freeText;
-
-    @Element(required = false)
     private String plannedArrivalTime;      // should be some sort of time
-
-    @Element(required = false)
     private String plannedDepartureTime;    // should be some sort of time
-
-    @Element(required = false)
     private int validityDays;
-
-    @ElementList(required = false)
     private List<DeliveryPoint> deliveryPoints;
-
-    @Element(required = false)
     private Service service = null;
 
     public StopPointItem() {}

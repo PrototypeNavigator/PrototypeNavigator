@@ -53,4 +53,14 @@ public final class RouteItem implements Comparable<RouteItem> {
         }
     }
 
+    @Override
+    public String toString() {
+        return "RouteItem{" +
+                "order=" + order +
+                ", primaryStopPointItemUuid=" + primaryStopPointItemUuid +
+                ", stopPoint=" + stopPoint +
+                ", stopPointItems=" + stopPointItems +
+                '}';
+    }
+
 }

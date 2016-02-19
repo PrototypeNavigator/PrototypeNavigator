@@ -22,6 +22,7 @@ public final class MainActivity extends AppCompatActivity {
     private Uri uri;
     private static Loader loader;
 
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

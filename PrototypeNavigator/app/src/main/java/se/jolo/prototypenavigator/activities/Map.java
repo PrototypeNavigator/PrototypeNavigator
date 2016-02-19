@@ -50,7 +50,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     private final static int PERMISSIONS_LOCATION = 0;
     private MapView mapView;
     private FloatingActionButton findMeBtn;
-    private static LocationServices locationService;
+    private LocationServices locationService;
     private DirectionsRoute currentRoute = null;
     private List<Waypoint> waypoints = null;
     private Uri uri;
@@ -138,7 +138,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     private List<Waypoint> loadWaypoints(Route route) {
 
-        List<Waypoint> waypoints = new ArrayList<>(); // kanske går med en HashMap för Order...
+        List<Waypoint> waypoints = new ArrayList<>();
         List<RouteItem> routeItems = route.getRouteItems();
 
         for (RouteItem ri : routeItems) {

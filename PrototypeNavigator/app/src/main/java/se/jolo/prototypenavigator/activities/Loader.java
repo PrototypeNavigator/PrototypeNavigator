@@ -1,8 +1,6 @@
 package se.jolo.prototypenavigator.activities;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -20,9 +18,9 @@ import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.utils.JsonMapper;
 
 public final class Loader extends AsyncTask<Uri, Integer, Route> {
+
     private Context context;
     private Route route = null;
-    private Activity activity;
 
     public Loader(Context context){
         this.context = context;
@@ -51,7 +49,6 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         Log.d("route", "in Loader " + route.getName());
     }
 
-
     private String readFileContent(Uri uri) throws IOException {
 
         InputStream inputStream = context.getContentResolver().openInputStream(uri);
@@ -61,7 +58,6 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         return xmlFromFile;
 
     }
-
 
     private File streamToFile(InputStream in) throws IOException {
         final File tempFile = File.createTempFile("temp", ".tmp");
@@ -84,5 +80,4 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
 
         return null;
     }
-
 }

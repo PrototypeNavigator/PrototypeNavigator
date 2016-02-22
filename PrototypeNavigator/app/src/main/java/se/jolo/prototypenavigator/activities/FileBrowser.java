@@ -32,7 +32,7 @@ public class FileBrowser extends AppCompatActivity {
         Log.e("FileBrowser", (savedInstanceState == null) ? "FileB: savedState is null" : "FileB: savedState not null");
     }
 
-    private void openFileBrowser(){
+    private void openFileBrowser() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
@@ -49,9 +49,8 @@ public class FileBrowser extends AppCompatActivity {
 
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_ID && data != null) {
             currentUri = data.getData();
-                intent.putExtra("uri", currentUri);
-                startActivity(intent);
-
+            intent.putExtra("uri", currentUri);
+            startActivity(intent);
         }
     }
 

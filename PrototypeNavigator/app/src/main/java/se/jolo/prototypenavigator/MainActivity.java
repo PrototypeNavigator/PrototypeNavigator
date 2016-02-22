@@ -1,6 +1,8 @@
 package se.jolo.prototypenavigator;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -17,6 +19,7 @@ import se.jolo.prototypenavigator.activities.Map;
 public final class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = "MainActivity";
+    private static final int REQUEST_ID = 137;
     private Uri uri;
     private LocationManager locationManager;
     private boolean isGpsEnabled = false;
@@ -76,6 +79,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void showGpsDialog() {
+
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
 
         alertDialog.setTitle("GPS settings");
@@ -85,6 +89,7 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                allowInit = true;
                 startActivity(intent);
             }
         });
@@ -93,11 +98,22 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                allowInit = false;
             }
         });
 
         alertDialog.show();
     }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_ID) {
+//            allowInit = true;
+//            Log.d(LOG_TAG," just checking the allowInit boolean == " + allowInit);
+//        }
+//    }
 
     @Override
     protected void onStart() {

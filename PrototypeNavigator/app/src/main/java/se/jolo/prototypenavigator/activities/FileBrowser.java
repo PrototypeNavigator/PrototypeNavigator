@@ -29,7 +29,6 @@ public class FileBrowser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_browser);
         openFileBrowser();
-        Log.e("FileBrowser", (savedInstanceState == null) ? "FileB: savedState is null" : "FileB: savedState not null");
     }
 
     private void openFileBrowser() {

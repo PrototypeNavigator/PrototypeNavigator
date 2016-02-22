@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Joel on 2016-02-08.
  */
-public class RouteItem {
+public final class RouteItem implements Comparable<RouteItem> {
 
     private int order;
     private int primaryStopPointItemUuid;
@@ -37,4 +37,30 @@ public class RouteItem {
     public List<StopPointItem> getStopPointItems() {
         return stopPointItems;
     }
+
+
+    @Override
+    public int compareTo(RouteItem another) {
+
+        if (order > another.order) {
+            return 1;
+        }
+        else if (order <  another.order) {
+            return -1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "RouteItem{" +
+                "order=" + order +
+                ", primaryStopPointItemUuid=" + primaryStopPointItemUuid +
+                ", stopPoint=" + stopPoint +
+                ", stopPointItems=" + stopPointItems +
+                '}';
+    }
+
 }

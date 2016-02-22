@@ -3,10 +3,10 @@ package se.jolo.prototypenavigator.model;
 /**
  * Created by Joel on 2016-02-08.
  */
-public class Service {
+public final class Service {
 
-    private String agreementArrivalTime;
-    private String agreementDepartureTime;
+    private String agreementArrivalTime;    // should be time
+    private String agreementDepartureTime;  // should be time
     private boolean delivery;
     private boolean pickup;
     private String products;

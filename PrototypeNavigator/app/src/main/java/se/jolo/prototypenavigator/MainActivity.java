@@ -1,8 +1,6 @@
 package se.jolo.prototypenavigator;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -10,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import se.jolo.prototypenavigator.activities.FileBrowser;
 import se.jolo.prototypenavigator.activities.Map;
@@ -19,9 +16,7 @@ import se.jolo.prototypenavigator.activities.Map;
 public final class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = "MainActivity";
-    private static final int REQUEST_ID = 137;
     private Uri uri;
-    private LocationManager locationManager;
     private boolean isGpsEnabled = false;
     private boolean allowInit = false;
 
@@ -31,16 +26,11 @@ public final class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState != null) {
-
-            Log.e(LOG_TAG, "Main: savedState not null");
-
             isGpsEnabled = savedInstanceState.getBoolean("gps");
             allowInit = savedInstanceState.getBoolean("init");
         }
 
         initGps();
-
-        Log.e(LOG_TAG, "Main: savedState is null");
 
         if (allowInit) {
             init();
@@ -51,16 +41,14 @@ public final class MainActivity extends AppCompatActivity {
 
     public void initGps() {
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         if (!isGpsEnabled) {
             showGpsDialog();
             isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        }
-
-        if (isGpsEnabled) {
+        } else {
             allowInit = true;
         }
     }

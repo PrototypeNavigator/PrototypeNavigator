@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Joel on 2016-02-08.
  */
-public class Route {
+public final class Route {
 
     private AuditInfo auditInfo;
     private DeliveryOffice deliveryOffice;

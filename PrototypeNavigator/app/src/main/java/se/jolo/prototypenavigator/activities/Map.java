@@ -19,6 +19,7 @@ import com.mapbox.directions.DirectionsCriteria;
 import com.mapbox.directions.MapboxDirections;
 import com.mapbox.directions.service.models.DirectionsResponse;
 import com.mapbox.directions.service.models.DirectionsRoute;
+import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
@@ -123,7 +124,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     }
 
     public void animateCamera(LatLng latLng) {
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 16, 45, 0)));
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 11, 45, 0)));
     }
 
     public List<Waypoint> fewerWaypointsPlis(List<Waypoint> allWaypoints) {
@@ -140,6 +141,8 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         List<Waypoint> waypoints = new ArrayList<>();
         List<RouteItem> routeItems = route.getRouteItems();
+
+        
 
         for (RouteItem ri : routeItems) {
             waypoints.add(new Waypoint(
@@ -187,8 +190,10 @@ public class Map extends AppCompatActivity implements LocationListener {
         MapboxDirections md = new MapboxDirections.Builder()
                 .setAccessToken(MAPBOX_ACCESS_TOKEN)
                 .setWaypoints(waypoints)
-                .setProfile(DirectionsCriteria.PROFILE_WALKING)
+                .setProfile(DirectionsCriteria.PROFILE_DRIVING)
                 .build();
+
+
 
         md.enqueue(new Callback<DirectionsResponse>() {
             @Override
@@ -206,12 +211,12 @@ public class Map extends AppCompatActivity implements LocationListener {
                 }
 
                 // Print some info about the route
-                //currentRoute = response.body().getRoutes().get(0);
+                currentRoute = response.body().getRoutes().get(0);
                 //Log.d(LOG_TAG, "Distance: " + currentRoute.getDistance());
                 //showMessage(String.format("Route is %d meters long.", currentRoute.getDistance()));
-
                 // Draw the route on the map
-                //drawRoute(currentRoute);
+                List <RouteStep> steps = currentRoute.getSteps();
+                drawRoute(currentRoute);
             }
 
             @Override
@@ -219,7 +224,9 @@ public class Map extends AppCompatActivity implements LocationListener {
                 Log.e(LOG_TAG, "Error: " + t.getMessage());
                 showMessage("Error: " + t.getMessage());
             }
+
         });
+
     }
 
     private void drawRoute(DirectionsRoute route) {

@@ -1,34 +1,16 @@
 package se.jolo.prototypenavigator.model;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
-
 /**
  * Created by Joel on 2016-02-08.
  */
-
-@Root
 public class Service {
 
-    @Element(required = false)
-    private String agreementArrivalTime;    // should be time
-
-    @Element(required = false)
-    private String agreementDepartureTime;  // should be time
-
-    @Element(required = false)
+    private String agreementArrivalTime;
+    private String agreementDepartureTime;
     private boolean delivery;
-
-    @Element(required = false)
     private boolean pickup;
-
-    @Element(required = false)
     private String products;
-
-    @Element(required = false)
     private String serviceCode;
-
-    @Element(required = false)
     private String serviceName;
 
     public Service() {}

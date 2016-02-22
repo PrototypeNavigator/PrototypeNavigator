@@ -105,16 +105,6 @@ public final class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_ID) {
-//            allowInit = true;
-//            Log.d(LOG_TAG," just checking the allowInit boolean == " + allowInit);
-//        }
-//    }
-
     @Override
     protected void onStart() {
         super.onStart();

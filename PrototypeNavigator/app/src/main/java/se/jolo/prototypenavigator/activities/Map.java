@@ -142,8 +142,6 @@ public class Map extends AppCompatActivity implements LocationListener {
         List<Waypoint> waypoints = new ArrayList<>();
         List<RouteItem> routeItems = route.getRouteItems();
 
-        
-
         for (RouteItem ri : routeItems) {
             waypoints.add(new Waypoint(
                     ri.getStopPoint().getEasting(),

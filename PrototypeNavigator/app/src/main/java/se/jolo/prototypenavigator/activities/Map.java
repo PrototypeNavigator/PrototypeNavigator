@@ -29,14 +29,11 @@ import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationListener;
+import com.mapbox.mapboxsdk.location.LocationServices;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CoderResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -45,6 +42,7 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import se.jolo.prototypenavigator.R;
+import se.jolo.prototypenavigator.Router;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 
@@ -56,9 +54,11 @@ public class Map extends AppCompatActivity implements LocationListener {
     private MapView mapView;
     private FloatingActionButton findMeBtn;
     private DirectionsRoute currentRoute = null;
+    private LocationServices locationServices;
     private List<Waypoint> waypoints = null;
     private Uri uri;
     private Route route;
+    private Router router;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +68,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         Bundle extras = getIntent().getExtras();
         Loader loader = new Loader(this);
 
+        locationServices = LocationServices.getLocationServices(this);
         findMeBtn = (FloatingActionButton) findViewById(R.id.findMeBtn);
         mapView = loadMap(savedInstanceState);
         uri = (Uri) extras.get("uri");
@@ -83,6 +84,12 @@ public class Map extends AppCompatActivity implements LocationListener {
         enableLocation();
 
         waypoints = loadWaypoints(route);
+
+        // next stop routing
+        router = new Router(mapView, MAPBOX_ACCESS_TOKEN);
+        router.setWaypoints(waypoints)
+                .setCurrentLocation(locationServices.getLastLocation())
+                .getRoute();
 
         // centroid goes here
         LatLng centroid = new LatLng(
@@ -100,11 +107,10 @@ public class Map extends AppCompatActivity implements LocationListener {
             public void onClick(View v) {
                 animateCamera(new LatLng(mapView.getLatLng()));
                 toggleTracking();
+                onLocationChanged(locationServices.getLastLocation());
             }
         });
 
-        // get immediet rout
-        getImmediateRoute(getNextWaypoint(waypoints));
         mapView.onCreate(savedInstanceState);
     }
 
@@ -132,16 +138,6 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     public void animateCamera(LatLng latLng) {
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 11, 45, 0)));
-    }
-
-    public List<Waypoint> getNextWaypoint(List<Waypoint> allWatpoints) {
-
-        List<Waypoint> nextWaypoint = new ArrayList<>();
-
-        nextWaypoint.add(allWatpoints.get(0));
-        nextWaypoint.add(allWatpoints.get(1));
-
-        return nextWaypoint;
     }
 
     public List<Waypoint> fewerWaypointsPlis(List<Waypoint> allWaypoints) {
@@ -203,33 +199,6 @@ public class Map extends AppCompatActivity implements LocationListener {
         animateCamera(centroid);
     }
 
-    private void getImmediateRoute(List<Waypoint> waypoints) {
-        MapboxDirections md = new MapboxDirections.Builder()
-                .setAccessToken(MAPBOX_ACCESS_TOKEN)
-                .setWaypoints(waypoints)
-                .setProfile(DirectionsCriteria.PROFILE_DRIVING)
-                .build();
-
-        md.enqueue(new Callback<DirectionsResponse>() {
-            @Override
-            public void onResponse(Response<DirectionsResponse> response, Retrofit retrofit) {
-                printResponseMessage(response);
-
-                DirectionsRoute directionsRoute = response.body().getRoutes().get(0);
-
-                List<RouteStep> steps = directionsRoute.getSteps();
-
-                drawRoute(directionsRoute, "#ff0000");
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e(LOG_TAG, "getRoute-Error: " + t.getMessage());
-                showMessage("getRoute-Error: " + t.getMessage());
-            }
-        });
-    }
-
     private void getRoute(List<Waypoint> waypoints) {
         MapboxDirections md = new MapboxDirections.Builder()
                 .setAccessToken(MAPBOX_ACCESS_TOKEN)
@@ -238,7 +207,9 @@ public class Map extends AppCompatActivity implements LocationListener {
                 .build();
 
         Log.d(LOG_TAG, String.format("GEIF FKN URL TO ENCODE... :" + md, Charset.forName("utf-8")));
-
+        //
+        // subklass av typ något här för att hitta request url för att se till att den är encoded till utf-8
+        //
         md.enqueue(new Callback<DirectionsResponse>() {
             @Override
             public void onResponse(Response<DirectionsResponse> response, Retrofit retrofit) {
@@ -309,8 +280,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
-
-
+        router.setCurrentLocation(location).getRoute();
     }
 
     @Override

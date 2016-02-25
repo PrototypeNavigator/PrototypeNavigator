@@ -281,6 +281,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     public void onLocationChanged(Location location) {
         animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
         router.setCurrentLocation(location).getRoute();
+        router.removePolyline(router.getPolylineToNextStop());
     }
 
     @Override

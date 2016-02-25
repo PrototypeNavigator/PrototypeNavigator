@@ -81,7 +81,7 @@ public final class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        
+
         alertDialog.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
 
             @Override

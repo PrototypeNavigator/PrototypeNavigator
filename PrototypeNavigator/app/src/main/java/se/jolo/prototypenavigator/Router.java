@@ -9,6 +9,7 @@ import com.mapbox.directions.MapboxDirections;
 import com.mapbox.directions.service.models.DirectionsResponse;
 import com.mapbox.directions.service.models.DirectionsRoute;
 import com.mapbox.directions.service.models.Waypoint;
+import com.mapbox.mapboxsdk.annotations.Polyline;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
@@ -33,6 +34,7 @@ public final class Router {
     private DirectionsRoute directionsRoute;
     private List<Waypoint> waypointsRemaining;
     private boolean inProximity;
+    PolylineOptions polylineToNextStop;
 
     public Router(MapView mapView, String MAPBOX_ACCESS_TOKEN) {
         this.mapView = mapView;
@@ -85,10 +87,27 @@ public final class Router {
                                   waypoints.get(i).getLongitude());
         }
 
-        mapView.addPolyline(new PolylineOptions()
-                .add(point)
+
+        polylineToNextStop = new PolylineOptions().add(point)
                 .color(Color.parseColor(color))
-                .width(5));
+                .width(5);
+
+        mapView.addPolyline(polylineToNextStop);
+
+    }
+
+    public boolean removePolyline(PolylineOptions polylineOptions){
+        boolean removed = false;
+        if (polylineOptions != null){
+            mapView.removeAnnotation(polylineOptions.getPolyline());
+            removed = true;
+            return removed;
+        }
+        return removed;
+    }
+
+    public PolylineOptions getPolylineToNextStop() {
+        return polylineToNextStop;
     }
 
     public Router getRoute() {

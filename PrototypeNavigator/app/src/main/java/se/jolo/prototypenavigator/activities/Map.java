@@ -286,6 +286,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
         router.setCurrentLocation(location).getRoute();
         Toast.makeText(this, "calls made ::: " + CallCounter.getCounts(), Toast.LENGTH_LONG).show();
+        router.removePolyline(router.getPolylineToNextStop());
     }
 
     @Override

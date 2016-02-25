@@ -41,6 +41,7 @@ import java.util.concurrent.ExecutionException;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import se.jolo.prototypenavigator.CallCounter;
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.Router;
 import se.jolo.prototypenavigator.model.Route;
@@ -88,7 +89,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         // next stop routing
         router = new Router(mapView, MAPBOX_ACCESS_TOKEN);
         router.setWaypoints(waypoints)
-                .setCurrentLocation(locationServices.getLastLocation())
+                .setCurrentLocation(LocationServices.getLocationServices(this).getLastLocation())
                 .getRoute();
 
         // centroid goes here
@@ -211,8 +212,11 @@ public class Map extends AppCompatActivity implements LocationListener {
         // subklass av typ något här för att hitta request url för att se till att den är encoded till utf-8
         //
         md.enqueue(new Callback<DirectionsResponse>() {
+
             @Override
             public void onResponse(Response<DirectionsResponse> response, Retrofit retrofit) {
+                CallCounter.count();
+
                 // You can get generic HTTP info about the response
                 printResponseMessage(response);
 
@@ -281,6 +285,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     public void onLocationChanged(Location location) {
         animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
         router.setCurrentLocation(location).getRoute();
+        Toast.makeText(this, "calls made ::: " + CallCounter.getCounts(), Toast.LENGTH_LONG).show();
     }
 
     @Override

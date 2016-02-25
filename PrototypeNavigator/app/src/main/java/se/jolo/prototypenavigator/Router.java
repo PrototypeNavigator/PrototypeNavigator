@@ -3,6 +3,7 @@ package se.jolo.prototypenavigator;
 import android.graphics.Color;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.mapbox.directions.DirectionsCriteria;
 import com.mapbox.directions.MapboxDirections;
@@ -107,6 +108,8 @@ public final class Router {
 
             @Override
             public void onResponse(Response<DirectionsResponse> response, Retrofit retrofit) {
+                CallCounter.count();
+
                 printResponseMessage(response);
 
                 directionsRoute = response.body().getRoutes().get(0);

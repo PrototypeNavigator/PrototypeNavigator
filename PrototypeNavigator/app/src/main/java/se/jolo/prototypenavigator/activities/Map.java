@@ -172,7 +172,9 @@ public class Map extends AppCompatActivity {
             view.setVisibility(isVisible ? View.INVISIBLE : View.VISIBLE);
         }
     }
-
+    /*********************************************************************************************/
+    /****                                      Menu                                           ****/
+    /*********************************************************************************************/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu,menu);

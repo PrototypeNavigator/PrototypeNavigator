@@ -3,7 +3,6 @@ package se.jolo.prototypenavigator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -17,8 +16,6 @@ public final class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = "MainActivity";
     private Uri uri;
-    private boolean isGpsEnabled = false;
-    private boolean allowInit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,30 +23,30 @@ public final class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState != null) {
-            isGpsEnabled = savedInstanceState.getBoolean("gps");
-            allowInit = savedInstanceState.getBoolean("init");
+            Locator.isGpsEnabled = savedInstanceState.getBoolean("gps");
+            Locator.allowInit = savedInstanceState.getBoolean("init");
         }
 
         initGps();
 
-        if (allowInit) {
+        if (Locator.allowInit) {
             init();
-            allowInit = false;
+            Locator.allowInit = false;
         }
 
     }
 
     public void initGps() {
 
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Locator.isGpsEnabled = Locator.isGpsEnabled(this);
 
-        isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (!isGpsEnabled) {
+        if (!Locator.isGpsEnabled) {
             showGpsDialog();
-            isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } else {
-            allowInit = true;
+            Locator.isGpsEnabled = Locator.isGpsEnabled(this);
+        }
+
+        if (Locator.isGpsEnabled) {
+            Locator.allowInit = true;
         }
     }
 
@@ -77,7 +74,7 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                allowInit = true;
+                Locator.allowInit = true;
                 startActivity(intent);
             }
         });
@@ -87,7 +84,7 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                allowInit = false;
+                Locator.allowInit = false;
             }
         });
 
@@ -97,18 +94,18 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (allowInit) {
+        if (Locator.allowInit) {
             init();
-            allowInit = false;
+            Locator.allowInit = false;
         }
     }
 
     @Override
-    public void onResume() {
+    public void onResume() { // kanske överflödig
         super.onResume();
-        if (allowInit) {
+        if (Locator.allowInit) {
             init();
-            allowInit = false;
+            Locator.allowInit = false;
         }
     }
 
@@ -129,8 +126,8 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean("gps", isGpsEnabled);
-        outState.putBoolean("init", allowInit);
+        outState.putBoolean("gps", Locator.isGpsEnabled);
+        outState.putBoolean("init", Locator.allowInit);
 
         super.onSaveInstanceState(outState);
     }

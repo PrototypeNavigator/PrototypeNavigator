@@ -1,4 +1,4 @@
-package se.jolo.prototypenavigator;
+package se.jolo.prototypenavigator.utils;
 
 import android.util.Log;
 

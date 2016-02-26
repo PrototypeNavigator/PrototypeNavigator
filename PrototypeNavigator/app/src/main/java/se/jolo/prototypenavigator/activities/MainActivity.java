@@ -1,4 +1,4 @@
-package se.jolo.prototypenavigator;
+package se.jolo.prototypenavigator.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -8,9 +8,8 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 
-import se.jolo.prototypenavigator.activities.FileBrowser;
-import se.jolo.prototypenavigator.activities.Map;
-
+import se.jolo.prototypenavigator.R;
+import se.jolo.prototypenavigator.utils.Locator;
 
 public final class MainActivity extends AppCompatActivity {
 
@@ -94,19 +93,11 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (Locator.allowInit) {
-            init();
-            Locator.allowInit = false;
-        }
     }
 
     @Override
-    public void onResume() { // kanske överflödig
+    public void onResume() {
         super.onResume();
-        if (Locator.allowInit) {
-            init();
-            Locator.allowInit = false;
-        }
     }
 
     @Override

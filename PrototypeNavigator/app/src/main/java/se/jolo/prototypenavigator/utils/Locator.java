@@ -1,4 +1,4 @@
-package se.jolo.prototypenavigator;
+package se.jolo.prototypenavigator.utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -20,10 +20,10 @@ import com.mapbox.mapboxsdk.views.MapView;
 public class Locator implements LocationListener {
 
     private static final String LOG_TAG = "LOCATOR";
-    private final static int PERMISSIONS_LOCATION = 0;
-    private Location location;
+    private static final int PERMISSIONS_LOCATION = 0;
     public static boolean isGpsEnabled = false;
     public static boolean allowInit = false;
+    private Location location;
 
     protected Locator() {}
 

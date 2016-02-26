@@ -27,6 +27,10 @@ public class Locator implements LocationListener {
 
     protected Locator() {}
 
+    public static Location getLocation(Context context) {
+        return LocationServices.getLocationServices(context).getLastLocation();
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         this.location = location;
@@ -35,10 +39,6 @@ public class Locator implements LocationListener {
     public static boolean isGpsEnabled(Context context) {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    }
-
-    public Location getLocation() {
-        return location;
     }
 
     public static MapView enableLocation(Context context, Activity activity, MapView mapView) {

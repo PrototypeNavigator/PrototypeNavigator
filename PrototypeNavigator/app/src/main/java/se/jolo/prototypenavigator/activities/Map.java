@@ -1,6 +1,5 @@
 package se.jolo.prototypenavigator.activities;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +14,6 @@ import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.location.LocationServices;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import java.util.List;
@@ -30,28 +28,27 @@ public class Map extends AppCompatActivity {
 
     private final static String LOG_TAG = "MapActivity";
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
-    private MapView mapView;
     private FloatingActionButton findMeBtn;
     private List<Waypoint> waypoints = null;
-    private Uri uri;
-    private Route route;
+    private MapView mapView;
     private Router router;
-    private Activity mapActivity = this;
+    private Route route;
+    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        mapView = loadMap(savedInstanceState);
-        Locator.enableLocation(this, this, mapView);
-        Locator.toggleTracking(this, this, mapView);
-
         Bundle extras = getIntent().getExtras();
         Loader loader = new Loader(this);
 
-        findMeBtn = (FloatingActionButton) findViewById(R.id.findMeBtn);
+        mapView = loadMap(savedInstanceState);
+        
+        Locator.enableLocation(this, this, mapView);
+        Locator.toggleTracking(this, this, mapView);
 
+        findMeBtn = (FloatingActionButton) findViewById(R.id.findMeBtn);
         uri = (Uri) extras.get("uri");
         loader.execute(uri);
 
@@ -62,7 +59,7 @@ public class Map extends AppCompatActivity {
         }
 
         router = new Router(this, mapView, MAPBOX_ACCESS_TOKEN);
-        router.setCurrentLocation(LocationServices.getLocationServices(this).getLastLocation())
+        router.setCurrentLocation(Locator.getLocation(this))
                 .loadWaypoints(route)
                 .loadFullRoute()
                 .loadRoute();

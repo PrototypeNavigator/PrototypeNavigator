@@ -1,6 +1,5 @@
 package se.jolo.prototypenavigator;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
@@ -16,7 +15,6 @@ import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.location.LocationServices;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import java.io.IOException;
@@ -50,11 +48,6 @@ public final class Router extends Locator {
         this.mapView = mapView;
         this.MAPBOX_ACCESS_TOKEN = MAPBOX_ACCESS_TOKEN;
         this.inProximity = false;
-    }
-
-    @Override
-    public Location getLocation() {
-        return currentLocation;
     }
 
     @Override
@@ -187,6 +180,10 @@ public final class Router extends Locator {
         }
 
         return removed;
+    }
+
+    public Location getLocation() {
+        return Locator.getLocation(context);
     }
 
     public List<Waypoint> getCurrentRoute() {

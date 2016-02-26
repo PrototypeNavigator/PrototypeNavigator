@@ -3,6 +3,8 @@ package se.jolo.prototypenavigator.activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -16,6 +18,7 @@ import android.transition.Slide;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -38,7 +41,7 @@ import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.Locator;
 import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.Router;
+import se.jolo.prototypenavigator.utils.Router;
 import se.jolo.prototypenavigator.model.Route;
 
 public class Map extends AppCompatActivity {
@@ -56,6 +59,7 @@ public class Map extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_TAG,"Create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
@@ -63,7 +67,7 @@ public class Map extends AppCompatActivity {
         Loader loader = new Loader(this);
 
         mapView = loadMap(savedInstanceState);
-        
+
         Locator.enableLocation(this, this, mapView);
         Locator.toggleTracking(this, this, mapView);
 
@@ -116,7 +120,7 @@ public class Map extends AppCompatActivity {
             public void onClick(View v) {
                 TransitionManager.beginDelayedTransition(viewGroup, new Slide());
                 toggleVisibility(textView);
-                
+
             }
         });
 
@@ -182,13 +186,29 @@ public class Map extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.loadRoute:
+                Intent sendToFileBrowser = new Intent(this, FileBrowser.class);
+                startActivity(sendToFileBrowser);
+                android.os.Process.killProcess(android.os.Process.myPid());
+                return true;
+            case R.id.showDetails:
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
+        Log.d(LOG_TAG, "Start");
         mapView.onStart();
     }
 
     @Override
     public void onResume() {
+        Log.d(LOG_TAG,"Resume");
         super.onResume();
         toggleBearing();
         mapView.onResume();
@@ -196,18 +216,22 @@ public class Map extends AppCompatActivity {
 
     @Override
     public void onPause() {
+        Log.d(LOG_TAG,"Pause");
         super.onPause();
         mapView.onPause();
     }
 
     @Override
     protected void onStop() {
+        Log.d(LOG_TAG,"Stop");
         super.onStop();
+        mapView.removeAllAnnotations();
         mapView.onStop();
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(LOG_TAG,"Destroy");
         super.onDestroy();
         mapView.onDestroy();
     }

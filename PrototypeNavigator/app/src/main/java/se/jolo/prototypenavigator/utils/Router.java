@@ -1,4 +1,4 @@
-package se.jolo.prototypenavigator;
+package se.jolo.prototypenavigator.utils;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -24,6 +24,8 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import se.jolo.prototypenavigator.CallCounter;
+import se.jolo.prototypenavigator.Locator;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 

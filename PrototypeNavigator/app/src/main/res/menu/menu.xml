@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 <item
-    android:id="@+id/item1"
-    android:title="item 1"/>
+    android:id="@+id/loadRoute"
+    android:title="Ladda Rutt"/>
 <item
-    android:id="@+id/item2"
-    android:title="item 2"/>
+    android:id="@+id/showDetails"
+    android:title="Visa Stop"/>
     />
 </menu>

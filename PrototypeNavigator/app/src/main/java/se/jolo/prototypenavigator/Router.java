@@ -35,7 +35,7 @@ public final class Router extends Locator {
     private static final String LOG_TAG = "ROUTER";
     private Context context;
     private MapView mapView;
-    private String MAPBOX_ACCESS_TOKEN = "";
+    private String MAPBOX_ACCESS_TOKEN;
     private Location currentLocation;
     private DirectionsRoute currentRoute, fullRoute;
     private List<Waypoint> waypoints;

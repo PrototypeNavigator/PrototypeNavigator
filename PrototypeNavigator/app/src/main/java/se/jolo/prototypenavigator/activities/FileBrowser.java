@@ -44,7 +44,11 @@ public class FileBrowser extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Uri currentUri = null;
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, Map.class);
+
+        if(intent.hasExtra("uri")){
+            intent.getExtras().clear();
+        }
 
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_ID && data != null) {
             currentUri = data.getData();

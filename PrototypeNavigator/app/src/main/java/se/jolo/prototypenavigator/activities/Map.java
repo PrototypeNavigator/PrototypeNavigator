@@ -90,14 +90,13 @@ public class Map extends AppCompatActivity {
         router = new Router(this, mapView, MAPBOX_ACCESS_TOKEN);
         router.setCurrentLocation(Locator.getLocation(this))
                 .loadWaypoints(route)
-                .loadFullRoute()
                 .loadRoute();
 
         waypoints = router.getWaypoints();
 
         // centroid goes here
-      //  LatLng centroid = new LatLng(locationServices.getLastLocation().getLatitude(),locationServices.getLastLocation().getLongitude());
-    //    setCentroid(centroid);
+        LatLng centroid = new LatLng(Locator.getLocation(this).getLatitude(),Locator.getLocation(this).getLongitude());
+        setCentroid(centroid);
 
         addMarkers(waypoints);
 
@@ -176,6 +175,7 @@ public class Map extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu,menu);
+
         return true;
     }
 

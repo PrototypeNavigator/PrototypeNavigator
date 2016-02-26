@@ -96,7 +96,13 @@ public final class Router extends Locator {
     public Router updateWaypointsRemaining() {
 
         if (inProximity) {
+            Log.d(LOG_TAG, "removing waypoint at: "
+                    + waypointsRemaining.get(0).getLongitude() + " "
+                    + waypointsRemaining.get(0).getLatitude());
             waypointsRemaining.remove(0);
+            Log.d(LOG_TAG, "next waypoint at: "
+                    + waypointsRemaining.get(0).getLongitude() + " "
+                    + waypointsRemaining.get(0).getLatitude());
             inProximity = false;
         }
 
@@ -112,8 +118,10 @@ public final class Router extends Locator {
                 currentLocation.getLatitude(),
                 currentLocation.getLongitude());
 
-        if (latLngWaypoint.distanceTo(latLngPosition) < 100) {
-            Log.d(LOG_TAG, "you're within 100 meters of your next stop");
+        if (latLngWaypoint.distanceTo(latLngPosition) < 10.0) {
+            Log.d(LOG_TAG, "you're "
+                    + latLngWaypoint.distanceTo(latLngPosition)
+                    + " meters from your next stop");
             inProximity = true;
         }
 
@@ -154,18 +162,18 @@ public final class Router extends Locator {
                     waypoints.get(i).getLongitude());
         }
 
-        if (waypoints.size() >= 3) {
-            mapView.addPolyline(new PolylineOptions()
-                    .add(point)
-                    .color(Color.parseColor("#3887be"))
-                    .width(5));
-        } else {
+//        if (waypoints.size() >= 3) {
+//            mapView.addPolyline(new PolylineOptions()
+//                    .add(point)
+//                    .color(Color.parseColor("#3887be"))
+//                    .width(5));
+//        } else {
             polylineToNextStop = new PolylineOptions()
                     .add(point)
                     .color(Color.parseColor("#ff0000"))
                     .width(5);
             mapView.addPolyline(polylineToNextStop);
-        }
+//        }
     }
 
     public boolean removePolyline(PolylineOptions polylineOptions) {

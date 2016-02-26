@@ -61,7 +61,7 @@ public class Map extends AppCompatActivity {
         router = new Router(this, mapView, MAPBOX_ACCESS_TOKEN);
         router.setCurrentLocation(Locator.getLocation(this))
                 .loadWaypoints(route)
-                .loadFullRoute()
+                //.loadFullRoute()
                 .loadRoute();
 
         waypoints = router.getWaypoints();

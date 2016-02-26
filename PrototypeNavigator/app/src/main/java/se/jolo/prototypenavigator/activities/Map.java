@@ -96,8 +96,8 @@ public class Map extends AppCompatActivity {
         waypoints = router.getWaypoints();
 
         // centroid goes here
-      //  LatLng centroid = new LatLng(locationServices.getLastLocation().getLatitude(),locationServices.getLastLocation().getLongitude());
-    //    setCentroid(centroid);
+        LatLng centroid = new LatLng(Locator.getLocation(this).getLatitude(),Locator.getLocation(this).getLongitude());
+        setCentroid(centroid);
 
         addMarkers(waypoints);
 

@@ -3,7 +3,6 @@ package se.jolo.prototypenavigator.activities;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -23,14 +22,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mapbox.directions.DirectionsCriteria;
-import com.mapbox.directions.MapboxDirections;
-import com.mapbox.directions.service.models.DirectionsResponse;
-import com.mapbox.directions.service.models.DirectionsRoute;
-import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.MyBearingTracking;
@@ -41,19 +34,13 @@ import com.mapbox.mapboxsdk.location.LocationListener;
 import com.mapbox.mapboxsdk.location.LocationServices;
 import com.mapbox.mapboxsdk.views.MapView;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import se.jolo.prototypenavigator.CallCounter;
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.Router;
 import se.jolo.prototypenavigator.model.Route;
-import se.jolo.prototypenavigator.model.RouteItem;
 
 public class Map extends AppCompatActivity implements LocationListener {
 
@@ -62,7 +49,6 @@ public class Map extends AppCompatActivity implements LocationListener {
     private final static int PERMISSIONS_LOCATION = 0;
     private MapView mapView;
     private FloatingActionButton findMeBtn;
-    private DirectionsRoute currentRoute = null;
     private LocationServices locationServices;
     private List<Waypoint> waypoints = null;
     private Uri uri;
@@ -101,23 +87,22 @@ public class Map extends AppCompatActivity implements LocationListener {
         }
 
         enableLocation();
-        toggleBearing();
-        waypoints = loadWaypoints(route);
+
 
         // next stop routing
-        router = new Router(mapView, MAPBOX_ACCESS_TOKEN);
-        router.setWaypoints(waypoints)
-                .setCurrentLocation(locationServices.getLastLocation())
-                .getRoute();
+        router = new Router(this, mapView, MAPBOX_ACCESS_TOKEN);
+        router.loadWaypoints(route)
+                .setCurrentLocation(LocationServices.getLocationServices(this).getLastLocation())
+                .loadFullRoute()
+                .loadRoute();
+
+        waypoints = router.getWaypoints();
 
         // centroid goes here
         LatLng centroid = new LatLng(locationServices.getLastLocation().getLatitude(),locationServices.getLastLocation().getLongitude());
         setCentroid(centroid);
 
         addMarkers(waypoints);
-        // get route from API
-        getRoute(fewerWaypointsPlis(waypoints));
-
 
 
         findMeBtn.setOnClickListener(new View.OnClickListener() {
@@ -171,34 +156,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
 
     public void animateCamera(LatLng latLng) {
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 11, 45, 0)));
-    }
-
-    public List<Waypoint> fewerWaypointsPlis(List<Waypoint> allWaypoints) {
-
-        List<Waypoint> fewerWaypoints = new ArrayList<>();
-
-        fewerWaypoints.add(allWaypoints.get(0));
-        fewerWaypoints.add(allWaypoints.get(1));
-        fewerWaypoints.add(allWaypoints.get(2));
-        fewerWaypoints.add(allWaypoints.get(3));
-        fewerWaypoints.add(allWaypoints.get(4));
-
-        return fewerWaypoints;
-    }
-
-    private List<Waypoint> loadWaypoints(Route route) {
-
-        List<Waypoint> waypoints = new ArrayList<>();
-        List<RouteItem> routeItems = route.getRouteItems();
-
-        for (RouteItem ri : routeItems) {
-            waypoints.add(new Waypoint(
-                    ri.getStopPoint().getEasting(),
-                    ri.getStopPoint().getNorthing()));  // altitude can be set as a third parameter
-        }
-
-        return waypoints;
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 13, 45, 0)));
     }
 
     private MapView loadMap(Bundle savedInstanceState) {
@@ -213,7 +171,7 @@ public class Map extends AppCompatActivity implements LocationListener {
             @Override
             public void onMapClick(@NonNull LatLng point) {
                 Waypoint target = new Waypoint(point.getLongitude(), point.getLatitude());
-                checkOffRoute(target);
+                router.checkOffRoute(target);
             }
         });
 
@@ -233,89 +191,12 @@ public class Map extends AppCompatActivity implements LocationListener {
         animateCamera(centroid);
     }
 
-    private void getRoute(List<Waypoint> waypoints) {
-        MapboxDirections md = new MapboxDirections.Builder()
-                .setAccessToken(MAPBOX_ACCESS_TOKEN)
-                .setWaypoints(waypoints)
-                .setProfile(DirectionsCriteria.PROFILE_DRIVING)
-                .build();
-
-        Log.d(LOG_TAG, String.format("GEIF FKN URL TO ENCODE... :" + md, Charset.forName("utf-8")));
-        //
-        // subklass av typ något här för att hitta request url för att se till att den är encoded till utf-8
-        //
-        md.enqueue(new Callback<DirectionsResponse>() {
-            @Override
-            public void onResponse(Response<DirectionsResponse> response, Retrofit retrofit) {
-                // You can get generic HTTP info about the response
-                printResponseMessage(response);
-
-                // Print some info about the route
-                currentRoute = response.body().getRoutes().get(0);
-                Log.d(LOG_TAG, "Distance: " + currentRoute.getDistance());
-                showMessage(String.format("Route is %d meters long.", currentRoute.getDistance()));
-
-                // Draw the route on the map
-                List<RouteStep> steps = currentRoute.getSteps();
-                drawRoute(currentRoute, "#3887be");
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e(LOG_TAG, "getRoute-Error: " + t.getMessage());
-                showMessage("getRoute-Error: " + t.getMessage());
-            }
-        });
-    }
-
-    private void drawRoute(DirectionsRoute route, String color) {
-        // Convert List<Waypoint> into LatLng[]
-        List<Waypoint> waypoints = route.getGeometry().getWaypoints();
-        LatLng[] point = new LatLng[waypoints.size()];
-        for (int i = 0; i < waypoints.size(); i++) {
-            point[i] = new LatLng(
-                    waypoints.get(i).getLatitude(),
-                    waypoints.get(i).getLongitude());
-        }
-
-        // Draw Points on MapView
-        mapView.addPolyline(new PolylineOptions()
-                .add(point)
-                .color(Color.parseColor(color))
-                .width(5));
-    }
-
-    private void printResponseMessage(Response<DirectionsResponse> response) {
-
-        if (!response.isSuccess()) {
-            try {
-                Log.d(LOG_TAG, "Error: " + response.errorBody().string());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.d(LOG_TAG, "Response code: " + response.code());
-            Log.d(LOG_TAG, "content-type: " + response.raw().header("Content-Type"));
-        }
-    }
-
-    private void checkOffRoute(Waypoint target) {
-        if (currentRoute.isOffRoute(target)) {
-            showMessage("You are off-route.");
-        } else {
-            showMessage("You are not off-route.");
-        }
-    }
-
-    private void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public void onLocationChanged(Location location) {
         animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
-        router.setCurrentLocation(location).getRoute();
+        router.setCurrentLocation(location).loadRoute();
         router.removePolyline(router.getPolylineToNextStop());
+        Toast.makeText(this, "calls made ::: " + CallCounter.getCounts(), Toast.LENGTH_LONG).show();
     }
 
     private static void toggleVisibility(View... views) {

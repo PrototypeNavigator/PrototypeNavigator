@@ -52,6 +52,9 @@ public final class Router extends Locator {
         this.inProximity = false;
     }
 
+    /*********************************************************************************************/
+    /****                                     Location                                        ****/
+    /*********************************************************************************************/
     @Override
     public void onLocationChanged(Location location) {
         super.onLocationChanged(location);
@@ -66,94 +69,19 @@ public final class Router extends Locator {
         Toast.makeText(context, "calls made ::: " + CallCounter.getCounts(), Toast.LENGTH_LONG).show();
     }
 
-    private List<Waypoint> fewerWaypoints() {
-
-        List<Waypoint> fewerWaypoints = new ArrayList<>();
-
-        fewerWaypoints.add(waypoints.get(0));
-        fewerWaypoints.add(waypoints.get(1));
-        fewerWaypoints.add(waypoints.get(2));
-        fewerWaypoints.add(waypoints.get(3));
-        fewerWaypoints.add(waypoints.get(4));
-
-        return fewerWaypoints;
+    public Location getLocation() {
+        return Locator.getLocation(context);
     }
 
-    public Router loadWaypoints(Route route) {
-
-        waypoints = new ArrayList<>();
-        List<RouteItem> routeItems = route.getRouteItems();
-
-        for (RouteItem ri : routeItems) {
-            waypoints.add(new Waypoint(
-                    ri.getStopPoint().getEasting(),
-                    ri.getStopPoint().getNorthing()));  // altitude can be set as a third parameter
-        }
-
-        setWaypointsRemaining(waypoints);
+    public Router setCurrentLocation(Location currentLocation) {
+        this.currentLocation = currentLocation;
 
         return this;
     }
 
-    public Router updateWaypointsRemaining() {
-
-        if (inProximity) {
-            Log.d(LOG_TAG, "removing waypoint at: "
-                    + waypointsRemaining.get(0).getLongitude() + " "
-                    + waypointsRemaining.get(0).getLatitude());
-            waypointsRemaining.remove(0);
-            Log.d(LOG_TAG, "next waypoint at: "
-                    + waypointsRemaining.get(0).getLongitude() + " "
-                    + waypointsRemaining.get(0).getLatitude());
-            inProximity = false;
-        }
-
-        return this;
-    }
-
-    public Router checkWaypointProximity() {
-        LatLng latLngWaypoint = new LatLng(
-                waypointsRemaining.get(0).getLatitude(),
-                waypointsRemaining.get(0).getLongitude());
-
-        LatLng latLngPosition = new LatLng(
-                currentLocation.getLatitude(),
-                currentLocation.getLongitude());
-
-        if (latLngWaypoint.distanceTo(latLngPosition) < 10.0) {
-            Log.d(LOG_TAG, "you're "
-                    + latLngWaypoint.distanceTo(latLngPosition)
-                    + " meters from your next stop");
-            inProximity = true;
-        }
-
-        return this;
-    }
-
-    private void printResponseMessage(Response<DirectionsResponse> response) {
-        if (!response.isSuccess()) {
-            try {
-                Log.d(LOG_TAG, "Error: " + response.errorBody().string());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.d(LOG_TAG, "Response code: " + response.code());
-        }
-    }
-
-    private void showMessage(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public void checkOffRoute(Waypoint target) {
-        if (fullRoute.isOffRoute(target)) {
-            showMessage("You are off-route.");
-        } else {
-            showMessage("You are not off-route.");
-        }
-    }
-
+    /*********************************************************************************************/
+    /****                                     drawing                                         ****/
+    /*********************************************************************************************/
     public void drawRoute(DirectionsRoute directionsRoute) {
 
         List<Waypoint> waypoints = directionsRoute.getGeometry().getWaypoints();
@@ -192,10 +120,13 @@ public final class Router extends Locator {
         return removed;
     }
 
-    public Location getLocation() {
-        return Locator.getLocation(context);
+    public PolylineOptions getPolylineToNextStop() {
+        return polylineToNextStop;
     }
 
+    /*********************************************************************************************/
+    /****                                     Routing                                         ****/
+    /*********************************************************************************************/
     public List<Waypoint> getCurrentRoute() {
 
         List<Waypoint> positionAndNextWaypoint = new ArrayList<>();
@@ -208,6 +139,9 @@ public final class Router extends Locator {
         return positionAndNextWaypoint;
     }
 
+    /**
+     * Route all waypoints
+     */
     public Router loadFullRoute() {
 
         MapboxDirections md = new MapboxDirections.Builder()
@@ -241,6 +175,9 @@ public final class Router extends Locator {
         return this;
     }
 
+    /**
+     * Route next StopPoint
+     */
     public Router loadRoute() {
 
         List<Waypoint> waypoints = (currentRoute != null)
@@ -278,12 +215,11 @@ public final class Router extends Locator {
         return this;
     }
 
+    /*********************************************************************************************/
+    /****                                    Waypoints                                        ****/
+    /*********************************************************************************************/
     public List<Waypoint> getWaypoints() {
         return waypoints;
-    }
-
-    public PolylineOptions getPolylineToNextStop() {
-        return polylineToNextStop;
     }
 
     public Router setWaypointsRemaining(List<Waypoint> waypoints) {
@@ -292,9 +228,103 @@ public final class Router extends Locator {
         return this;
     }
 
-    public Router setCurrentLocation(Location currentLocation) {
-        this.currentLocation = currentLocation;
+    /**
+     * temp
+     */
+    private List<Waypoint> fewerWaypoints() {
+
+        List<Waypoint> fewerWaypoints = new ArrayList<>();
+
+        fewerWaypoints.add(waypoints.get(0));
+        fewerWaypoints.add(waypoints.get(1));
+        fewerWaypoints.add(waypoints.get(2));
+        fewerWaypoints.add(waypoints.get(3));
+        fewerWaypoints.add(waypoints.get(4));
+
+        return fewerWaypoints;
+    }
+
+    public Router loadWaypoints(Route route) {
+
+        waypoints = new ArrayList<>();
+        List<RouteItem> routeItems = route.getRouteItems();
+
+        for (RouteItem ri : routeItems) {
+            waypoints.add(new Waypoint(
+                    ri.getStopPoint().getEasting(),
+                    ri.getStopPoint().getNorthing()));  // altitude can be set as a third parameter
+        }
+
+        setWaypointsRemaining(waypoints);
 
         return this;
+    }
+
+    /**
+     * check if position is in proximity of waypoint
+     **/
+    public Router checkWaypointProximity() {
+        LatLng latLngWaypoint = new LatLng(
+                waypointsRemaining.get(0).getLatitude(),
+                waypointsRemaining.get(0).getLongitude());
+
+        LatLng latLngPosition = new LatLng(
+                currentLocation.getLatitude(),
+                currentLocation.getLongitude());
+
+        if (latLngWaypoint.distanceTo(latLngPosition) < 10.0) {
+            Log.d(LOG_TAG, "you're "
+                    + latLngWaypoint.distanceTo(latLngPosition)
+                    + " meters from your next stop");
+            inProximity = true;
+        }
+
+        return this;
+    }
+
+    /**
+     * when in proximity of next waypoint, remove it
+     */
+    public Router updateWaypointsRemaining() {
+
+        if (inProximity) {
+            Log.d(LOG_TAG, "removing waypoint at: "
+                    + waypointsRemaining.get(0).getLongitude() + " "
+                    + waypointsRemaining.get(0).getLatitude());
+            waypointsRemaining.remove(0);
+            Log.d(LOG_TAG, "next waypoint at: "
+                    + waypointsRemaining.get(0).getLongitude() + " "
+                    + waypointsRemaining.get(0).getLatitude());
+            inProximity = false;
+        }
+
+        return this;
+    }
+
+    /*********************************************************************************************/
+    /****                                   Informatin                                        ****/
+    /*********************************************************************************************/
+    private void printResponseMessage(Response<DirectionsResponse> response) {
+        if (!response.isSuccess()) {
+            try {
+                Log.d(LOG_TAG, "Error: " + response.errorBody().string());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.d(LOG_TAG, "Response code: " + response.code());
+        }
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void checkOffRoute(Waypoint target) {
+        if (fullRoute.isOffRoute(target)) {
+            showMessage("You are off-route.");
+        } else {
+            showMessage("You are not off-route.");
+        }
     }
 }

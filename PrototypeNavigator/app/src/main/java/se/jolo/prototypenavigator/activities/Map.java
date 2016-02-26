@@ -1,12 +1,7 @@
 package se.jolo.prototypenavigator.activities;
 
-
-import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,16 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-
 import com.mapbox.mapboxsdk.constants.MyBearingTracking;
-import com.mapbox.mapboxsdk.constants.MyLocationTracking;
-
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
@@ -39,7 +30,7 @@ import com.mapbox.mapboxsdk.views.MapView;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import se.jolo.prototypenavigator.Locator;
+import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.utils.Router;
 import se.jolo.prototypenavigator.model.Route;

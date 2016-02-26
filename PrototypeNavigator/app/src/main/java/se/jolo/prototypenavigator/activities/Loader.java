@@ -26,29 +26,6 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         this.context = context;
     }
 
-    @Override
-    protected Route doInBackground(Uri... params) {
-        try {
-            String xmlString = readFileContent(params[0]);
-            route = loadRoute(xmlString);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return route;
-    }
-
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
-    }
-
-    @Override
-    protected void onPostExecute(Route route) {
-        super.onPostExecute(route);
-        Log.d("route", "in Loader " + route.getName());
-    }
-
     private String readFileContent(Uri uri) throws IOException {
 
         InputStream inputStream = context.getContentResolver().openInputStream(uri);
@@ -79,5 +56,31 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         }
 
         return null;
+    }
+
+    /*********************************************************************************************/
+    /****                                    AsycTasks                                        ****/
+    /*********************************************************************************************/
+    @Override
+    protected Route doInBackground(Uri... params) {
+        try {
+            String xmlString = readFileContent(params[0]);
+            route = loadRoute(xmlString);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return route;
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+    }
+
+    @Override
+    protected void onPostExecute(Route route) {
+        super.onPostExecute(route);
+        Log.d("route", "in Loader " + route.getName());
     }
 }

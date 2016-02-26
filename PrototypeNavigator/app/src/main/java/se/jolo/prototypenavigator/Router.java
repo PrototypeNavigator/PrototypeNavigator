@@ -1,5 +1,6 @@
 package se.jolo.prototypenavigator;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
@@ -12,7 +13,10 @@ import com.mapbox.directions.service.models.DirectionsResponse;
 import com.mapbox.directions.service.models.DirectionsRoute;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.location.LocationServices;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import java.io.IOException;
@@ -28,7 +32,7 @@ import se.jolo.prototypenavigator.model.RouteItem;
 /**
  * Created by Joel on 2016-02-24.
  */
-public final class Router {
+public final class Router extends Locator {
 
     private static final String LOG_TAG = "ROUTER";
     private Context context;
@@ -46,6 +50,25 @@ public final class Router {
         this.mapView = mapView;
         this.MAPBOX_ACCESS_TOKEN = MAPBOX_ACCESS_TOKEN;
         this.inProximity = false;
+    }
+
+    @Override
+    public Location getLocation() {
+        return currentLocation;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        super.onLocationChanged(location);
+
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+                new CameraPosition(
+                        new LatLng(location.getLatitude(), location.getLongitude()), 13, 45, 0)));
+
+        setCurrentLocation(location).loadRoute();
+        removePolyline(getPolylineToNextStop());
+
+        Toast.makeText(context, "calls made ::: " + CallCounter.getCounts(), Toast.LENGTH_LONG).show();
     }
 
     private List<Waypoint> fewerWaypoints() {
@@ -75,7 +98,7 @@ public final class Router {
         setWaypointsRemaining(waypoints);
 
         return this;
-    } 
+    }
 
     public Router updateWaypointsRemaining() {
 
@@ -88,9 +111,16 @@ public final class Router {
     }
 
     public Router checkWaypointProximity() {
+        LatLng latLngWaypoint = new LatLng(
+                waypointsRemaining.get(0).getLatitude(),
+                waypointsRemaining.get(0).getLongitude());
 
-        if (currentRoute.getDistance() <= 0.05) {
-            Log.d(LOG_TAG, "you're within 0.05 mile of the next stop");
+        LatLng latLngPosition = new LatLng(
+                currentLocation.getLatitude(),
+                currentLocation.getLongitude());
+
+        if (latLngWaypoint.distanceTo(latLngPosition) < 100) {
+            Log.d(LOG_TAG, "you're within 100 meters of your next stop");
             inProximity = true;
         }
 
@@ -106,7 +136,6 @@ public final class Router {
             }
         } else {
             Log.d(LOG_TAG, "Response code: " + response.code());
-            Log.d(LOG_TAG, "content-type: " + response.raw().header("Content-Type"));
         }
     }
 
@@ -122,7 +151,7 @@ public final class Router {
         }
     }
 
-    public void drawRoute(DirectionsRoute directionsRoute, String color) {
+    public void drawRoute(DirectionsRoute directionsRoute) {
 
         List<Waypoint> waypoints = directionsRoute.getGeometry().getWaypoints();
 
@@ -132,20 +161,25 @@ public final class Router {
                     waypoints.get(i).getLongitude());
         }
 
-        polylineToNextStop = new PolylineOptions()
-                .add(point)
-                .color(Color.parseColor(color))
-                .width(5);
-
-        mapView.addPolyline(polylineToNextStop);
-
+        if (waypoints.size() >= 3) {
+            mapView.addPolyline(new PolylineOptions()
+                    .add(point)
+                    .color(Color.parseColor("#3887be"))
+                    .width(5));
+        } else {
+            polylineToNextStop = new PolylineOptions()
+                    .add(point)
+                    .color(Color.parseColor("#ff0000"))
+                    .width(5);
+            mapView.addPolyline(polylineToNextStop);
+        }
     }
 
     public boolean removePolyline(PolylineOptions polylineOptions) {
 
         boolean removed = false;
 
-        if (polylineOptions != null){
+        if (polylineOptions != null) {
             mapView.removeAnnotation(polylineOptions.getPolyline());
             removed = true;
 
@@ -159,7 +193,9 @@ public final class Router {
 
         List<Waypoint> positionAndNextWaypoint = new ArrayList<>();
 
-        positionAndNextWaypoint.add(new Waypoint(currentLocation.getLongitude(), currentLocation.getLatitude()));
+        positionAndNextWaypoint.add(new Waypoint(
+                currentLocation.getLongitude(),
+                currentLocation.getLatitude()));
         positionAndNextWaypoint.add(waypointsRemaining.get(0));
 
         return positionAndNextWaypoint;
@@ -185,7 +221,7 @@ public final class Router {
 
                 showMessage(String.format("Route is %d meters long.", fullRoute.getDistance()));
 
-                drawRoute(fullRoute, "#3887be");
+                drawRoute(fullRoute);
             }
 
             @Override
@@ -222,7 +258,7 @@ public final class Router {
 
                 checkWaypointProximity();
 
-                drawRoute(currentRoute, "#ff0000");
+                drawRoute(currentRoute);
             }
 
             @Override

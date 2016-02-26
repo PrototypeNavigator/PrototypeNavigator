@@ -1,18 +1,26 @@
 package se.jolo.prototypenavigator.activities;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
+import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapbox.directions.DirectionsCriteria;
@@ -25,6 +33,7 @@ import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -59,6 +68,9 @@ public class Map extends AppCompatActivity implements LocationListener {
     private Uri uri;
     private Route route;
     private Router router;
+    private TextView textView;
+    private ViewGroup viewGroup;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +85,14 @@ public class Map extends AppCompatActivity implements LocationListener {
         mapView = loadMap(savedInstanceState);
         uri = (Uri) extras.get("uri");
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar.setTitle("test");
+
+        textView = (TextView) findViewById(R.id.textTop);
+        viewGroup = (ViewGroup) findViewById(R.id.textAndMenu);
+        setSupportActionBar(myToolbar);
         loader.execute(uri);
+
 
         try {
             route = loader.get();
@@ -82,7 +101,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         }
 
         enableLocation();
-
+        toggleBearing();
         waypoints = loadWaypoints(route);
 
         // next stop routing
@@ -92,15 +111,14 @@ public class Map extends AppCompatActivity implements LocationListener {
                 .getRoute();
 
         // centroid goes here
-        LatLng centroid = new LatLng(
-                (waypoints.get(0).getLatitude() + waypoints.get(waypoints.size() - 1).getLatitude()) / 2,
-                (waypoints.get(0).getLongitude() + waypoints.get(waypoints.size() - 1).getLongitude()) / 2);
+        LatLng centroid = new LatLng(locationServices.getLastLocation().getLatitude(),locationServices.getLastLocation().getLongitude());
         setCentroid(centroid);
 
         addMarkers(waypoints);
-
         // get route from API
         getRoute(fewerWaypointsPlis(waypoints));
+
+
 
         findMeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +126,16 @@ public class Map extends AppCompatActivity implements LocationListener {
                 animateCamera(new LatLng(mapView.getLatLng()));
                 toggleTracking();
                 onLocationChanged(locationServices.getLastLocation());
+            }
+        });
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                TransitionManager.beginDelayedTransition(viewGroup, new Slide());
+                toggleVisibility(textView);
+                
             }
         });
 
@@ -135,6 +163,12 @@ public class Map extends AppCompatActivity implements LocationListener {
             mapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
         }
     }
+
+    public void toggleBearing() throws SecurityException{
+        mapView.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
+    };
+
+
 
     public void animateCamera(LatLng latLng) {
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 11, 45, 0)));
@@ -284,6 +318,19 @@ public class Map extends AppCompatActivity implements LocationListener {
         router.removePolyline(router.getPolylineToNextStop());
     }
 
+    private static void toggleVisibility(View... views) {
+        for (View view : views) {
+            boolean isVisible = view.getVisibility() == View.VISIBLE;
+            view.setVisibility(isVisible ? View.INVISIBLE : View.VISIBLE);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu,menu);
+        return true;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -293,6 +340,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     @Override
     public void onResume() {
         super.onResume();
+        toggleBearing();
         mapView.onResume();
     }
 

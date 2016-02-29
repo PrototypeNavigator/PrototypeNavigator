@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.utils.Router;
+import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.model.Route;
 
 public class Map extends AppCompatActivity {
@@ -42,7 +42,7 @@ public class Map extends AppCompatActivity {
     private FloatingActionButton findMeBtn;
     private List<Waypoint> waypoints = null;
     private MapView mapView;
-    private Router router;
+    private RouteManager routeManager;
     private TextView textView;
     private ViewGroup viewGroup;
     private Route route;
@@ -82,13 +82,12 @@ public class Map extends AppCompatActivity {
         }
 
 
-        router = new Router(this, mapView, MAPBOX_ACCESS_TOKEN);
-        router.setCurrentLocation(Locator.getLocation(this))
+        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN);
+        routeManager.setCurrentLocation(Locator.getLocation(this))
                 .loadWaypoints(route)
-                //.loadFullRoute()
                 .loadRoute();
 
-        waypoints = router.getWaypoints();
+        waypoints = routeManager.getWaypoints();
 
         // centroid goes here
         LatLng centroid = new LatLng(Locator.getLocation(this).getLatitude(),Locator.getLocation(this).getLongitude());
@@ -101,7 +100,7 @@ public class Map extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 animateCamera(new LatLng(mapView.getLatLng()));
-                router.onLocationChanged(router.getLocation());
+                routeManager.onLocationChanged(routeManager.getLocation());
             }
         });
 
@@ -111,7 +110,6 @@ public class Map extends AppCompatActivity {
             public void onClick(View v) {
                 TransitionManager.beginDelayedTransition(viewGroup, new Slide());
                 toggleVisibility(textView);
-
             }
         });
 
@@ -140,7 +138,7 @@ public class Map extends AppCompatActivity {
             @Override
             public void onMapClick(@NonNull LatLng point) {
                 Waypoint target = new Waypoint(point.getLongitude(), point.getLatitude());
-                router.checkOffRoute(target);
+                routeManager.checkOffRoute(target);
             }
         });
 

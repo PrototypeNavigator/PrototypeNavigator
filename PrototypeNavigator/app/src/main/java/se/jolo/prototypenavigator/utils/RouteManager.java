@@ -183,7 +183,11 @@ public final class RouteManager extends Locator {
         return steps;
     }
 
-    public RouteManager loadWaypoints(Route route) {
+    public RouteItem getNextStop() {
+        return routeItems.get(0);
+    }
+
+    public RouteManager loadRouteItemsAndWaypoints(Route route) {
 
         waypoints = new ArrayList<>();
         routeItems = route.getRouteItems();

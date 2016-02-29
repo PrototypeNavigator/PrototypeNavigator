@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -50,7 +51,7 @@ public class Map extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(LOG_TAG,"Create");
+        Log.d(LOG_TAG, "Create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
@@ -84,13 +85,13 @@ public class Map extends AppCompatActivity {
 
         routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN);
         routeManager.setCurrentLocation(Locator.getLocation(this))
-                .loadWaypoints(route)
+                .loadRouteItemsAndWaypoints(route)
                 .loadRoute();
 
         waypoints = routeManager.getWaypoints();
 
         // centroid goes here
-        LatLng centroid = new LatLng(Locator.getLocation(this).getLatitude(),Locator.getLocation(this).getLongitude());
+        LatLng centroid = new LatLng(Locator.getLocation(this).getLatitude(), Locator.getLocation(this).getLongitude());
         setCentroid(centroid);
 
         addMarkers(waypoints);
@@ -101,6 +102,9 @@ public class Map extends AppCompatActivity {
             public void onClick(View v) {
                 animateCamera(new LatLng(mapView.getLatLng()));
                 routeManager.onLocationChanged(routeManager.getLocation());
+                Toast.makeText(v.getContext(), "at: "
+                        + routeManager.getNextStop().getOrder() + " "
+                        + routeManager.getNextStop().getStopPoint().getType(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -117,9 +121,11 @@ public class Map extends AppCompatActivity {
     }
 
 
-    public void toggleBearing() throws SecurityException{
+    public void toggleBearing() throws SecurityException {
         mapView.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
-    };
+    }
+
+    ;
 
 
     public void animateCamera(LatLng latLng) {
@@ -170,13 +176,13 @@ public class Map extends AppCompatActivity {
     /*********************************************************************************************/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu,menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.loadRoute:
                 Intent sendToFileBrowser = new Intent(this, FileBrowser.class);
                 startActivity(sendToFileBrowser);
@@ -197,7 +203,7 @@ public class Map extends AppCompatActivity {
 
     @Override
     public void onResume() {
-        Log.d(LOG_TAG,"Resume");
+        Log.d(LOG_TAG, "Resume");
         super.onResume();
         toggleBearing();
         mapView.onResume();
@@ -205,14 +211,14 @@ public class Map extends AppCompatActivity {
 
     @Override
     public void onPause() {
-        Log.d(LOG_TAG,"Pause");
+        Log.d(LOG_TAG, "Pause");
         super.onPause();
         mapView.onPause();
     }
 
     @Override
     protected void onStop() {
-        Log.d(LOG_TAG,"Stop");
+        Log.d(LOG_TAG, "Stop");
         super.onStop();
         mapView.removeAllAnnotations();
         mapView.onStop();
@@ -220,7 +226,7 @@ public class Map extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.d(LOG_TAG,"Destroy");
+        Log.d(LOG_TAG, "Destroy");
         super.onDestroy();
         mapView.onDestroy();
     }

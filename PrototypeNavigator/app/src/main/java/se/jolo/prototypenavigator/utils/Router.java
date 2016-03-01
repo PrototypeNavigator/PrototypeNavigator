@@ -10,6 +10,7 @@ import com.mapbox.directions.DirectionsCriteria;
 import com.mapbox.directions.MapboxDirections;
 import com.mapbox.directions.service.models.DirectionsResponse;
 import com.mapbox.directions.service.models.DirectionsRoute;
+import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -19,13 +20,14 @@ import com.mapbox.mapboxsdk.views.MapView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import se.jolo.prototypenavigator.CallCounter;
-import se.jolo.prototypenavigator.Locator;
+import se.jolo.prototypenavigator.utils.CallCounter;
+import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 
@@ -159,7 +161,6 @@ public final class Router extends Locator {
                 printResponseMessage(response);
 
                 fullRoute = response.body().getRoutes().get(0);
-
                 showMessage(String.format("Route is %d meters long.", fullRoute.getDistance()));
 
                 drawRoute(fullRoute);
@@ -248,6 +249,7 @@ public final class Router extends Locator {
 
         waypoints = new ArrayList<>();
         List<RouteItem> routeItems = route.getRouteItems();
+        Collections.sort(routeItems);
 
         for (RouteItem ri : routeItems) {
             waypoints.add(new Waypoint(
@@ -302,7 +304,7 @@ public final class Router extends Locator {
     }
 
     /*********************************************************************************************/
-    /****                                   Informatin                                        ****/
+    /****                                   Information                                       ****/
     /*********************************************************************************************/
     private void printResponseMessage(Response<DirectionsResponse> response) {
         if (!response.isSuccess()) {

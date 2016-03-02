@@ -67,6 +67,8 @@ public class RouteDetailFragment extends Fragment {
             appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
                 appBarLayout.setTitle(routeItem.getStopPointItems().get(0).getDeliveryAddress());
+
+
             }
 
             ImageLoader imageLoader = new ImageLoader();
@@ -75,7 +77,8 @@ public class RouteDetailFragment extends Fragment {
 
             try {
                 Bitmap photo = imageLoader.get();
-                image.setImageBitmap(photo);
+                if(photo!=null){
+                image.setImageBitmap(photo);}
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -98,8 +101,8 @@ public class RouteDetailFragment extends Fragment {
             public void onGenerated(Palette palette) {
                 int primaryDark = getResources().getColor(R.color.colorPrimaryDark);
                 int primary = getResources().getColor(R.color.colorPrimary);
-                //appBarLayout.setContentScrimColor(palette.getMutedColor(primary));
-                //appBarLayout.setStatusBarScrimColor(palette.getDarkVibrantColor(primaryDark));
+                appBarLayout.setContentScrimColor(palette.getMutedColor(primary));
+                appBarLayout.setStatusBarScrimColor(palette.getDarkVibrantColor(primaryDark));
             }
         });
 

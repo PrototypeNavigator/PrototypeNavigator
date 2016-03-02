@@ -8,7 +8,7 @@ import android.util.Log;
  */
 public class UrlBuilder {
     private final StringBuilder stringBuilder = new StringBuilder();
-    private final String BASE_URL = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=";
+    private final String BASE_URL = "https://maps.googleapis.com/maps/api/streetview?size=800x800&location=";
     private final String heading = "&fov=100&heading=235&pitch=10&";
     private final String API_KEY = "key=AIzaSyBxJe68IZK3SyPfibunetJFcI3_m91eqvw";
     private final float lon;

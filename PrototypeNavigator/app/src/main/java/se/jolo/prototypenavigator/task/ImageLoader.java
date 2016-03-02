@@ -27,7 +27,7 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
             String stringNumber = httpURLConnection.getHeaderField("content-length");
             int contentLength = Integer.parseInt(stringNumber);
             Log.d("content", stringNumber);
-            if (contentLength>10000){
+            if (contentLength>15000){
                 bitmap = BitmapFactory.decodeStream((InputStream) url.getContent());
 
             }else {

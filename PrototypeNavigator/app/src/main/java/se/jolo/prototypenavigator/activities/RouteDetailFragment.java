@@ -90,7 +90,9 @@ public class RouteDetailFragment extends Fragment {
             View recyclerView = activity.findViewById(R.id.route_list);
             assert recyclerView != null;
             setupRecyclerView((RecyclerView) recyclerView,appBarLayout);
-            setPalette();
+            appBarLayout.setBackgroundColor(getResources().getColor(R.color.transparent));
+            appBarLayout.setContentScrimColor(getResources().getColor(R.color.colorPrimary));
+            //setPalette();
         }
     }
 

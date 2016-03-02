@@ -1,6 +1,7 @@
 package se.jolo.prototypenavigator.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import se.jolo.prototypenavigator.deserializers.StopItemViewAdapter;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.task.ImageLoader;
+import se.jolo.prototypenavigator.utils.SimpleDividerItemDecoration;
 import se.jolo.prototypenavigator.utils.UrlBuilder;
 
 
@@ -89,8 +91,10 @@ public class RouteDetailFragment extends Fragment {
 
             View recyclerView = activity.findViewById(R.id.route_list);
             assert recyclerView != null;
-            setupRecyclerView((RecyclerView) recyclerView,appBarLayout);
-            setPalette();
+            setupRecyclerView((RecyclerView) recyclerView,appBarLayout,getContext());
+            appBarLayout.setBackgroundColor(getResources().getColor(R.color.transparent));
+            appBarLayout.setContentScrimColor(getResources().getColor(R.color.colorPrimary));
+            //setPalette();
         }
     }
 
@@ -108,7 +112,8 @@ public class RouteDetailFragment extends Fragment {
 
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView, CollapsingToolbarLayout collapsingToolbarLayout) {
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, CollapsingToolbarLayout collapsingToolbarLayout,Context context) {
+        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
         recyclerView.setAdapter(new StopItemViewAdapter(routeItem.getStopPointItems(), collapsingToolbarLayout));
     }
 

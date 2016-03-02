@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textSize="11dp"
+        android:text="@string/app_name"
+        android:layout_alignParentLeft="true"/>
+
+    <TableLayout
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:src="@drawable/abc_btn_radio_to_on_mtrl_000"
+                android:layout_height="wrap_content"
+                android:id="@+id/odrH"
+                android:layout_column="0" />
+
+            <ImageView
+                android:src="@drawable/abc_btn_radio_to_on_mtrl_000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/odrV"
+                android:layout_column="1" />
+            <ImageView
+                android:src="@drawable/abc_btn_radio_to_on_mtrl_000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/odrF"
+                android:layout_column="1" />
+            <ImageView
+                android:src="@drawable/abc_btn_radio_to_on_mtrl_000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/odrK"
+                android:layout_column="1" />
+            <ImageView
+                android:src="@drawable/abc_btn_radio_to_on_mtrl_000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/odrT"
+                android:layout_column="1" />
+            <ImageView
+                android:src="@drawable/abc_btn_radio_to_on_mtrl_000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/odrL"
+                android:layout_column="1" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textAlignment="center"
+                android:id="@+id/sumOdrH"
+                android:layout_column="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="10"
+                android:id="@+id/sumOdrV"
+                android:layout_column="1" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textAlignment="center"
+                android:id="@+id/sumOdrF"
+                android:layout_column="0" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textAlignment="center"
+                android:id="@+id/sumOdrK"
+                android:layout_column="0" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textAlignment="center"
+                android:id="@+id/sumOdrT"
+                android:layout_column="0" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textAlignment="center"
+                android:id="@+id/sumOdrL"
+                android:layout_column="0" />
+
+        </TableRow>
+    </TableLayout>
+</RelativeLayout>

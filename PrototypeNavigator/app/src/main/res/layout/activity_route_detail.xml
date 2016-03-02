@@ -20,7 +20,9 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
+            app:toolbarId="@+id/toolbar"
+            app:expandedTitleTextAppearance="@android:color/transparent"
+            >
 
             <ImageView
                 android:id="@+id/image"
@@ -36,7 +38,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

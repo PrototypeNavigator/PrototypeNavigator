@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">PrototypeNavigator</string>
     <string name="title_route_detail">Route Detail</string>
+    <string name="tvWelcome">pnpn!</string>
+    <string name="btnLoadNewRoute">New route</string>
+    <string name="btnLoadPreRoute">Previous route</string>
 </resources>

@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
+import android.widget.TextView;
 
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.utils.Locator;
@@ -14,12 +16,18 @@ import se.jolo.prototypenavigator.utils.Locator;
 public final class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = "MainActivity";
+    private TextView tvWelcome;
+    private Button btnLoadNewRoute, btnLoadPreRoute;
     private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        tvWelcome = (TextView) findViewById(R.id.tvWelcome);
+        btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
+        btnLoadPreRoute = (Button) findViewById(R.id.btnLoadPreRoute);
 
         if (savedInstanceState != null) {
             Locator.isGpsEnabled = savedInstanceState.getBoolean("gps");

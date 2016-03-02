@@ -31,7 +31,7 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.route_list_content, parent, false);
+                .inflate(R.layout.stop_list_content, parent, false);
         return new ViewHolder(view);
     }
 
@@ -39,7 +39,7 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = stopPointItems.get(position);
         holder.mIdView.setText(stopPointItems.get(position).getName());
-        holder.mContentView.setText(stopPointItems.get(position).getType());
+        holder.mContentView.setText("54");
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +69,7 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mContentView = (TextView) view.findViewById(R.id.sumOdrF);
         }
 
         @Override

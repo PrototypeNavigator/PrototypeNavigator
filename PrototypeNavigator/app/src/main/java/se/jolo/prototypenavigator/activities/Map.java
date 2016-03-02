@@ -120,15 +120,18 @@ public class Map extends AppCompatActivity {
             }
         });
 
-        mapView.onCreate(savedInstanceState);
+        // nedan anropas i loadMap(); ?
+        //mapView.onCreate(savedInstanceState);
     }
 
     public void toggleBearing() throws SecurityException {
-        mapView.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
+
+        //mapView.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
     }
 
     public void animateCamera(LatLng latLng) {
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 13, 45, 0)));
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+                routeManager.getCameraPosition(latLng)));
     }
 
     private MapView loadMap(Bundle savedInstanceState) {
@@ -139,6 +142,7 @@ public class Map extends AppCompatActivity {
 
         mapView.setCompassGravity(Gravity.BOTTOM);
         mapView.setLogoVisibility(View.INVISIBLE);
+
         mapView.onCreate(savedInstanceState);
 
         mapView.setOnMapClickListener(new MapView.OnMapClickListener() {

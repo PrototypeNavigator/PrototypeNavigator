@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.CharacterPickerDialog;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -36,11 +38,21 @@ public final class MainActivity extends AppCompatActivity {
 
         initGps();
 
-        if (Locator.allowInit) {
-            init();
-            Locator.allowInit = false;
-        }
+        btnLoadNewRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Locator.allowInit) {
+                    init();
+                }
+            }
+        });
 
+        btnLoadPreRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvWelcome.setText("the button will work in time ;)");
+            }
+        });
     }
 
     public void initGps() {
@@ -50,6 +62,7 @@ public final class MainActivity extends AppCompatActivity {
         if (!Locator.isGpsEnabled) {
             showGpsDialog();
             Locator.isGpsEnabled = Locator.isGpsEnabled(this);
+            Locator.allowInit = Locator.isGpsEnabled;
         }
 
         if (Locator.isGpsEnabled) {

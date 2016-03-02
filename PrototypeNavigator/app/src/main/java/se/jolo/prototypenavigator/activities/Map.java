@@ -13,6 +13,7 @@ import android.transition.AutoTransition;
 import android.transition.Slide;
 import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -122,13 +123,9 @@ public class Map extends AppCompatActivity {
         mapView.onCreate(savedInstanceState);
     }
 
-
     public void toggleBearing() throws SecurityException {
         mapView.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
     }
-
-    ;
-
 
     public void animateCamera(LatLng latLng) {
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 13, 45, 0)));
@@ -140,6 +137,8 @@ public class Map extends AppCompatActivity {
         mapView.setAccessToken(MAPBOX_ACCESS_TOKEN);
         mapView.setStyleUrl(Style.MAPBOX_STREETS);
 
+        mapView.setCompassGravity(Gravity.BOTTOM);
+        mapView.setLogoVisibility(View.INVISIBLE);
         mapView.onCreate(savedInstanceState);
 
         mapView.setOnMapClickListener(new MapView.OnMapClickListener() {

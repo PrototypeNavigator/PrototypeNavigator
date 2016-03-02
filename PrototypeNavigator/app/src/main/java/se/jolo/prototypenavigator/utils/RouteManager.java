@@ -64,8 +64,7 @@ public final class RouteManager extends Locator {
         super.onLocationChanged(location);
 
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
-                new CameraPosition(
-                        new LatLng(location.getLatitude(), location.getLongitude()), 13, 45, 0)));
+                getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
 
         setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
         removePolyline(getPolylineToNextStop());
@@ -121,6 +120,15 @@ public final class RouteManager extends Locator {
         return polylineToNextStop;
     }
 
+    public CameraPosition getCameraPosition(LatLng latLng) {
+        return new CameraPosition.Builder()
+                .bearing((steps != null) ? (float) steps.get(0).getHeading() : 0.0f)
+                .target(latLng)
+                .tilt(80f)
+                .zoom(15f)
+                .build();
+    }
+
     /*********************************************************************************************/
     /****                                     Routing                                         ****/
     /*********************************************************************************************/
@@ -142,6 +150,7 @@ public final class RouteManager extends Locator {
                 .setAccessToken(MAPBOX_ACCESS_TOKEN)
                 .setWaypoints(getCurrentRoute())
                 .setProfile(DirectionsCriteria.PROFILE_DRIVING)
+                .setSteps(true)
                 .build();
 
         md.enqueue(new Callback<DirectionsResponse>() {

@@ -1,9 +1,12 @@
 package se.jolo.prototypenavigator.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Joel on 2016-02-08.
  */
-public final class Service {
+public final class Service implements Parcelable {
 
     private String agreementArrivalTime;    // should be time
     private String agreementDepartureTime;  // should be time
@@ -53,4 +56,43 @@ public final class Service {
     public String getServiceName() {
         return serviceName;
     }
+
+    protected Service(Parcel in) {
+        agreementArrivalTime = in.readString();
+        agreementDepartureTime = in.readString();
+        delivery = in.readByte() != 0x00;
+        pickup = in.readByte() != 0x00;
+        products = in.readString();
+        serviceCode = in.readString();
+        serviceName = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(agreementArrivalTime);
+        dest.writeString(agreementDepartureTime);
+        dest.writeByte((byte) (delivery ? 0x01 : 0x00));
+        dest.writeByte((byte) (pickup ? 0x01 : 0x00));
+        dest.writeString(products);
+        dest.writeString(serviceCode);
+        dest.writeString(serviceName);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Service> CREATOR = new Parcelable.Creator<Service>() {
+        @Override
+        public Service createFromParcel(Parcel in) {
+            return new Service(in);
+        }
+
+        @Override
+        public Service[] newArray(int size) {
+            return new Service[size];
+        }
+    };
 }

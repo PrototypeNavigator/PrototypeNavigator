@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.AutoTransition;
 import android.transition.Slide;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -55,6 +56,7 @@ public class Map extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+
         Bundle extras = getIntent().getExtras();
         Loader loader = new Loader(this);
 
@@ -64,7 +66,7 @@ public class Map extends AppCompatActivity {
         Locator.toggleTracking(this, this, mapView);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        myToolbar.setTitle("test");
+
 
         textView = (TextView) findViewById(R.id.textTop);
         viewGroup = (ViewGroup) findViewById(R.id.textAndMenu);
@@ -112,7 +114,7 @@ public class Map extends AppCompatActivity {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                TransitionManager.beginDelayedTransition(viewGroup, new Slide());
+                TransitionManager.beginDelayedTransition(viewGroup, new AutoTransition());
                 toggleVisibility(textView);
             }
         });
@@ -189,6 +191,9 @@ public class Map extends AppCompatActivity {
                 android.os.Process.killProcess(android.os.Process.myPid());
                 return true;
             case R.id.showDetails:
+                Intent sendToDetails = new Intent(this,RouteListActivity.class);
+                sendToDetails.putExtra("route",route);
+                startActivity(sendToDetails);
                 return true;
         }
         return super.onOptionsItemSelected(item);

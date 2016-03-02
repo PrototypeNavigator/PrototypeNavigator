@@ -20,11 +20,15 @@ import com.mapbox.mapboxsdk.views.MapView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+
+import se.jolo.prototypenavigator.utils.CallCounter;
+import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 
@@ -132,9 +136,6 @@ public final class RouteManager extends Locator {
         return positionAndNextWaypoint;
     }
 
-    /**
-     * Route next StopPoint
-     */
     public RouteManager loadRoute() {
 
         MapboxDirections md = new MapboxDirections.Builder()
@@ -190,6 +191,7 @@ public final class RouteManager extends Locator {
     public RouteManager loadRouteItemsAndWaypoints(Route route) {
 
         waypoints = new ArrayList<>();
+
         routeItems = route.getRouteItems();
 
         for (RouteItem ri : routeItems) {
@@ -256,7 +258,7 @@ public final class RouteManager extends Locator {
     }
 
     /*********************************************************************************************/
-    /****                                   Informatin                                        ****/
+    /****                                   Information                                       ****/
     /*********************************************************************************************/
     private void printResponseMessage(Response<DirectionsResponse> response) {
         if (!response.isSuccess()) {

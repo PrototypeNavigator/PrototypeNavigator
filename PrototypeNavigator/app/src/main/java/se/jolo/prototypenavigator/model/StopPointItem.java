@@ -146,6 +146,25 @@ public class StopPointItem implements Parcelable {
         dest.writeValue(service);
     }
 
+    @Override
+    public String toString() {
+        return "StopPointItem{" +
+                "uuid='" + uuid + '\'' +
+                ", type='" + type + '\'' +
+                ", name='" + name + '\'' +
+                ", deliveryAddress='" + deliveryAddress + '\'' +
+                ", deliveryPostalCode=" + deliveryPostalCode +
+                ", easting=" + easting +
+                ", northing=" + northing +
+                ", freeText='" + freeText + '\'' +
+                ", plannedArrivalTime='" + plannedArrivalTime + '\'' +
+                ", plannedDepartureTime='" + plannedDepartureTime + '\'' +
+                ", validityDays=" + validityDays +
+                ", deliveryPoints=" + deliveryPoints +
+                ", service=" + service +
+                '}';
+    }
+
     @SuppressWarnings("unused")
     public static final Parcelable.Creator<StopPointItem> CREATOR = new Parcelable.Creator<StopPointItem>() {
         @Override

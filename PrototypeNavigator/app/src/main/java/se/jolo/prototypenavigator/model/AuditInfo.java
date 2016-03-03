@@ -58,4 +58,12 @@ public final class AuditInfo implements Parcelable {
             return new AuditInfo[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "AuditInfo{" +
+                "createdAt=" + createdAt +
+                ", createdBy='" + createdBy + '\'' +
+                '}';
+    }
 }

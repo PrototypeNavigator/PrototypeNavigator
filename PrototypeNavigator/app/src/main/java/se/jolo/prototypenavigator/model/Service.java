@@ -95,4 +95,17 @@ public final class Service implements Parcelable {
             return new Service[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Service{" +
+                "agreementArrivalTime='" + agreementArrivalTime + '\'' +
+                ", agreementDepartureTime='" + agreementDepartureTime + '\'' +
+                ", delivery=" + delivery +
+                ", pickup=" + pickup +
+                ", products='" + products + '\'' +
+                ", serviceCode='" + serviceCode + '\'' +
+                ", serviceName='" + serviceName + '\'' +
+                '}';
+    }
 }

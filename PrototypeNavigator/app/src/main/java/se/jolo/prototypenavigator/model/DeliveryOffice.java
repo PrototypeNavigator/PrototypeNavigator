@@ -54,4 +54,12 @@ public class DeliveryOffice implements Parcelable {
             return new DeliveryOffice[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "DeliveryOffice{" +
+                "name='" + name + '\'' +
+                ", uuid='" + uuid + '\'' +
+                '}';
+    }
 }

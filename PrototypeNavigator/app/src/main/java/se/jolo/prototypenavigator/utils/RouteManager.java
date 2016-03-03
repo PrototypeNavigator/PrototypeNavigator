@@ -156,6 +156,7 @@ public final class RouteManager extends Locator {
         md.enqueue(new Callback<DirectionsResponse>() {
 
             @Override
+
             public void onResponse(Response<DirectionsResponse> response, Retrofit retrofit) {
                 CallCounter.count();
 

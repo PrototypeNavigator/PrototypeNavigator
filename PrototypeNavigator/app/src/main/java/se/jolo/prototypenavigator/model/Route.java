@@ -107,4 +107,17 @@ public final class Route implements Parcelable {
             return new Route[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Route{" +
+                "auditInfo=" + auditInfo +
+                ", deliveryOffice=" + deliveryOffice +
+                ", name=" + name +
+                ", type='" + type + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", validityDays=" + validityDays +
+                ", routeItems=" + routeItems +
+                '}';
+    }
 }

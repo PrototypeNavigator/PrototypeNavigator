@@ -41,7 +41,7 @@ public class RouteViewAdapter
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.routeItem = route.getRouteItems().get(position);
         holder.mIdView.setText(route.getRouteItems().get(position).getStopPointItems().get(0).getDeliveryAddress());
-        //holder.mContentView.setText(route.getRouteItems().get(position).getStopPointItems().get(0).getDeliveryAddress());
+        //holder.sumOdrH.setText(route.getRouteItems().get(position).getStopPointItems().get(0).getDeliveryAddress());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -78,4 +78,15 @@ public class StopPoint implements Parcelable {
             return new StopPoint[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "StopPoint{" +
+                "easting=" + easting +
+                ", northing=" + northing +
+                ", type='" + type + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", freeText='" + freeText + '\'' +
+                '}';
+    }
 }

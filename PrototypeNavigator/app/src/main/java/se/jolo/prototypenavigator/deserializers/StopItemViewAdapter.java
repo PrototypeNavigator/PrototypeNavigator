@@ -1,10 +1,19 @@
 package se.jolo.prototypenavigator.deserializers;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import java.util.List;
@@ -12,6 +21,7 @@ import java.util.List;
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.model.DeliveryPoint;
 import se.jolo.prototypenavigator.model.OdrRecipient;
+import se.jolo.prototypenavigator.model.StopPoint;
 import se.jolo.prototypenavigator.model.StopPointItem;
 
 
@@ -20,12 +30,15 @@ import se.jolo.prototypenavigator.model.StopPointItem;
  */
 public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapter.ViewHolder> {
 
+    Point p;
+    private Activity activity;
     private final List<StopPointItem> stopPointItems;
     private final CollapsingToolbarLayout collapsingToolbarLayout;
 
-    public StopItemViewAdapter(List<StopPointItem> stopPointItems, CollapsingToolbarLayout collapsingToolbarLayout) {
+    public StopItemViewAdapter(List<StopPointItem> stopPointItems, CollapsingToolbarLayout collapsingToolbarLayout,Activity activity) {
         this.stopPointItems = stopPointItems;
         this.collapsingToolbarLayout=collapsingToolbarLayout;
+        this.activity = activity;
     }
 
     @Override
@@ -49,7 +62,7 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
                 Intent intent = new Intent(context, RouteDetailActivity.class);
                 intent.putExtra(RouteDetailFragment.ARG_ITEM_ID, holder.routeItem.getUuid());
                 context.startActivity(intent);*/
-
+                showPopup(activity, holder.stopPointItem,v.getPivotY(),v.getPivotX());
             }
         });
     }
@@ -87,6 +100,46 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
         public String toString() {
             return super.toString() + " '" + sumOdrH.getText() + "'";
         }
+    }
+
+
+
+
+    private void showPopup(final Activity activity, StopPointItem stopPointItem,float y,float x) {
+        p = new Point();
+        p.set((int)x,(int)y);
+        // Inflate the popup_layout.xml
+        LinearLayout viewGroup = (LinearLayout) activity.findViewById(R.id.popup);
+        LayoutInflater layoutInflater = (LayoutInflater) activity
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.popup_layout, viewGroup);
+        TextView textView = (TextView) layout.findViewById(R.id.popupText);
+
+        textView.setText(stopPointItem.toString());
+
+        // Creating the PopupWindow
+        final PopupWindow popup = new PopupWindow(activity);
+        popup.setAnimationStyle(R.style.animationName);
+        popup.setContentView(layout);
+        popup.setFocusable(true);
+
+        // Some offset to align the popup a bit to the right, and a bit down, relative to button's position.
+
+        // Clear the default translucent background
+        popup.setBackgroundDrawable(new BitmapDrawable());
+
+        // Displaying the popup at the specified location, + offsets.
+        popup.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
+        // Getting a reference to Close button, and close the popup when clicked.
+        Button close = (Button) layout.findViewById(R.id.close);
+        close.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                popup.dismiss();
+            }
+        });
     }
 
     public void odrChecker(StopPointItem stopPointItem,ViewHolder holder){

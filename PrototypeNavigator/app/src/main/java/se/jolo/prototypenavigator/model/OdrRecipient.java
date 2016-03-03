@@ -9,6 +9,15 @@ import android.os.Parcelable;
 public class OdrRecipient implements Parcelable {
 
     private int amount = 0;
+
+    @Override
+    public String toString() {
+        return "OdrRecipient{" +
+                "amount=" + amount +
+                ", type='" + type + '\'' +
+                '}';
+    }
+
     private String type = "";
 
     public OdrRecipient() {}

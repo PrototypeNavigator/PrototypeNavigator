@@ -39,11 +39,13 @@ public class RouteDetailFragment extends Fragment {
     private RouteItem routeItem;
     private Route route;
     private CollapsingToolbarLayout appBarLayout;
+    private Activity activity;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public RouteDetailFragment() {
+    public RouteDetailFragment(Activity activity) {
+        this.activity = activity;
     }
 
     @Override
@@ -114,7 +116,7 @@ public class RouteDetailFragment extends Fragment {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, CollapsingToolbarLayout collapsingToolbarLayout,Context context) {
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
-        recyclerView.setAdapter(new StopItemViewAdapter(routeItem.getStopPointItems(), collapsingToolbarLayout));
+        recyclerView.setAdapter(new StopItemViewAdapter(routeItem.getStopPointItems(), collapsingToolbarLayout, activity));
     }
 
 

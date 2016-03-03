@@ -54,4 +54,12 @@ public class Resident implements Parcelable {
             return new Resident[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Resident{" +
+                "firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                '}';
+    }
 }

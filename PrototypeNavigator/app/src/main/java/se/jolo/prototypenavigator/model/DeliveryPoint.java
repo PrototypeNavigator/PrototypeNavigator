@@ -12,6 +12,16 @@ import java.util.List;
 public class DeliveryPoint implements Parcelable {
 
     private boolean odr;
+
+    @Override
+    public String toString() {
+        return "DeliveryPoint{" +
+                "odr=" + odr +
+                ", odrRecipients=" + odrRecipients +
+                ", residents=" + residents +
+                '}';
+    }
+
     private List<OdrRecipient> odrRecipients;
     private List<Resident> residents;
 

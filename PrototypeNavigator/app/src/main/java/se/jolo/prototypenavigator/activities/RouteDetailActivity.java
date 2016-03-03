@@ -51,7 +51,7 @@ private Route route;
             arguments.putInt(RouteDetailFragment.ARG_ITEM_ID,
                     (getIntent().getIntExtra(RouteDetailFragment.ARG_ITEM_ID,46)));
             arguments.putParcelable("route",(route));
-            RouteDetailFragment fragment = new RouteDetailFragment();
+            RouteDetailFragment fragment = new RouteDetailFragment(this);
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.route_list, fragment)

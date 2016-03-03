@@ -28,6 +28,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
     private Button btnLoadNewRoute, btnLoadPreRoute;
     private Spinner spnrLoadRoute;
     private Loader loader;
+    private String fileName;
     private Uri uri;
 
     @Override
@@ -41,60 +42,66 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         }
 
         tvWelcome = (TextView) findViewById(R.id.tvWelcome);
-        btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
-        btnLoadPreRoute = (Button) findViewById(R.id.btnLoadPreRoute);
 
         initGps();
         setButtonClickListener();
         loadSpinner();
-
-
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         tvWelcome.setText(parent.getItemAtPosition(position).toString());
+        fileName = parent.getItemAtPosition(position).toString();
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {}
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
 
     private void setButtonClickListener() {
 
+        btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
         btnLoadNewRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Locator.allowInit) {
-                    init();
+                    initNewFile();
                 }
             }
         });
 
+        btnLoadPreRoute = (Button) findViewById(R.id.btnLoadPreRoute);
         btnLoadPreRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (Locator.allowInit) {
+                    initPreLoadedFile();
+                }
             }
         });
     }
 
     public void loadSpinner() {
+
         loader = new Loader(this);
 
         spnrLoadRoute = (Spinner) findViewById(R.id.spnrLoadRoute);
         spnrLoadRoute.setOnItemSelectedListener(this);
 
-        List<String> fileNames = new ArrayList<>();
+        if (loader.loadSavedFiles() != null) {
 
-        File[] files = loader.loadSavedFiles();
-        for (File f : files) {
-            fileNames.add(f.getName());
+            List<String> fileNames = new ArrayList<>();
+
+            File[] files = loader.loadSavedFiles();
+            for (File f : files) {
+                fileNames.add(f.getName());
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    this, R.layout.support_simple_spinner_dropdown_item, fileNames);
+            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+            spnrLoadRoute.setAdapter(adapter);
         }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, R.layout.support_simple_spinner_dropdown_item, fileNames);
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spnrLoadRoute.setAdapter(adapter);
     }
 
     public void initGps() {
@@ -112,7 +119,12 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         }
     }
 
-    public void init() {
+    public void initPreLoadedFile() {
+        Intent mapIntent = new Intent(this, Map.class).putExtra("str", fileName);
+        startActivity(mapIntent);
+    }
+
+    public void initNewFile() {
 
         Bundle extras = getIntent().getExtras();
 

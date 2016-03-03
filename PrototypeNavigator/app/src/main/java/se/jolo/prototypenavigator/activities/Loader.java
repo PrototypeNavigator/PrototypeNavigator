@@ -36,7 +36,10 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         saveLoadedFile(xmlFromFile);
 
         return xmlFromFile;
+    }
 
+    private String readFileContent(File file) throws IOException {
+        return FileUtils.readFileToString(file);
     }
 
     private File streamToFile(InputStream in) throws IOException {
@@ -51,17 +54,45 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         return tempFile;
     }
 
+    private boolean checkForDuplicate(FileOutputStream out, String content) throws IOException {
+
+        File tmpFile = File.createTempFile("tmp", ".tmp");
+        tmpFile.deleteOnExit();
+
+        out = new FileOutputStream(tmpFile);
+        out.write(content.getBytes());
+        out.close();
+
+        for (File f : loadSavedFiles()) {
+            if (FileUtils.contentEquals(tmpFile, f)) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private boolean saveLoadedFile(String content) {
 
+        FileOutputStream out = null;
+
         try {
-            FileOutputStream out = new FileOutputStream(
-                    new File(context.getFilesDir(), "RouteXmlFile-" + new Random().nextInt(1000)));
-            out.write(content.getBytes());
-            out.close();
+            if (checkForDuplicate(out, content)) {
+                Log.d("Loader", "file exists");
 
-            loadSavedFiles();
+                return false;
+            } else {
 
-            return true;
+                out = new FileOutputStream(new File(
+                        context.getFilesDir(), "RouteXmlFile-" + new Random().nextInt(1000)));
+                out.write(content.getBytes());
+                out.close();
+
+                Log.d("Loader", "new file saved");
+
+                return true;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,15 +104,17 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         return context.getFilesDir().listFiles();
     }
 
-    public void getPreLoadedFileAsString(String fileName) {
+    public Route getPreLoadedRoute(String fileName) throws IOException {
 
         File[] files = loadSavedFiles();
 
         for (File f : files) {
             if (f.getName().equals(fileName)) {
-
+                return loadRoute(readFileContent(f));
             }
         }
+
+        return null;
     }
 
     private Route loadRoute(String xmlString) {

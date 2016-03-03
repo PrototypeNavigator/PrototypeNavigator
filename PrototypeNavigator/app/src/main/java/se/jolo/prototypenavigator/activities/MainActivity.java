@@ -7,19 +7,27 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.text.method.CharacterPickerDialog;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.utils.Locator;
 
-public final class MainActivity extends AppCompatActivity {
+public final class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private final static String LOG_TAG = "MainActivity";
     private TextView tvWelcome;
     private Button btnLoadNewRoute, btnLoadPreRoute;
+    private Spinner spnrLoadRoute;
+    private Loader loader;
     private Uri uri;
 
     @Override
@@ -27,16 +35,31 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tvWelcome = (TextView) findViewById(R.id.tvWelcome);
-        btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
-        btnLoadPreRoute = (Button) findViewById(R.id.btnLoadPreRoute);
-
         if (savedInstanceState != null) {
             Locator.isGpsEnabled = savedInstanceState.getBoolean("gps");
             Locator.allowInit = savedInstanceState.getBoolean("init");
         }
 
+        tvWelcome = (TextView) findViewById(R.id.tvWelcome);
+        btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
+        btnLoadPreRoute = (Button) findViewById(R.id.btnLoadPreRoute);
+
         initGps();
+        setButtonClickListener();
+        loadSpinner();
+
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        tvWelcome.setText(parent.getItemAtPosition(position).toString());
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {}
+
+    private void setButtonClickListener() {
 
         btnLoadNewRoute.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,9 +73,28 @@ public final class MainActivity extends AppCompatActivity {
         btnLoadPreRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tvWelcome.setText("the button will work in time ;)");
+
             }
         });
+    }
+
+    public void loadSpinner() {
+        loader = new Loader(this);
+
+        spnrLoadRoute = (Spinner) findViewById(R.id.spnrLoadRoute);
+        spnrLoadRoute.setOnItemSelectedListener(this);
+
+        List<String> fileNames = new ArrayList<>();
+
+        File[] files = loader.loadSavedFiles();
+        for (File f : files) {
+            fileNames.add(f.getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, R.layout.support_simple_spinner_dropdown_item, fileNames);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spnrLoadRoute.setAdapter(adapter);
     }
 
     public void initGps() {
@@ -71,6 +113,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     public void init() {
+
         Bundle extras = getIntent().getExtras();
 
         if (extras == null) {

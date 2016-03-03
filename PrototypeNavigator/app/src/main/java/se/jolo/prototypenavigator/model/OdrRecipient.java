@@ -8,8 +8,8 @@ import android.os.Parcelable;
  */
 public class OdrRecipient implements Parcelable {
 
-    private int amount;
-    private String type;
+    private int amount = 0;
+    private String type = "";
 
     public OdrRecipient() {}
 

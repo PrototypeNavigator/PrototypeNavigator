@@ -46,26 +46,26 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:id="@+id/odrF"
-                android:layout_column="1" />
+                android:layout_column="2" />
             <ImageView
                 android:src="@drawable/k2"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:id="@+id/odrK"
-                android:layout_column="1" />
+                android:layout_column="3" />
             <ImageView
                 android:src="@drawable/t2"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:id="@+id/odrT"
                 android:layout_gravity="center"
-                android:layout_column="1" />
+                android:layout_column="4" />
             <ImageView
                 android:src="@drawable/l2"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:id="@+id/odrL"
-                android:layout_column="1" />
+                android:layout_column="5" />
 
         </TableRow>
 
@@ -76,7 +76,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"
+                android:text="0"
                 android:textAlignment="center"
                 android:id="@+id/sumOdrH"
                 android:layout_column="0" />
@@ -85,37 +85,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:text="10"
+                android:text="0"
                 android:id="@+id/sumOdrV"
                 android:layout_column="1" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"
+                android:text="0"
                 android:textAlignment="center"
                 android:id="@+id/sumOdrF"
-                android:layout_column="0" />
+                android:layout_column="2" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"
+                android:text="0"
                 android:textAlignment="center"
                 android:id="@+id/sumOdrK"
-                android:layout_column="0" />
+                android:layout_column="3" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"
+                android:text="0"
                 android:textAlignment="center"
                 android:id="@+id/sumOdrT"
-                android:layout_column="0" />
+                android:layout_column="4" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1"
+                android:text="0"
                 android:textAlignment="center"
                 android:id="@+id/sumOdrL"
-                android:layout_column="0" />
+                android:layout_column="5" />
 
         </TableRow>
     </TableLayout>

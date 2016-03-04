@@ -110,8 +110,7 @@ public class Map extends AppCompatActivity {
             }
         });
 
-        // nedan anropas i loadMap(); ?
-        //mapView.onCreate(savedInstanceState);
+        mapView.onCreate(savedInstanceState);
     }
 
     public void loadRoute(Bundle extras, Loader loader) {
@@ -155,8 +154,6 @@ public class Map extends AppCompatActivity {
 
         mapView.setCompassGravity(Gravity.BOTTOM);
         mapView.setLogoVisibility(View.INVISIBLE);
-
-        mapView.onCreate(savedInstanceState);
 
         mapView.setOnMapClickListener(new MapView.OnMapClickListener() {
             @Override

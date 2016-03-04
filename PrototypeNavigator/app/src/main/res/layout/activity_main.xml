@@ -8,7 +8,10 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="se.jolo.prototypenavigator.activities.MainActivity">
+    android:background="@color/colorPrimary"
+    tools:context="se.jolo.prototypenavigator.activities.MainActivity"
+    android:backgroundTint="@color/colorPrimary"
+    >
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,7 +28,10 @@
         android:text="@string/btnLoadNewRoute"
         android:id="@+id/btnLoadNewRoute"
         android:layout_above="@+id/spnrLoadRoute"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:theme="@style/button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        />
 
     <Button
         android:layout_width="wrap_content"
@@ -33,13 +39,27 @@
         android:text="@string/btnLoadPreRoute"
         android:id="@+id/btnLoadPreRoute"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:theme="@style/button"
+        style="@style/Widget.AppCompat.Button.Colored"/>
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/spnrLoadRoute"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:popupTheme="@android:anim/cycle_interpolator"
+        style="?android:attr/spinnerItemStyle"
+        android:backgroundTint="@color/colorAccent2"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/logo"
+        android:layout_above="@+id/btnLoadNewRoute"
+        android:layout_alignParentEnd="true" />
+
 
 </RelativeLayout>

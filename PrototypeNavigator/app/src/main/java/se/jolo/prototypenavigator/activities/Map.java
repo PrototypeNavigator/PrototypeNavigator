@@ -63,8 +63,8 @@ public class Map extends AppCompatActivity {
 
         mapView = loadMap(savedInstanceState);
 
-        Locator.enableLocation(this, this, mapView);
-        Locator.toggleTracking(this, this, mapView);
+        Locator.enableLocation(this.getApplicationContext(), this, mapView);
+        Locator.toggleTracking(this.getApplicationContext(), this, mapView);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -77,7 +77,7 @@ public class Map extends AppCompatActivity {
         loadRoute(extras, loader);
 
         routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN);
-        routeManager.setCurrentLocation(Locator.getLocation(this))
+        routeManager.setCurrentLocation(Locator.getLocation(this.getApplicationContext()))
                 .loadRouteItemsAndWaypoints(route)
                 .loadRoute();
 

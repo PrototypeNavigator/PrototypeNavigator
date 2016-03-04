@@ -25,21 +25,12 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
 
     private final static String LOG_TAG = "MainActivity";
     private TextView tvWelcome;
-    private Button btnLoadNewRoute, btnLoadPreRoute;
-    private Spinner spnrLoadRoute;
-    private Loader loader;
     private String fileName;
-    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if (savedInstanceState != null) {
-            Locator.isGpsEnabled = savedInstanceState.getBoolean("gps");
-            Locator.allowInit = savedInstanceState.getBoolean("init");
-        }
 
         tvWelcome = (TextView) findViewById(R.id.tvWelcome);
 
@@ -59,8 +50,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
     }
 
     private void setButtonClickListener() {
-
-        btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
+        Button btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
         btnLoadNewRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +60,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
             }
         });
 
-        btnLoadPreRoute = (Button) findViewById(R.id.btnLoadPreRoute);
+        Button btnLoadPreRoute = (Button) findViewById(R.id.btnLoadPreRoute);
         btnLoadPreRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,9 +73,9 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
 
     public void loadSpinner() {
 
-        loader = new Loader(this);
+        Loader loader = new Loader(this);
 
-        spnrLoadRoute = (Spinner) findViewById(R.id.spnrLoadRoute);
+        Spinner spnrLoadRoute = (Spinner) findViewById(R.id.spnrLoadRoute);
         spnrLoadRoute.setOnItemSelectedListener(this);
 
         if (loader.loadSavedFiles() != null) {
@@ -132,7 +122,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
             Intent switchToFileBrowser = new Intent(this, FileBrowser.class);
             startActivity(switchToFileBrowser);
         } else {
-            uri = (Uri) extras.get("uri");
+            Uri uri = (Uri) extras.get("uri");
             Intent mapIntent = new Intent(this, Map.class).putExtra("uri", uri);
             startActivity(mapIntent);
         }
@@ -193,9 +183,6 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean("gps", Locator.isGpsEnabled);
-        outState.putBoolean("init", Locator.allowInit);
-
         super.onSaveInstanceState(outState);
     }
 }

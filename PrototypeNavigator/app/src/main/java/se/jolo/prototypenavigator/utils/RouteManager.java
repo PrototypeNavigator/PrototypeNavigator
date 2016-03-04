@@ -202,6 +202,8 @@ public final class RouteManager extends Locator {
 
         waypoints = new ArrayList<>();
 
+        routeItems = new ArrayList<>();
+
         routeItems = route.getRouteItems();
 
         for (RouteItem ri : routeItems) {

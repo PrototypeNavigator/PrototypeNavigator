@@ -30,6 +30,7 @@ import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -57,7 +58,6 @@ public class Map extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-
         Bundle extras = getIntent().getExtras();
         Loader loader = new Loader(this);
 
@@ -68,23 +68,13 @@ public class Map extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
-
         textView = (TextView) findViewById(R.id.textTop);
         viewGroup = (ViewGroup) findViewById(R.id.textAndMenu);
         setSupportActionBar(myToolbar);
 
         findMeBtn = (FloatingActionButton) findViewById(R.id.findMeBtn);
-        uri = (Uri) extras.get("uri");
 
-        loader.execute(uri);
-
-
-        try {
-            route = loader.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
+        loadRoute(extras, loader);
 
         routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN);
         routeManager.setCurrentLocation(Locator.getLocation(this))
@@ -122,6 +112,29 @@ public class Map extends AppCompatActivity {
 
         // nedan anropas i loadMap(); ?
         //mapView.onCreate(savedInstanceState);
+    }
+
+    public void loadRoute(Bundle extras, Loader loader) {
+
+        if (extras.get("uri") != null) {
+
+            uri = (Uri) extras.get("uri");
+            loader.execute(uri);
+
+            try {
+                route = loader.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        } else if (extras.get("str") != null) {
+
+            try {
+                route = loader.getPreLoadedRoute(extras.getString("str"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void toggleBearing() throws SecurityException {
@@ -194,8 +207,8 @@ public class Map extends AppCompatActivity {
                 android.os.Process.killProcess(android.os.Process.myPid());
                 return true;
             case R.id.showDetails:
-                Intent sendToDetails = new Intent(this,RouteListActivity.class);
-                sendToDetails.putExtra("route",route);
+                Intent sendToDetails = new Intent(this, RouteListActivity.class);
+                sendToDetails.putExtra("route", route);
                 startActivity(sendToDetails);
                 return true;
         }

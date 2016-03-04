@@ -29,7 +29,7 @@ public class FileBrowser extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
+
         Uri currentUri = null;
 
         Intent intent = new Intent(this, Map.class);

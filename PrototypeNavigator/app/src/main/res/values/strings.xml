@@ -2,6 +2,6 @@
     <string name="app_name">PrototypeNavigator</string>
     <string name="title_route_detail">Route Detail</string>
     <string name="tvWelcome">pnpn!</string>
-    <string name="btnLoadNewRoute">Ny rutt</string>
-    <string name="btnLoadPreRoute">Vald rutt</string>
+    <string name="btnLoadNewRoute">Ladda ny rutt</string>
+    <string name="btnLoadPreRoute">Välj rutt</string>
 </resources>

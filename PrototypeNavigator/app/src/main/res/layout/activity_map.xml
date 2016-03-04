@@ -23,7 +23,7 @@
             android:layout_height="?attr/actionBarSize"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            android:background="#8000"
+            android:background="@color/darkTransparent"
             android:textAlignment="center"
             android:titleTextColor="#fff"
             />
@@ -36,7 +36,7 @@
             android:textColor="#fff"
             android:textAlignment="center"
             android:textSize="50sp"
-            android:background="#8000"
+            android:background="@color/darkTransparent"
             android:elevation="2dp"
             android:layout_weight="0.6"
             android:layout_below="@+id/my_toolbar"
@@ -55,6 +55,8 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:src="@drawable/abc_btn_radio_to_on_mtrl_015"
-        android:id="@+id/findMeBtn" />
+        android:tint="@color/colorPrimaryDark"
+        android:id="@+id/findMeBtn"
+        mapbox:backgroundTint="@color/colorPrimary" />
 
 </RelativeLayout>

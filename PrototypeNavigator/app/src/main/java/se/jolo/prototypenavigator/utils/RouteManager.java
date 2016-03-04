@@ -20,48 +20,51 @@ import com.mapbox.mapboxsdk.views.MapView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-
-import se.jolo.prototypenavigator.utils.CallCounter;
-import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 
 /**
  * Created by Joel on 2016-02-24.
  */
-public final class RouteManager extends Locator {
+public final class RouteManager {
 
     private static final String LOG_TAG = "ROUTER";
     private Context context;
     private MapView mapView;
     private String MAPBOX_ACCESS_TOKEN = "";
-    private Location currentLocation;
-    private DirectionsRoute currentRoute;
+
     private List<Waypoint> waypoints;
     private List<RouteItem> routeItems;
     private List<RouteStep> steps;
+
     private boolean inProximity;
+    private Locator locator;
+    private Location currentLocation;
+
+    private DirectionsRoute currentRoute;
     private PolylineOptions polylineToNextStop;
 
-    public RouteManager(Context context, MapView mapView, String MAPBOX_ACCESS_TOKEN) {
+    public RouteManager(Context context, MapView mapView, String MAPBOX_ACCESS_TOKEN,
+                        Locator locator, Location currentLocation) {
         this.context = context;
         this.mapView = mapView;
         this.MAPBOX_ACCESS_TOKEN = MAPBOX_ACCESS_TOKEN;
+        this.locator = locator;
+        this.currentLocation = currentLocation;
         this.inProximity = false;
     }
 
     /*********************************************************************************************/
     /****                                     Location                                        ****/
     /*********************************************************************************************/
-    @Override
+    //@Override
     public void onLocationChanged(Location location) {
-        super.onLocationChanged(location);
+        //super.onLocationChanged(location);
 
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                 getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
@@ -73,7 +76,7 @@ public final class RouteManager extends Locator {
     }
 
     public Location getLocation() {
-        return Locator.getLocation(context);
+        return locator.getLocation();
     }
 
     public RouteManager setCurrentLocation(Location currentLocation) {
@@ -104,16 +107,13 @@ public final class RouteManager extends Locator {
 
     public boolean removePolyline(PolylineOptions polylineOptions) {
 
-        boolean removed = false;
-
         if (polylineOptions != null) {
             mapView.removeAnnotation(polylineOptions.getPolyline());
-            removed = true;
 
-            return removed;
+            return true;
         }
 
-        return removed;
+        return false;
     }
 
     public PolylineOptions getPolylineToNextStop() {

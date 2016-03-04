@@ -32,9 +32,13 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initGps();
+
+        Locator locator = new Locator(this, this);
+        locator.init();
+
         tvWelcome = (TextView) findViewById(R.id.tvWelcome);
 
-        initGps();
         setButtonClickListener();
         loadSpinner();
     }
@@ -46,8 +50,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     private void setButtonClickListener() {
         Button btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
@@ -94,21 +97,6 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         }
     }
 
-    public void initGps() {
-
-        Locator.isGpsEnabled = Locator.isGpsEnabled(this);
-
-        if (!Locator.isGpsEnabled) {
-            showGpsDialog();
-            Locator.isGpsEnabled = Locator.isGpsEnabled(this);
-            Locator.allowInit = Locator.isGpsEnabled;
-        }
-
-        if (Locator.isGpsEnabled) {
-            Locator.allowInit = true;
-        }
-    }
-
     public void initPreLoadedFile() {
         Intent mapIntent = new Intent(this, Map.class).putExtra("str", fileName);
         startActivity(mapIntent);
@@ -125,6 +113,21 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
             Uri uri = (Uri) extras.get("uri");
             Intent mapIntent = new Intent(this, Map.class).putExtra("uri", uri);
             startActivity(mapIntent);
+        }
+    }
+
+    public void initGps() {
+
+        Locator.isGpsEnabled = Locator.isGpsEnabled(this);
+
+        if (!Locator.isGpsEnabled) {
+            showGpsDialog();
+            Locator.isGpsEnabled = Locator.isGpsEnabled(this);
+            Locator.allowInit = Locator.isGpsEnabled;
+        }
+
+        if (Locator.isGpsEnabled) {
+            Locator.allowInit = true;
         }
     }
 

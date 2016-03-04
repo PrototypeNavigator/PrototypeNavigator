@@ -42,14 +42,20 @@ import se.jolo.prototypenavigator.model.Route;
 public class Map extends AppCompatActivity {
 
     private final static String LOG_TAG = "MapActivity";
-    private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
+    private final static String MAPBOX_ACCESS_TOKEN =
+            "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2b" +
+                    "XQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
+
     private FloatingActionButton findMeBtn;
-    private List<Waypoint> waypoints = null;
-    private MapView mapView;
-    private RouteManager routeManager;
     private TextView textView;
-    private ViewGroup viewGroup;
+
+
+    private List<Waypoint> waypoints = null;
+    private RouteManager routeManager;
+    private MapView mapView;
     private Route route;
+
+    private ViewGroup viewGroup;
     private Uri uri;
 
     @Override
@@ -58,13 +64,16 @@ public class Map extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        Locator locator = new Locator(this, this);
+        locator.init();
+
         Bundle extras = getIntent().getExtras();
         Loader loader = new Loader(this);
 
         mapView = loadMap(savedInstanceState);
 
-        Locator.enableLocation(this.getApplicationContext(), this, mapView);
-        Locator.toggleTracking(this.getApplicationContext(), this, mapView);
+        Locator.enableLocation(mapView);
+        Locator.toggleTracking(mapView);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -76,15 +85,15 @@ public class Map extends AppCompatActivity {
 
         loadRoute(extras, loader);
 
-        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN);
-        routeManager.setCurrentLocation(Locator.getLocation(this.getApplicationContext()))
-                .loadRouteItemsAndWaypoints(route)
-                .loadRoute();
+        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator,
+                locator.getLocation());
+        routeManager.loadRouteItemsAndWaypoints(route).loadRoute();
 
         waypoints = routeManager.getWaypoints();
 
         // centroid goes here
-        LatLng centroid = new LatLng(Locator.getLocation(this).getLatitude(), Locator.getLocation(this).getLongitude());
+        LatLng centroid = new LatLng(locator.getLocation().getLatitude(),
+                locator.getLocation().getLongitude());
         setCentroid(centroid);
 
         addMarkers(waypoints);
@@ -97,7 +106,8 @@ public class Map extends AppCompatActivity {
                 routeManager.onLocationChanged(routeManager.getLocation());
                 Toast.makeText(v.getContext(), "at: "
                         + routeManager.getNextStop().getOrder() + " "
-                        + routeManager.getNextStop().getStopPoint().getType(), Toast.LENGTH_LONG).show();
+                        + routeManager.getNextStop().getStopPoint().getType(),
+                        Toast.LENGTH_LONG).show();
             }
         });
 

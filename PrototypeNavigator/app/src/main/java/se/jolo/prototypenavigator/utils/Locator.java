@@ -16,7 +16,7 @@ import com.mapbox.mapboxsdk.views.MapView;
 /**
  * Created by Joel on 2016-02-25.
  */
-public class Locator {
+public class Locator implements LocationListener {
 
     private static final String LOG_TAG = "LOCATOR";
     private static final String GPS_PROVIDER = LocationManager.GPS_PROVIDER;
@@ -25,6 +25,7 @@ public class Locator {
 
     public static boolean isGpsEnabled = false;
     public static boolean allowInit = false;
+    public static boolean ableToGetLocation = false;
 
     private static LocationManager locationManager;
     private Location location;
@@ -32,35 +33,33 @@ public class Locator {
     private Context context;
     private Activity activity;
 
-    private Locator() {}
+    public Locator() {
+    }
 
     public Locator(Context context, Activity activity) {
         this.context = context;
         this.activity = activity;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        setLocation(location);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    @Override
+    public void onProviderEnabled(String provider) {}
+
+    @Override
+    public void onProviderDisabled(String provider) {}
+
     public void init() {
 
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                setLocation(location);
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-            }
-        };
+        LocationListener locationListener = this;
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -74,10 +73,13 @@ public class Locator {
             locationManager.requestLocationUpdates(GPS_PROVIDER, 10, 5, locationListener);
             locationManager.requestLocationUpdates(NETWORK_PROVIDER, 10, 5, locationListener);
             location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+
             if (location == null) {
                 location = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
             }
         }
+
+        ableToGetLocation = (location != null);
     }
 
     @SuppressWarnings("ResourceType")

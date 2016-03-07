@@ -31,7 +31,7 @@ import se.jolo.prototypenavigator.model.RouteItem;
 /**
  * Created by Joel on 2016-02-24.
  */
-public final class RouteManager {
+public final class RouteManager extends Locator {
 
     private static final String LOG_TAG = "ROUTER";
     private Context context;
@@ -50,21 +50,20 @@ public final class RouteManager {
     private PolylineOptions polylineToNextStop;
 
     public RouteManager(Context context, MapView mapView, String MAPBOX_ACCESS_TOKEN,
-                        Locator locator, Location currentLocation) {
+                        Locator locator) {
         this.context = context;
         this.mapView = mapView;
         this.MAPBOX_ACCESS_TOKEN = MAPBOX_ACCESS_TOKEN;
         this.locator = locator;
-        this.currentLocation = currentLocation;
         this.inProximity = false;
     }
 
     /*********************************************************************************************/
     /****                                     Location                                        ****/
     /*********************************************************************************************/
-    //@Override
+    @Override
     public void onLocationChanged(Location location) {
-        //super.onLocationChanged(location);
+        super.onLocationChanged(location);
 
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                 getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
@@ -76,6 +75,13 @@ public final class RouteManager {
     }
 
     public Location getLocation() {
+        if (!Locator.ableToGetLocation) {
+            currentLocation.setLatitude(routeItems.get(0).getStopPoint().getEasting());
+            currentLocation.setLongitude(routeItems.get(0).getStopPoint().getNorthing());
+
+            return currentLocation;
+        }
+
         return locator.getLocation();
     }
 
@@ -144,11 +150,22 @@ public final class RouteManager {
         return positionAndNextWaypoint;
     }
 
+    public List<Waypoint> getNoLocationRoute() {
+
+        List<Waypoint> noLocationRoute = new ArrayList<>();
+
+        for (int i = 0; i < 13; i++) {
+            noLocationRoute.add(waypoints.get(i));
+        }
+
+        return noLocationRoute;
+    }
+
     public RouteManager loadRoute() {
 
         MapboxDirections md = new MapboxDirections.Builder()
                 .setAccessToken(MAPBOX_ACCESS_TOKEN)
-                .setWaypoints(getCurrentRoute())
+                .setWaypoints((Locator.ableToGetLocation) ? getCurrentRoute() : getNoLocationRoute()) // location check
                 .setProfile(DirectionsCriteria.PROFILE_DRIVING)
                 .setSteps(true)
                 .build();
@@ -289,7 +306,9 @@ public final class RouteManager {
     }
 
     public void checkOffRoute(Waypoint target) {
-        if (currentRoute.isOffRoute(target)) {
+        if (currentRoute == null) {
+            showMessage("Unable to get location");
+        } else if (currentRoute.isOffRoute(target)) {
             showMessage("You are off-route.");
         } else {
             showMessage("You are not off-route.");

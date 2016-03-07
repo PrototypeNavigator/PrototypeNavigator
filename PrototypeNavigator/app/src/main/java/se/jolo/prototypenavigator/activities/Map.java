@@ -10,7 +10,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.AutoTransition;
-import android.transition.Slide;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -21,11 +20,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
@@ -34,10 +32,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.model.Route;
+import se.jolo.prototypenavigator.utils.Locator;
+import se.jolo.prototypenavigator.utils.RouteManager;
 
 public class Map extends AppCompatActivity {
 
@@ -49,8 +47,8 @@ public class Map extends AppCompatActivity {
     private FloatingActionButton findMeBtn;
     private TextView textView;
 
-
     private List<Waypoint> waypoints = null;
+    private List<RouteStep> steps;
     private RouteManager routeManager;
     private MapView mapView;
     private Route route;
@@ -72,8 +70,13 @@ public class Map extends AppCompatActivity {
 
         mapView = loadMap(savedInstanceState);
 
-        Locator.enableLocation(mapView);
-        Locator.toggleTracking(mapView);
+        if (Locator.ableToGetLocation) {
+            Locator.enableLocation(mapView);
+            Locator.toggleTracking(mapView);
+        } else {
+            Toast.makeText(this, "Unable to acquire location. Please leave the "
+                    + "woods/cave/cellar and/or the elevator", Toast.LENGTH_LONG).show();
+        }
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -85,28 +88,37 @@ public class Map extends AppCompatActivity {
 
         loadRoute(extras, loader);
 
-        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator,
-                locator.getLocation());
-        routeManager.loadRouteItemsAndWaypoints(route).loadRoute();
+        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator);
+        routeManager.loadRouteItemsAndWaypoints(route);
+
+        if (locator.getLocation() == null) {
+            Log.d(LOG_TAG, "just a test");
+        } else {
+            routeManager.setCurrentLocation(locator.getLocation()).loadRoute();
+        }
 
         waypoints = routeManager.getWaypoints();
 
-        // centroid goes here
-        LatLng centroid = new LatLng(locator.getLocation().getLatitude(),
-                locator.getLocation().getLongitude());
+        LatLng centroid = (locator.getLocation() != null)
+                ? new LatLng(locator.getLocation().getLatitude(), locator.getLocation().getLongitude())
+                : new LatLng(waypoints.get(0).getLatitude(), waypoints.get(0).getLongitude());
+
         setCentroid(centroid);
 
         addMarkers(waypoints);
-
 
         findMeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 animateCamera(new LatLng(mapView.getLatLng()));
-                routeManager.onLocationChanged(routeManager.getLocation());
+
+                if (Locator.ableToGetLocation) {
+                    routeManager.onLocationChanged(routeManager.getLocation());
+                }
+
                 Toast.makeText(v.getContext(), "at: "
-                        + routeManager.getNextStop().getOrder() + " "
-                        + routeManager.getNextStop().getStopPoint().getType(),
+                                + routeManager.getNextStop().getOrder() + " "
+                                + routeManager.getNextStop().getStopPoint().getType(),
                         Toast.LENGTH_LONG).show();
             }
         });

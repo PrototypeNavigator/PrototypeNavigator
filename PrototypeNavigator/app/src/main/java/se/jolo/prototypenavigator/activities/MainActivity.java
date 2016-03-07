@@ -57,9 +57,9 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         btnLoadNewRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Locator.allowInit) {
+//                if (Locator.allowInit) {
                     initNewFile();
-                }
+                //    }
             }
         });
 
@@ -67,9 +67,9 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         btnLoadPreRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Locator.allowInit) {
+               // if (Locator.allowInit) {
                     initPreLoadedFile();
-                }
+                //}
             }
         });
     }
@@ -147,7 +147,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
             }
         });
 
-        alertDialog.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {

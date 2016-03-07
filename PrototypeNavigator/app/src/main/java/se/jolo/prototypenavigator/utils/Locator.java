@@ -32,8 +32,7 @@ public class Locator {
     private Context context;
     private Activity activity;
 
-    private Locator() {
-    }
+    private Locator() {}
 
     public Locator(Context context, Activity activity) {
         this.context = context;

@@ -2,6 +2,7 @@ package se.jolo.prototypenavigator.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,21 +149,53 @@ public class StopPointItem implements Parcelable {
 
     @Override
     public String toString() {
-        return "StopPointItem{" +
-                "uuid='" + uuid + '\'' +
-                ", type='" + type + '\'' +
-                ", name='" + name + '\'' +
-                ", deliveryAddress='" + deliveryAddress + '\'' +
-                ", deliveryPostalCode=" + deliveryPostalCode +
-                ", easting=" + easting +
-                ", northing=" + northing +
-                ", freeText='" + freeText + '\'' +
-                ", plannedArrivalTime='" + plannedArrivalTime + '\'' +
-                ", plannedDepartureTime='" + plannedDepartureTime + '\'' +
-                ", validityDays=" + validityDays +
-                ", deliveryPoints=" + deliveryPoints +
-                ", service=" + service +
-                '}';
+        StringBuilder stringBuilder = new StringBuilder();
+        String newLine = "\n";
+
+        if (uuid!=null){
+           // stringBuilder.append(uuid).append(newLine);
+        }
+        if (type!=null){
+           // stringBuilder.append(type).append(newLine);
+        }
+        if (name!=null){
+           // stringBuilder.append(name).append(newLine);
+        }
+        if (deliveryAddress!=null && !deliveryAddress.equals("")){
+            stringBuilder.append("Adress: " + deliveryAddress+" ");
+        }
+        if (deliveryPostalCode!=0){
+            stringBuilder.append(deliveryPostalCode).append(newLine);
+        }
+        if (freeText!=null && !freeText.equals("")){
+            stringBuilder.append("info: " + freeText).append(newLine);
+            Log.d("freeText", freeText);
+        }
+        if (plannedArrivalTime!=null && !plannedArrivalTime.equals("")){
+            stringBuilder.append("Ankomst: " + plannedArrivalTime).append(newLine);
+        }
+        if (plannedDepartureTime!=null && !plannedDepartureTime.equals("")){
+            stringBuilder.append("Angång: " + plannedDepartureTime).append(newLine);
+        }
+        if (validityDays!=0){
+            stringBuilder.append("Giltighets dagar: "+ validityDays).append(newLine);
+        }
+        if (deliveryPoints!=null){
+            for (DeliveryPoint d: deliveryPoints){
+                List<Resident> residents = d.getResidents();
+                stringBuilder.append("Mottagare: ");
+                for (Resident r : residents){
+                    if(residents.size()>1){
+                        stringBuilder.append(r.getLastName()+" "+r.getFirstName()+", ");
+                    }else {
+                        stringBuilder.append(r.getLastName()+" "+r.getFirstName());
+                    }
+
+                }
+            }
+        }
+
+        return stringBuilder.toString();
     }
 
     @SuppressWarnings("unused")

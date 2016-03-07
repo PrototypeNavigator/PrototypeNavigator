@@ -32,10 +32,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.utils.Locator;
+import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.utils.RouteManager;
+import se.jolo.prototypenavigator.model.Route;
 
 public class Map extends AppCompatActivity {
 
@@ -88,7 +88,8 @@ public class Map extends AppCompatActivity {
 
         loadRoute(extras, loader);
 
-        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator);
+        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator, 
+                textView, myToolbar);
         routeManager.loadRouteItemsAndWaypoints(route);
 
         if (locator.getLocation() == null) {

@@ -32,10 +32,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.model.Route;
+import se.jolo.prototypenavigator.utils.Locator;
+import se.jolo.prototypenavigator.utils.RouteManager;
 
 public class Map extends AppCompatActivity {
 
@@ -68,7 +68,7 @@ public class Map extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         Loader loader = new Loader(this);
 
-        mapView = loadMap(savedInstanceState);
+        mapView = loadMap();
 
         if (Locator.ableToGetLocation) {
             Locator.enableLocation(mapView);
@@ -159,17 +159,12 @@ public class Map extends AppCompatActivity {
         }
     }
 
-    public void toggleBearing() throws SecurityException {
-
-        //mapView.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
-    }
-
     public void animateCamera(LatLng latLng) {
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                 routeManager.getCameraPosition(latLng)));
     }
 
-    private MapView loadMap(Bundle savedInstanceState) {
+    private MapView loadMap() {
 
         mapView = (MapView) findViewById(R.id.mapboxMapView);
         mapView.setAccessToken(MAPBOX_ACCESS_TOKEN);
@@ -246,7 +241,6 @@ public class Map extends AppCompatActivity {
     public void onResume() {
         Log.d(LOG_TAG, "Resume");
         super.onResume();
-        toggleBearing();
         mapView.onResume();
     }
 

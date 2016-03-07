@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.mapbox.directions.DirectionsCriteria;
 import com.mapbox.directions.MapboxDirections;
@@ -49,14 +51,19 @@ public final class RouteManager {
     private DirectionsRoute currentRoute;
     private PolylineOptions polylineToNextStop;
 
+    private TextView textView;
+    private Toolbar toolbar;
+
     public RouteManager(Context context, MapView mapView, String MAPBOX_ACCESS_TOKEN,
-                        Locator locator, Location currentLocation) {
+                        Locator locator, Location currentLocation,TextView textView,Toolbar toolbar) {
         this.context = context;
         this.mapView = mapView;
         this.MAPBOX_ACCESS_TOKEN = MAPBOX_ACCESS_TOKEN;
         this.locator = locator;
         this.currentLocation = currentLocation;
         this.inProximity = false;
+        this.textView = textView;
+        this.toolbar = toolbar;
     }
 
     /*********************************************************************************************/
@@ -165,7 +172,9 @@ public final class RouteManager {
                 currentRoute = response.body().getRoutes().get(0);
 
                 steps = currentRoute.getSteps();
-
+                textView.setText(steps.get(0).getManeuver().getInstruction());
+                toolbar.setTitle(routeItems.get(0).getStopPointItems().get(0).getDeliveryAddress());
+                toolbar.setTitleTextColor(Color.WHITE);
                 drawRoute(currentRoute);
             }
 
@@ -178,6 +187,7 @@ public final class RouteManager {
 
         return this;
     }
+
 
     /*********************************************************************************************/
     /****                                    RoutItems                                        ****/

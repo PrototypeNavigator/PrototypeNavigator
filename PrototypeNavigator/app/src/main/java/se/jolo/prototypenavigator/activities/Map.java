@@ -86,11 +86,14 @@ public class Map extends AppCompatActivity {
         loadRoute(extras, loader);
 
         routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator,
-                locator.getLocation());
+                locator.getLocation(), textView, myToolbar);
         routeManager.loadRouteItemsAndWaypoints(route).loadRoute();
-
         waypoints = routeManager.getWaypoints();
 
+
+      //
+
+//        Log.d("Steps",routeManager.getSteps().get(0).getManeuver().getInstruction());
         // centroid goes here
         LatLng centroid = new LatLng(locator.getLocation().getLatitude(),
                 locator.getLocation().getLongitude());

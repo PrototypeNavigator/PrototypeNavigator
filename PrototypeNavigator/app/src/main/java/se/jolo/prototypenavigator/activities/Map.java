@@ -40,18 +40,18 @@ import se.jolo.prototypenavigator.utils.RouteManager;
 public class Map extends AppCompatActivity {
 
     private final static String LOG_TAG = "MapActivity";
-    private final static String MAPBOX_ACCESS_TOKEN =
-            "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2b" +
-                    "XQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
+    private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
 
     private FloatingActionButton findMeBtn;
     private TextView textView;
+    private Toolbar myToolbar;
 
     private List<Waypoint> waypoints = null;
     private List<RouteStep> steps;
     private RouteManager routeManager;
     private MapView mapView;
     private Route route;
+    private LatLng centroid;
 
     private ViewGroup viewGroup;
     private Uri uri;
@@ -65,48 +65,69 @@ public class Map extends AppCompatActivity {
         Locator locator = new Locator(this, this);
         locator.init();
 
-        Bundle extras = getIntent().getExtras();
         Loader loader = new Loader(this);
-
-        mapView = loadMap();
-
-        if (Locator.ableToGetLocation) {
-            Locator.enableLocation(mapView);
-            Locator.toggleTracking(mapView);
-        } else {
-            Toast.makeText(this, "Unable to acquire location. Please leave the "
-                    + "woods/cave/cellar and/or the elevator", Toast.LENGTH_LONG).show();
-        }
-
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-
-        textView = (TextView) findViewById(R.id.textTop);
-        viewGroup = (ViewGroup) findViewById(R.id.textAndMenu);
-        setSupportActionBar(myToolbar);
-
-        findMeBtn = (FloatingActionButton) findViewById(R.id.findMeBtn);
+        Bundle extras = getIntent().getExtras();
 
         loadRoute(extras, loader);
 
-        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator, 
-                textView, myToolbar);
-        routeManager.loadRouteItemsAndWaypoints(route);
-
-        if (locator.getLocation() == null) {
-            Log.d(LOG_TAG, "just a test");
-        } else {
-            routeManager.setCurrentLocation(locator.getLocation()).loadRoute();
-        }
-
+        mapView = loadMap();
+        myToolbar = makeToolbar();
+        viewGroup = makeViewGroup();
+        textView = makeTextView();
+        routeManager = loadManager(locator);
         waypoints = routeManager.getWaypoints();
+        findMeBtn = makeFindMeBtn();
+        centroid = setCentroid(locator);
 
-        LatLng centroid = (locator.getLocation() != null)
-                ? new LatLng(locator.getLocation().getLatitude(), locator.getLocation().getLongitude())
-                : new LatLng(waypoints.get(0).getLatitude(), waypoints.get(0).getLongitude());
-
-        setCentroid(centroid);
-
+        setSupportActionBar(myToolbar);
         addMarkers(waypoints);
+
+        mapView.onCreate(savedInstanceState);
+    }
+
+    /*********************************************************************************************/
+    /****                                     Other                                           ****/
+    /*********************************************************************************************/
+
+    private ViewGroup makeViewGroup() {
+        return (ViewGroup) findViewById(R.id.textAndMenu);
+    }
+
+    private Toolbar makeToolbar() {
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        return myToolbar;
+    }
+
+    /**
+     * Initialize TextView and setting OnClickListener to toggle visibility.
+     *
+     * @return newly initialized TextView
+     */
+    private TextView makeTextView() {
+
+        textView = (TextView) findViewById(R.id.textTop);
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                TransitionManager.beginDelayedTransition(viewGroup, new AutoTransition());
+                toggleVisibility(textView);
+            }
+        });
+
+        return textView;
+    }
+
+    /**
+     * Initialize FloatingActionButton to call animateCamera() with at current location.
+     * If able to get location calls onLocationChange() in RouteManager.
+     *
+     * @return FloatingActionButton
+     */
+    private FloatingActionButton makeFindMeBtn() {
+
+        findMeBtn = (FloatingActionButton) findViewById(R.id.findMeBtn);
 
         findMeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,18 +145,50 @@ public class Map extends AppCompatActivity {
             }
         });
 
-        textView.setOnClickListener(new View.OnClickListener() {
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(View v) {
-                TransitionManager.beginDelayedTransition(viewGroup, new AutoTransition());
-                toggleVisibility(textView);
-            }
-        });
-
-        mapView.onCreate(savedInstanceState);
+        return findMeBtn;
     }
 
+    /**
+     * Toggles visibility of NextStep-view
+     *
+     * @param views NextStep
+     */
+    private static void toggleVisibility(View... views) {
+        for (View view : views) {
+            boolean isVisible = view.getVisibility() == View.VISIBLE;
+            view.setVisibility(isVisible ? View.INVISIBLE : View.VISIBLE);
+        }
+    }
+
+    /*********************************************************************************************/
+    /****                                     Route                                           ****/
+    /*********************************************************************************************/
+
+    /**
+     * Initialize RouteManager, loading RouteItems and Waypoints. Setting current location if able.
+     * Loads selected route.
+     *
+     * @param locator LocationHandler
+     * @return loaded RouteManager
+     */
+    private RouteManager loadManager(Locator locator) {
+
+        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator, textView, myToolbar);
+        routeManager.loadRouteItemsAndWaypoints(route);
+
+        if (locator.getLocation() != null) {
+            routeManager.setCurrentLocation(locator.getLocation()).loadRoute();
+        }
+
+        return routeManager;
+    }
+
+    /**
+     * Loads a newly selected Route from URI, or loads previously saved Route.
+     *
+     * @param extras bundle containing URI
+     * @param loader loading the route from file
+     */
     public void loadRoute(Bundle extras, Loader loader) {
 
         if (extras.get("uri") != null) {
@@ -159,11 +212,15 @@ public class Map extends AppCompatActivity {
         }
     }
 
-    public void animateCamera(LatLng latLng) {
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
-                routeManager.getCameraPosition(latLng)));
-    }
+    /*********************************************************************************************/
+    /****                                      Map                                            ****/
+    /*********************************************************************************************/
 
+    /**
+     * Initializes the MapView setting values and location tracking if able.
+     *
+     * @return newly set MapView
+     */
     private MapView loadMap() {
 
         mapView = (MapView) findViewById(R.id.mapboxMapView);
@@ -181,9 +238,22 @@ public class Map extends AppCompatActivity {
             }
         });
 
+        if (Locator.ableToGetLocation) {
+            Locator.enableLocation(mapView);
+            Locator.toggleTracking(mapView);
+        } else {
+            Toast.makeText(this, "Unable to acquire location. Please leave the "
+                    + "woods/cave/cellar and/or the elevator", Toast.LENGTH_LONG).show();
+        }
+
         return mapView;
     }
 
+    /**
+     * Adds Waypoint markers for full Route.
+     *
+     * @param waypoints list of waypoints
+     */
     private void addMarkers(List<Waypoint> waypoints) {
         for (Waypoint w : waypoints) {
             mapView.addMarker(new MarkerOptions()
@@ -192,18 +262,34 @@ public class Map extends AppCompatActivity {
         }
     }
 
-    private void setCentroid(LatLng centroid) {
+    /**
+     * Set centroid to current location if able, else set it to next waypoint.
+     *
+     * @param locator LocationHandler
+     * @return LatLng, centroid position
+     */
+    private LatLng setCentroid(Locator locator) {
+
+        LatLng centroid = (locator.getLocation() != null)
+                ? new LatLng(locator.getLocation().getLatitude(), locator.getLocation().getLongitude())
+                : new LatLng(waypoints.get(0).getLatitude(), waypoints.get(0).getLongitude());
+
         mapView.setCenterCoordinate(centroid);
         animateCamera(centroid);
+
+        return centroid;
     }
 
-
-    private static void toggleVisibility(View... views) {
-        for (View view : views) {
-            boolean isVisible = view.getVisibility() == View.VISIBLE;
-            view.setVisibility(isVisible ? View.INVISIBLE : View.VISIBLE);
-        }
+    /**
+     * Set camera position, angle and zoom.
+     *
+     * @param latLng new camera position
+     */
+    public void animateCamera(LatLng latLng) {
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+                routeManager.getCameraPosition(latLng)));
     }
+
     /*********************************************************************************************/
     /****                                      Menu                                           ****/
     /*********************************************************************************************/
@@ -230,6 +316,9 @@ public class Map extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /*********************************************************************************************/
+    /****                                     Lifecycle                                       ****/
+    /*********************************************************************************************/
     @Override
     protected void onStart() {
         super.onStart();
@@ -255,7 +344,6 @@ public class Map extends AppCompatActivity {
     protected void onStop() {
         Log.d(LOG_TAG, "Stop");
         super.onStop();
-        mapView.removeAllAnnotations();
         mapView.onStop();
     }
 

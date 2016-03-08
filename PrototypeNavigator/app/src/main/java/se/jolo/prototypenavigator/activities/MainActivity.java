@@ -43,37 +43,13 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         loadSpinner();
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        tvWelcome.setText(parent.getItemAtPosition(position).toString());
-        fileName = parent.getItemAtPosition(position).toString();
-    }
+    /*********************************************************************************************/
+    /****                                     Spinner                                         ****/
+    /*********************************************************************************************/
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {}
-
-    private void setButtonClickListener() {
-        Button btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
-        btnLoadNewRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                if (Locator.allowInit) {
-                    initNewFile();
-                //    }
-            }
-        });
-
-        Button btnLoadPreRoute = (Button) findViewById(R.id.btnLoadPreRoute);
-        btnLoadPreRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // if (Locator.allowInit) {
-                    initPreLoadedFile();
-                //}
-            }
-        });
-    }
-
+    /**
+     * Spinner containing a list of previous routes.
+     */
     public void loadSpinner() {
 
         Loader loader = new Loader(this);
@@ -97,13 +73,25 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         }
     }
 
-    public void initPreLoadedFile() {
-        Intent mapIntent = new Intent(this, Map.class).putExtra("str", fileName);
-        startActivity(mapIntent);
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        tvWelcome.setText(parent.getItemAtPosition(position).toString());
+        fileName = parent.getItemAtPosition(position).toString();
     }
 
-    public void initNewFile() {
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
 
+    /*********************************************************************************************/
+    /****                                   Load Route                                        ****/
+    /*********************************************************************************************/
+
+    /**
+     * Initialize route from a new file. If bundle is null launch file-browser-activity to
+     * locate new file. If bundle contains uri, launch Map activity with uri to chosen new file.
+     */
+    public void initNewFile() {
         Bundle extras = getIntent().getExtras();
 
         if (extras == null) {
@@ -116,21 +104,54 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         }
     }
 
-    public void initGps() {
+    /**
+     * Initialize route from previously selected file.
+     */
+    public void initPreLoadedFile() {
+        Intent mapIntent = new Intent(this, Map.class).putExtra("str", fileName);
+        startActivity(mapIntent);
+    }
 
+    /**
+     * Buttons to launch either initialization with new file or with previously save file.
+     */
+    private void setButtonClickListener() {
+        Button btnLoadNewRoute = (Button) findViewById(R.id.btnLoadNewRoute);
+        btnLoadNewRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initNewFile();
+            }
+        });
+
+        Button btnLoadPreRoute = (Button) findViewById(R.id.btnLoadPreRoute);
+        btnLoadPreRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initPreLoadedFile();
+            }
+        });
+    }
+
+    /*********************************************************************************************/
+    /****                                        GPS                                          ****/
+    /*********************************************************************************************/
+
+    /**
+     * Check if GPS is enabled. If not launch settings dialog.
+     */
+    public void initGps() {
         Locator.isGpsEnabled = Locator.isGpsEnabled(this);
 
         if (!Locator.isGpsEnabled) {
             showGpsDialog();
             Locator.isGpsEnabled = Locator.isGpsEnabled(this);
-            Locator.allowInit = Locator.isGpsEnabled;
-        }
-
-        if (Locator.isGpsEnabled) {
-            Locator.allowInit = true;
         }
     }
 
+    /**
+     * Settings dialog, launched if GPS isn't enabled.
+     */
     private void showGpsDialog() {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
@@ -142,7 +163,6 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                Locator.allowInit = true;
                 startActivity(intent);
             }
         });
@@ -152,13 +172,15 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                Locator.allowInit = false;
             }
         });
 
         alertDialog.show();
     }
 
+    /*********************************************************************************************/
+    /****                                    Lifecycle                                        ****/
+    /*********************************************************************************************/
     @Override
     protected void onStart() {
         super.onStart();

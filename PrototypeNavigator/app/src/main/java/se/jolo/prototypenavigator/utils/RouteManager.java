@@ -3,10 +3,10 @@ package se.jolo.prototypenavigator.utils;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
 
 import com.mapbox.directions.DirectionsCriteria;
 import com.mapbox.directions.MapboxDirections;
@@ -55,7 +55,7 @@ public final class RouteManager extends Locator {
     private Toolbar toolbar;
 
     public RouteManager(Context context, MapView mapView, String MAPBOX_ACCESS_TOKEN,
-                        Locator locator, TextView textView,Toolbar toolbar) {
+                        Locator locator, TextView textView, Toolbar toolbar) {
         this.context = context;
         this.mapView = mapView;
         this.MAPBOX_ACCESS_TOKEN = MAPBOX_ACCESS_TOKEN;
@@ -68,6 +68,14 @@ public final class RouteManager extends Locator {
     /*********************************************************************************************/
     /****                                     Location                                        ****/
     /*********************************************************************************************/
+
+    /**
+     * Set new location, set camera to new location, check new locations proximity to next
+     * stop-point, updates remaining stop-points, loads route again and removes and re-draws
+     * polyline from location to next stop-point.
+     *
+     * @param location the new location
+     */
     @Override
     public void onLocationChanged(Location location) {
         super.onLocationChanged(location);
@@ -77,10 +85,14 @@ public final class RouteManager extends Locator {
 
         setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
         removePolyline(getPolylineToNextStop());
-
-        Toast.makeText(context, "calls made ::: " + CallCounter.getCounts(), Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Get location either with gps or network. If unable to get location, set location
+     * to first stop-point in route.
+     *
+     * @return location
+     */
     public Location getLocation() {
         if (!Locator.ableToGetLocation) {
             currentLocation.setLatitude(routeItems.get(0).getStopPoint().getEasting());
@@ -101,6 +113,12 @@ public final class RouteManager extends Locator {
     /*********************************************************************************************/
     /****                                     drawing                                         ****/
     /*********************************************************************************************/
+
+    /**
+     * Draws a polyline with geometry received from the MapboxDirection call.
+     *
+     * @param directionsRoute route response from MaboxDirection api
+     */
     public void drawRoute(DirectionsRoute directionsRoute) {
 
         List<Waypoint> waypoints = directionsRoute.getGeometry().getWaypoints();
@@ -118,6 +136,12 @@ public final class RouteManager extends Locator {
         mapView.addPolyline(polylineToNextStop);
     }
 
+    /**
+     * Removes drawn polyline to enable a redraw on location update.
+     *
+     * @param polylineOptions polyline to be removed
+     * @return true if polyline removed, else false
+     */
     public boolean removePolyline(PolylineOptions polylineOptions) {
 
         if (polylineOptions != null) {
@@ -133,18 +157,16 @@ public final class RouteManager extends Locator {
         return polylineToNextStop;
     }
 
-    public CameraPosition getCameraPosition(LatLng latLng) {
-        return new CameraPosition.Builder()
-                .bearing((steps != null) ? (float) steps.get(0).getHeading() : 0.0f)
-                .target(latLng)
-                .tilt(80f)
-                .zoom(15f)
-                .build();
-    }
-
     /*********************************************************************************************/
     /****                                     Routing                                         ****/
     /*********************************************************************************************/
+
+    /**
+     * Makes a list of waypoints containing current location and next stop-point, to enable
+     * drawing a route between the two.
+     *
+     * @return list of waypoints
+     */
     public List<Waypoint> getCurrentRoute() {
 
         List<Waypoint> positionAndNextWaypoint = new ArrayList<>();
@@ -157,22 +179,17 @@ public final class RouteManager extends Locator {
         return positionAndNextWaypoint;
     }
 
-    public List<Waypoint> getNoLocationRoute() {
-
-        List<Waypoint> noLocationRoute = new ArrayList<>();
-
-        for (int i = 0; i < 13; i++) {
-            noLocationRoute.add(waypoints.get(i));
-        }
-
-        return noLocationRoute;
-    }
-
+    /**
+     * Builds a call to MapboxDirections. Makes the call and hadles the response.
+     *
+     * @return self for fluidity
+     */
     public RouteManager loadRoute() {
 
         MapboxDirections md = new MapboxDirections.Builder()
                 .setAccessToken(MAPBOX_ACCESS_TOKEN)
-                .setWaypoints((Locator.ableToGetLocation) ? getCurrentRoute() : getNoLocationRoute()) // location check
+                        // if unable to get location, set it to next waypoint
+                .setWaypoints((Locator.ableToGetLocation) ? getCurrentRoute() : waypoints)
                 .setProfile(DirectionsCriteria.PROFILE_DRIVING)
                 .setSteps(true)
                 .build();
@@ -180,18 +197,18 @@ public final class RouteManager extends Locator {
         md.enqueue(new Callback<DirectionsResponse>() {
 
             @Override
-
             public void onResponse(Response<DirectionsResponse> response, Retrofit retrofit) {
-                CallCounter.count();
 
                 printResponseMessage(response);
 
                 currentRoute = response.body().getRoutes().get(0);
 
                 steps = currentRoute.getSteps();
+
                 textView.setText(steps.get(0).getManeuver().getInstruction());
                 toolbar.setTitle(routeItems.get(0).getStopPointItems().get(0).getDeliveryAddress());
                 toolbar.setTitleTextColor(Color.WHITE);
+
                 drawRoute(currentRoute);
             }
 
@@ -208,26 +225,16 @@ public final class RouteManager extends Locator {
     /*********************************************************************************************/
     /****                                    RoutItems                                        ****/
     /*********************************************************************************************/
-    public List<Waypoint> getWaypoints() {
-        return waypoints;
-    }
 
-    public List<RouteItem> getRouteItems() {
-        return routeItems;
-    }
-
-    public List<RouteStep> getSteps() {
-        return steps;
-    }
-
-    public RouteItem getNextStop() {
-        return routeItems.get(0);
-    }
-
+    /**
+     * Loads waypoints and route-items from parent Route object.
+     *
+     * @param route object containing the route-items
+     * @return self for fluidity
+     */
     public RouteManager loadRouteItemsAndWaypoints(Route route) {
 
         waypoints = new ArrayList<>();
-
         routeItems = new ArrayList<>();
 
         routeItems = route.getRouteItems();
@@ -242,8 +249,10 @@ public final class RouteManager extends Locator {
     }
 
     /**
-     * check if position is in proximity of next StopPoint
-     **/
+     * Check if current location is in proximity of next StopPoint.
+     *
+     * @return self for fluidity
+     */
     public RouteManager checkStopPointProximity() {
 
         LatLng latLngRouteItem = new LatLng(
@@ -268,7 +277,9 @@ public final class RouteManager extends Locator {
     }
 
     /**
-     * when in proximity of next StopPoint, remove it
+     * If in proximity of next StopPoint, remove it to get next coming StopPoint.
+     *
+     * @return self for fluidity
      */
     public RouteManager updateStopPointsRemaining() {
 
@@ -295,9 +306,65 @@ public final class RouteManager extends Locator {
         return this;
     }
 
+    /**
+     * @return next stop in route
+     */
+    public RouteItem getNextStop() {
+        return routeItems.get(0);
+    }
+
+    public List<Waypoint> getWaypoints() {
+        return waypoints;
+    }
+
+    public List<RouteItem> getRouteItems() {
+        return routeItems;
+    }
+
+    public List<RouteStep> getSteps() {
+        return steps;
+    }
+
     /*********************************************************************************************/
-    /****                                   Information                                       ****/
+    /****                                  Info & Other                                       ****/
     /*********************************************************************************************/
+
+    /**
+     * Sets camera position to device bearing, if unable to get bearing set it to north.
+     * Sets tilt and zoom.
+     *
+     * @param latLng current location
+     * @return returns newly set CameraPosition
+     */
+    public CameraPosition getCameraPosition(LatLng latLng) {
+        return new CameraPosition.Builder()
+                .bearing((steps != null) ? (float) steps.get(0).getHeading() : 0.0f)
+                .target(latLng)
+                .tilt(80f)
+                .zoom(15f)
+                .build();
+    }
+
+    /**
+     * Check in target Waypoint is on rout.
+     *
+     * @param target to be checked
+     */
+    public void checkOffRoute(Waypoint target) {
+        if (currentRoute == null) {
+            showMessage("Unable to get location");
+        } else if (currentRoute.isOffRoute(target)) {
+            showMessage("You are off-route.");
+        } else {
+            showMessage("You are not off-route.");
+        }
+    }
+
+    /**
+     * Prints the response message from DirectionsResponse to display response code.
+     *
+     * @param response from Mapbox Directions api
+     */
     private void printResponseMessage(Response<DirectionsResponse> response) {
         if (!response.isSuccess()) {
             try {
@@ -310,17 +377,12 @@ public final class RouteManager extends Locator {
         }
     }
 
+    /**
+     * Simple toaster.
+     *
+     * @param message toast text
+     */
     private void showMessage(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public void checkOffRoute(Waypoint target) {
-        if (currentRoute == null) {
-            showMessage("Unable to get location");
-        } else if (currentRoute.isOffRoute(target)) {
-            showMessage("You are off-route.");
-        } else {
-            showMessage("You are not off-route.");
-        }
     }
 }

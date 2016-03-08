@@ -24,7 +24,6 @@ public class Locator implements LocationListener {
     private static final int PERMISSIONS_LOCATION = 0;
 
     public static boolean isGpsEnabled = false;
-    public static boolean allowInit = false;
     public static boolean ableToGetLocation = false;
 
     private static LocationManager locationManager;
@@ -33,14 +32,16 @@ public class Locator implements LocationListener {
     private Context context;
     private Activity activity;
 
-    public Locator() {
-    }
+    public Locator() {}
 
     public Locator(Context context, Activity activity) {
         this.context = context;
         this.activity = activity;
     }
 
+    /*********************************************************************************************/
+    /****                                 LocationListener                                    ****/
+    /*********************************************************************************************/
     @Override
     public void onLocationChanged(Location location) {
         setLocation(location);
@@ -55,6 +56,14 @@ public class Locator implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {}
 
+    /*********************************************************************************************/
+    /****                                     Location                                        ****/
+    /*********************************************************************************************/
+
+    /**
+     * Initialize Locator setting LocationManager, LocationListener, checking permissions for
+     * gps and network. If able, set last known location and boolean ableToGetLocation.
+     */
     public void init() {
 
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -82,6 +91,21 @@ public class Locator implements LocationListener {
         ableToGetLocation = (location != null);
     }
 
+    /**
+     * Check with provider if GPS is enabled.
+     */
+    public static boolean isGpsEnabled(Context context) {
+        LocationManager locationManager = (LocationManager)
+                context.getSystemService(Context.LOCATION_SERVICE);
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    /**
+     * Get location from GPS, if unable, get location from network.
+     *
+     * @return location
+     */
     @SuppressWarnings("ResourceType")
     public Location getLocation() {
         return (locationManager.getLastKnownLocation(GPS_PROVIDER) != null)
@@ -89,6 +113,13 @@ public class Locator implements LocationListener {
                 : locationManager.getLastKnownLocation(NETWORK_PROVIDER);
     }
 
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    /*********************************************************************************************/
+    /****                                      Mapbox                                         ****/
+    /*********************************************************************************************/
     @SuppressWarnings("ResourceType")
     public static void enableLocation(MapView mapView) {
         mapView.setMyLocationEnabled(true);
@@ -97,24 +128,5 @@ public class Locator implements LocationListener {
     @SuppressWarnings("ResourceType")
     public static void toggleTracking(MapView mapView) {
         mapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
-    }
-
-    public static boolean isGpsEnabled(Context context) {
-        LocationManager locationManager = (LocationManager)
-                context.getSystemService(Context.LOCATION_SERVICE);
-
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
     }
 }

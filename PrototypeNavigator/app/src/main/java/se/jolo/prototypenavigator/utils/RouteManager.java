@@ -80,11 +80,14 @@ public final class RouteManager extends Locator {
     public void onLocationChanged(Location location) {
         super.onLocationChanged(location);
 
+        location = (location != null) ? location : locator.getLocation() ;
+
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                 getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
 
         setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
         removePolyline(getPolylineToNextStop());
+
     }
 
     /**

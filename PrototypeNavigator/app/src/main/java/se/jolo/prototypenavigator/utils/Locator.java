@@ -44,7 +44,7 @@ public class Locator implements LocationListener {
     /*********************************************************************************************/
     @Override
     public void onLocationChanged(Location location) {
-        setLocation(location);
+        setLocation((location != null) ? location : this.location);
     }
 
     @Override
@@ -108,9 +108,12 @@ public class Locator implements LocationListener {
      */
     @SuppressWarnings("ResourceType")
     public Location getLocation() {
-        return (locationManager.getLastKnownLocation(GPS_PROVIDER) != null)
-                ? locationManager.getLastKnownLocation(GPS_PROVIDER)
-                : locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+        Location newLocation =
+                (locationManager.getLastKnownLocation(GPS_PROVIDER) != null)
+                ?locationManager.getLastKnownLocation(GPS_PROVIDER)
+                :locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+
+        return (newLocation != null) ? newLocation : location;
     }
 
     public void setLocation(Location location) {

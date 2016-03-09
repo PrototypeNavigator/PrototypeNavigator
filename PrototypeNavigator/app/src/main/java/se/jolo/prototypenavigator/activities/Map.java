@@ -36,6 +36,7 @@ import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.utils.RouteManager;
+import se.jolo.prototypenavigator.utils.Speech;
 
 public class Map extends AppCompatActivity {
 
@@ -45,6 +46,8 @@ public class Map extends AppCompatActivity {
     private FloatingActionButton findMeBtn;
     private TextView textView;
     private Toolbar myToolbar;
+
+    private Speech speech;
 
     private List<Waypoint> waypoints = null;
     private List<RouteStep> steps;
@@ -113,6 +116,8 @@ public class Map extends AppCompatActivity {
             public void onClick(View v) {
                 TransitionManager.beginDelayedTransition(viewGroup, new AutoTransition());
                 toggleVisibility(textView);
+                speech = new Speech(Map.this);
+                speech.say(textView.getText().toString());
             }
         });
 

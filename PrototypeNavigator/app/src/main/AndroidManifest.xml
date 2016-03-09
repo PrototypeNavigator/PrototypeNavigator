@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
         android:allowBackup="true"
@@ -53,6 +54,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="se.jolo.prototypenavigator.activities.RouteListActivity" />
         </activity>
+
+        <meta-data
+            android:name="ispeech_api_key"
+            android:value="fa55153dbdbf6300bfc497f4f07ffe2c" />
+
     </application>
 
 </manifest>

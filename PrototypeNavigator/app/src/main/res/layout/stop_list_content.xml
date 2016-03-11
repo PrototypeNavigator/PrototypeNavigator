@@ -13,7 +13,8 @@
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="11dp"
         android:text="@string/app_name"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/content"/>
 
     <TableLayout
         android:id="@+id/content"

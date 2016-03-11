@@ -20,7 +20,11 @@ import se.jolo.prototypenavigator.model.Route;
  * in a {@link RouteListActivity}.
  */
 public class RouteDetailActivity extends AppCompatActivity {
-private Route route;
+    private Route route;
+
+    public RouteDetailActivity() {
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +53,8 @@ private Route route;
             Bundle arguments = new Bundle();
             route = getIntent().getParcelableExtra("route");
             arguments.putInt(RouteDetailFragment.ARG_ITEM_ID,
-                    (getIntent().getIntExtra(RouteDetailFragment.ARG_ITEM_ID,46)));
-            arguments.putParcelable("route",(route));
+                    (getIntent().getIntExtra(RouteDetailFragment.ARG_ITEM_ID, 46)));
+            arguments.putParcelable("route", (route));
             RouteDetailFragment fragment = new RouteDetailFragment(this);
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -70,7 +74,7 @@ private Route route;
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
 
-            navigateUpTo(new Intent(this, RouteListActivity.class).putExtra("route",route));
+            navigateUpTo(new Intent(this, RouteListActivity.class).putExtra("route", route));
             return true;
         }
         return super.onOptionsItemSelected(item);

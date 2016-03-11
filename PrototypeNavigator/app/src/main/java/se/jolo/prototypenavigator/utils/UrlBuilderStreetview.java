@@ -6,7 +6,7 @@ import android.util.Log;
 /**
  * Created by Holstad on 01/03/16.
  */
-public class UrlBuilder {
+public class UrlBuilderStreetview {
     private final StringBuilder stringBuilder = new StringBuilder();
     private final String BASE_URL = "https://maps.googleapis.com/maps/api/streetview?size=800x800&location=";
     private final String HEADING = "&fov=100&heading=235&pitch=10&";
@@ -15,7 +15,7 @@ public class UrlBuilder {
     private final float lat;
 
 
-    public UrlBuilder(float lon, float lat){
+    public UrlBuilderStreetview(float lon, float lat){
         this.lat=lat;
         this.lon=lon;
     }

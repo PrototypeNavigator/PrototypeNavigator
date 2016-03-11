@@ -2,22 +2,16 @@ package se.jolo.prototypenavigator.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.deserializers.StopItemViewAdapter;
@@ -25,7 +19,6 @@ import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.task.ImageLoader;
 import se.jolo.prototypenavigator.utils.SimpleDividerItemDecoration;
-import se.jolo.prototypenavigator.utils.UrlBuilder;
 
 
 public class RouteDetailFragment extends Fragment {
@@ -76,7 +69,7 @@ public class RouteDetailFragment extends Fragment {
         }
 
                /* imageLoader = new ImageLoader();
-                imageLoader.execute(new UrlBuilder(routeItem.getStopPointItems().get(0).getEasting(), routeItem.getStopPointItems().get(0).getNorthing()).getUrl());
+                imageLoader.execute(new UrlBuilderStreetview(routeItem.getStopPointItems().get(0).getEasting(), routeItem.getStopPointItems().get(0).getNorthing()).getUrl());
                 image = (ImageView) activity.findViewById(R.id.image);
 
                 try {

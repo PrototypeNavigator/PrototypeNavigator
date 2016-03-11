@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
 
     private final static String LOG_TAG = "MainActivity";
     private TextView tvWelcome;
+    private Loader loader;
     private String fileName;
 
     @Override
@@ -35,6 +37,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         initGps();
 
         Locator locator = new Locator(this, this);
+        loader = new Loader(this);
         locator.init();
 
         tvWelcome = (TextView) findViewById(R.id.tvWelcome);
@@ -51,8 +54,6 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
      * Spinner containing a list of previous routes.
      */
     public void loadSpinner() {
-
-        Loader loader = new Loader(this);
 
         Spinner spnrLoadRoute = (Spinner) findViewById(R.id.spnrLoadRoute);
         spnrLoadRoute.setOnItemSelectedListener(this);
@@ -80,8 +81,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     /*********************************************************************************************/
     /****                                   Load Route                                        ****/
@@ -108,8 +108,12 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
      * Initialize route from previously selected file.
      */
     public void initPreLoadedFile() {
-        Intent mapIntent = new Intent(this, Map.class).putExtra("str", fileName);
-        startActivity(mapIntent);
+        if (loader.loadSavedFiles().length > 0) {
+            Intent mapIntent = new Intent(this, Map.class).putExtra("str", fileName);
+            startActivity(mapIntent);
+        } else {
+            Toast.makeText(this, "No route to load. Please choose a new file", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

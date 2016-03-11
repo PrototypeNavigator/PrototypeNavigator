@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="@string/btnLoadNewRoute"
         android:id="@+id/btnLoadNewRoute"
-        android:layout_above="@+id/spnrLoadRoute"
+        android:layout_above="@+id/btnLoadPreRoute"
         android:layout_alignParentStart="true"
         android:theme="@style/button"
         style="@style/Widget.AppCompat.Button.Colored"

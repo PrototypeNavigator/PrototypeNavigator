@@ -50,8 +50,9 @@ public class Map extends AppCompatActivity {
     private List<RouteStep> steps;
     private RouteManager routeManager;
     private MapView mapView;
-    private Route route;
     private LatLng centroid;
+    private Locator locator;
+    private Route route;
 
     private ViewGroup viewGroup;
     private Uri uri;
@@ -62,7 +63,7 @@ public class Map extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        Locator locator = new Locator(this, this);
+        locator = new Locator(this, this);
         locator.init();
 
         Loader loader = new Loader(this);
@@ -135,7 +136,7 @@ public class Map extends AppCompatActivity {
                 animateCamera(new LatLng(mapView.getLatLng()));
 
                 if (Locator.ableToGetLocation) {
-                    routeManager.onLocationChanged(routeManager.getLocation());
+                    routeManager.onLocationChanged(locator.getLocation());
                 }
 
                 Toast.makeText(v.getContext(), "at: "
@@ -165,20 +166,15 @@ public class Map extends AppCompatActivity {
     /*********************************************************************************************/
 
     /**
-     * Initialize RouteManager, loading RouteItems and Waypoints. Setting current location if able.
+     * Initialize RouteManager, loading RouteItems and Waypoints. Setting current location.
      * Loads selected route.
      *
      * @param locator LocationHandler
      * @return loaded RouteManager
      */
     private RouteManager loadManager(Locator locator) {
-
         routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator, textView, myToolbar);
-        routeManager.loadRouteItemsAndWaypoints(route);
-
-        if (locator.getLocation() != null) {
-            routeManager.setCurrentLocation(locator.getLocation()).loadRoute();
-        }
+        routeManager.loadRouteItemsAndWaypoints(route).setCurrentLocation(locator.getLocation()).loadRoute();
 
         return routeManager;
     }
@@ -313,6 +309,7 @@ public class Map extends AppCompatActivity {
                 startActivity(sendToDetails);
                 return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

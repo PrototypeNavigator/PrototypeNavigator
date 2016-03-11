@@ -17,6 +17,7 @@ import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.constants.GeoConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 
@@ -88,23 +89,6 @@ public final class RouteManager extends Locator {
         setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
         removePolyline(getPolylineToNextStop());
 
-    }
-
-    /**
-     * Get location either with gps or network. If unable to get location, set location
-     * to first stop-point in route.
-     *
-     * @return location
-     */
-    public Location getLocation() {
-        if (!Locator.ableToGetLocation) {
-            currentLocation.setLatitude(routeItems.get(0).getStopPoint().getEasting());
-            currentLocation.setLongitude(routeItems.get(0).getStopPoint().getNorthing());
-
-            return currentLocation;
-        }
-
-        return locator.getLocation();
     }
 
     public RouteManager setCurrentLocation(Location currentLocation) {
@@ -191,7 +175,6 @@ public final class RouteManager extends Locator {
 
         MapboxDirections md = new MapboxDirections.Builder()
                 .setAccessToken(MAPBOX_ACCESS_TOKEN)
-                        // if unable to get location, set it to next waypoint
                 .setWaypoints((Locator.ableToGetLocation) ? getCurrentRoute() : waypoints)
                 .setProfile(DirectionsCriteria.PROFILE_DRIVING)
                 .setSteps(true)

@@ -29,5 +29,4 @@ public class UrlBuilderStreetview {
         Log.d("url",stringBuilder.toString());
         return stringBuilder.toString();
     }
-
 }

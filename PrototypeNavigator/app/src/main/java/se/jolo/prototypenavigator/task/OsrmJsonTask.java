@@ -164,5 +164,4 @@ public class OsrmJsonTask extends AsyncTask<URL,String,HashMap<String,List>> {
 
         return path;
     }
-
 }

@@ -65,5 +65,4 @@ public class RouteListActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

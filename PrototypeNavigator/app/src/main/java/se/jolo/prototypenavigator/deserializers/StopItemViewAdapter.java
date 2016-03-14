@@ -173,29 +173,5 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
                     }
                 }
             }
-
-
     }
-/*                     <deliveryPoints>
-                        <deliveryPoint>
-                            <odr>true</odr>
-                            <odrRecipients>
-                                <odrRecipient>
-                                    <amount>2</amount>
-                                    <type>F</type>
-                                </odrRecipient>
-                                <odrRecipient>
-                                    <amount>2</amount>
-                                    <type>V</type>
-                                </odrRecipient>
-                            </odrRecipients>
-                            <residents>
-                                <resident>
-                                    <firstname>Kalle</firstname>
-                                    <lastname>Anka</lastname>
-                                </resident>
-                            </residents>
-                        </deliveryPoint>
-                    </deliveryPoints>
-*/
 }

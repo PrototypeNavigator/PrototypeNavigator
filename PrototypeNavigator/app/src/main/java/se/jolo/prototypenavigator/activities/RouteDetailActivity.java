@@ -79,6 +79,4 @@ public class RouteDetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 }

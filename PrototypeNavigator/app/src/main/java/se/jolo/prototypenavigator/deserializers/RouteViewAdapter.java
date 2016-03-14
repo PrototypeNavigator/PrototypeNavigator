@@ -79,5 +79,4 @@ public class RouteViewAdapter
             return super.toString() + " '" + mContentView.getText() + "'";
         }
     }
-
 }

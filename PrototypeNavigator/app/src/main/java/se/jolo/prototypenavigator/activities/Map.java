@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,8 @@ public class Map extends AppCompatActivity {
     private FloatingActionButton findMeBtn;
     private TextView textView;
     private Toolbar myToolbar;
+    private Button plus;
+    private Button minus;
 
     private Speech speech;
 
@@ -80,7 +83,9 @@ public class Map extends AppCompatActivity {
         textView = makeTextView();
         routeManager = loadManager(locator);
         waypoints = routeManager.getWaypoints();
-        findMeBtn = makeFindMeBtn();
+        findMeBtn = initFindMeBtn();
+        plus = initPlusBtn();
+        minus = initMinusBtn();
         centroid = setCentroid(locator);
 
         setSupportActionBar(myToolbar);
@@ -131,7 +136,7 @@ public class Map extends AppCompatActivity {
      *
      * @return FloatingActionButton
      */
-    private FloatingActionButton makeFindMeBtn() {
+    private FloatingActionButton initFindMeBtn() {
 
         findMeBtn = (FloatingActionButton) findViewById(R.id.findMeBtn);
 
@@ -152,6 +157,44 @@ public class Map extends AppCompatActivity {
         });
 
         return findMeBtn;
+    }
+
+    /**
+     * Initialize plus button
+     * @return plus
+     * */
+    private Button initPlusBtn(){
+
+        plus = (Button) findViewById(R.id.plus);
+
+        plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Double currentZoom = mapView.getZoom();
+                mapView.setZoom(currentZoom + 1, true);
+            }
+        });
+        return plus;
+    }
+
+    /**
+     * Initialize plus button
+     * @return minus
+     * */
+    private Button initMinusBtn(){
+
+        minus = (Button) findViewById(R.id.minus);
+
+        minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Double currentZoom = mapView.getZoom();
+                Log.d(LOG_TAG, mapView.getZoom()+"");
+                Log.d("id",minus.getId()+"");
+                mapView.setZoom(currentZoom - 1, true);
+            }
+        });
+        return minus;
     }
 
     /**

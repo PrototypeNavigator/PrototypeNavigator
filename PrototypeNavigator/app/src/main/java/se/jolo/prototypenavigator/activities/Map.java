@@ -230,6 +230,7 @@ public class Map extends AppCompatActivity {
 
         mapView.setCompassGravity(Gravity.BOTTOM);
         mapView.setLogoVisibility(View.INVISIBLE);
+        mapView.removeView(mapView.getTouchables().get(1));
 
         mapView.setOnMapClickListener(new MapView.OnMapClickListener() {
             @Override

@@ -61,4 +61,26 @@
         android:id="@+id/findMeBtn"
         mapbox:backgroundTint="@color/colorPrimary" />
 
+    <Button
+        android:backgroundTint="@color/lightTransparent"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:text="+"
+        android:id="@+id/plus"
+        android:layout_below="@+id/textAndMenu"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:backgroundTint="@color/lightTransparent"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="10dp"
+        android:text="-"
+        android:id="@+id/minus"
+        android:layout_below="@+id/plus"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

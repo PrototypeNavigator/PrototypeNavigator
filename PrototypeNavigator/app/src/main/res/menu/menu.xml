@@ -2,9 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 <item
     android:id="@+id/loadRoute"
-    android:title="Ladda Rutt"/>
+    android:title="Ladda rutt"/>
 <item
     android:id="@+id/showDetails"
-    android:title="Visa Stop"/>
+    android:title="Visa stop"/>
+    />
+    <item
+        android:id="@+id/showRoute"
+        android:title="Visa rutt på karta"/>
     />
 </menu>

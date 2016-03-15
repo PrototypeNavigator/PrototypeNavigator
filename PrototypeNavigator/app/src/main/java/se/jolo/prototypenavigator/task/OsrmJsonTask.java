@@ -28,8 +28,8 @@ import se.jolo.prototypenavigator.model.Instruction;
 public class OsrmJsonTask extends AsyncTask<URL,String,HashMap<String,List>> {
     private String jsonString;
     private String TAG = "PolylineDecoder";
-    private String ROUTE_GEOMETRY = "route_geometry";
-    private String INSTRUCTIONS = "route_instructions";
+    public static String ROUTE_GEOMETRY = "route_geometry";
+    public static String INSTRUCTIONS = "route_instructions";
     private List<LatLng> polyline;
     private HashMap<String,List> lists;
     private ArrayList <Instruction> instructions;
@@ -96,6 +96,7 @@ public class OsrmJsonTask extends AsyncTask<URL,String,HashMap<String,List>> {
     @Override
     protected void onPostExecute(HashMap polyline) {
         super.onPostExecute(polyline);
+        Log.d(TAG,"done!!!");
     }
 
     private static String getStringFromInputStream(InputStream is) {

@@ -23,13 +23,15 @@ import com.mapbox.mapboxsdk.views.MapView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import se.jolo.prototypenavigator.model.Instruction;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
+import se.jolo.prototypenavigator.model.StopPoint;
+import se.jolo.prototypenavigator.task.OsrmJsonTask;
 
 /**
  * Created by Joel on 2016-02-24.
@@ -37,33 +39,25 @@ import se.jolo.prototypenavigator.model.RouteItem;
 public final class RouteManager extends Locator {
 
     private static final String LOG_TAG = "ROUTER";
+
+    private Route route;
     private Context context;
-    private MapView mapView;
-    private String MAPBOX_ACCESS_TOKEN = "";
 
-    private List<Waypoint> waypoints;
+    private List<LatLng> fullRoute;
     private List<RouteItem> routeItems;
-    private List<RouteStep> steps;
+    private List<Instruction> instructions;
+    private ArrayList<RouteItem> nextStop;
 
-    private boolean inProximity;
+    private boolean inProximity = false;;
     private Locator locator;
     private Location currentLocation;
 
     private DirectionsRoute currentRoute;
     private PolylineOptions polylineToNextStop;
+    private PolylineOptions polylinefullRoute;
 
-    private TextView textView;
-    private Toolbar toolbar;
-
-    public RouteManager(Context context, MapView mapView, String MAPBOX_ACCESS_TOKEN,
-                        Locator locator, TextView textView, Toolbar toolbar) {
+    public RouteManager(Context context) {
         this.context = context;
-        this.mapView = mapView;
-        this.MAPBOX_ACCESS_TOKEN = MAPBOX_ACCESS_TOKEN;
-        this.locator = locator;
-        this.inProximity = false;
-        this.textView = textView;
-        this.toolbar = toolbar;
     }
 
     /*********************************************************************************************/
@@ -75,9 +69,8 @@ public final class RouteManager extends Locator {
      * stop-point, updates remaining stop-points, loads route again and removes and re-draws
      * polyline from location to next stop-point.
      *
-     * @param location the new location
      */
-    @Override
+/*    @Override
     public void onLocationChanged(Location location) {
         super.onLocationChanged(location);
 
@@ -86,62 +79,14 @@ public final class RouteManager extends Locator {
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                 getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
 
-        setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
+        setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRouteToNextStop();
         removePolyline(getPolylineToNextStop());
 
-    }
+    }*/
 
     public RouteManager setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
-
         return this;
-    }
-
-    /*********************************************************************************************/
-    /****                                     drawing                                         ****/
-    /*********************************************************************************************/
-
-    /**
-     * Draws a polyline with geometry received from the MapboxDirection call.
-     *
-     * @param directionsRoute route response from MaboxDirection api
-     */
-    public void drawRoute(DirectionsRoute directionsRoute) {
-
-        List<Waypoint> waypoints = directionsRoute.getGeometry().getWaypoints();
-
-        LatLng[] point = new LatLng[waypoints.size()];
-        for (int i = 0; i < waypoints.size(); i++) {
-            point[i] = new LatLng(waypoints.get(i).getLatitude(),
-                    waypoints.get(i).getLongitude());
-        }
-
-        polylineToNextStop = new PolylineOptions()
-                .add(point)
-                .color(Color.parseColor("#ff0000"))
-                .width(5);
-        mapView.addPolyline(polylineToNextStop);
-    }
-
-    /**
-     * Removes drawn polyline to enable a redraw on location update.
-     *
-     * @param polylineOptions polyline to be removed
-     * @return true if polyline removed, else false
-     */
-    public boolean removePolyline(PolylineOptions polylineOptions) {
-
-        if (polylineOptions != null) {
-            mapView.removeAnnotation(polylineOptions.getPolyline());
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public PolylineOptions getPolylineToNextStop() {
-        return polylineToNextStop;
     }
 
     /*********************************************************************************************/
@@ -154,58 +99,57 @@ public final class RouteManager extends Locator {
      *
      * @return list of waypoints
      */
-    public List<Waypoint> getCurrentRoute() {
+   /* public List<LatLng> getCurrentRoute() {
 
-        List<Waypoint> positionAndNextWaypoint = new ArrayList<>();
+        List<LatLng> positionAndNextWaypoint = new ArrayList<>();
 
-        positionAndNextWaypoint.add(new Waypoint(
-                currentLocation.getLongitude(),
-                currentLocation.getLatitude()));
-        positionAndNextWaypoint.add(waypoints.get(0));
+        positionAndNextWaypoint.add(new LatLng(
+                currentLocation.getLatitude(),
+                currentLocation.getLongitude()));
+        positionAndNextWaypoint.add(nextStop.get(0));
 
         return positionAndNextWaypoint;
-    }
+    }*/
 
     /**
-     * Builds a call to MapboxDirections. Makes the call and hadles the response.
      *
-     * @return self for fluidity
+     *
+     *
      */
-    public RouteManager loadRoute() {
+    public PolylineOptions createPolylineOption(List<RouteItem> routeItems) {
+        HashMap<String, List> stopsAndInstructions = stopsAndInstructions(routeItems);
+        if(routeItems.size()<=1){
+            instructions = stopsAndInstructions.get(OsrmJsonTask.INSTRUCTIONS);
+        }
+        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.addAll(stopsAndInstructions.get(OsrmJsonTask.ROUTE_GEOMETRY));
+        return polylineOptions;
+    }
 
-        MapboxDirections md = new MapboxDirections.Builder()
-                .setAccessToken(MAPBOX_ACCESS_TOKEN)
-                .setWaypoints((Locator.ableToGetLocation) ? getCurrentRoute() : waypoints)
-                .setProfile(DirectionsCriteria.PROFILE_DRIVING)
-                .setSteps(true)
-                .build();
 
-        md.enqueue(new Callback<DirectionsResponse>() {
+    public HashMap<String,List> stopsAndInstructions(List<RouteItem> routeItems){
 
-            @Override
-            public void onResponse(Response<DirectionsResponse> response, Retrofit retrofit) {
+        OsrmJsonTask osrmJsonTask = new OsrmJsonTask();
+        ArrayList<LatLng>routeStops = new ArrayList<>();
 
-                printResponseMessage(response);
-
-                currentRoute = response.body().getRoutes().get(0);
-
-                steps = currentRoute.getSteps();
-
-                textView.setText(steps.get(0).getManeuver().getInstruction());
-                toolbar.setTitle(routeItems.get(0).getStopPointItems().get(0).getDeliveryAddress());
-                toolbar.setTitleTextColor(Color.WHITE);
-
-                drawRoute(currentRoute);
+        if (routeItems.size()<=1){
+            routeStops.add(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()));
+            routeStops.add(new LatLng(routeItems.get(0).getStopPoint().getNorthing(),routeItems.get(0).getStopPoint().getEasting()));
+        }else {
+            for (RouteItem routeItem : routeItems) {
+                routeStops.add(new LatLng(routeItem.getStopPoint().getNorthing(), routeItem.getStopPoint().getEasting()));
             }
+        }
+        osrmJsonTask.execute(UrlBuilderRoute.multiplePoints(routeStops));
+        try {
+            return osrmJsonTask.get();
 
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e(LOG_TAG, "loadRoute-Error: " + t.getMessage());
-                showMessage("loadRoute-Error: " + t.getMessage());
-            }
-        });
-
-        return this;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /*********************************************************************************************/
@@ -220,19 +164,30 @@ public final class RouteManager extends Locator {
      */
     public RouteManager loadRouteItemsAndWaypoints(Route route) {
 
-        waypoints = new ArrayList<>();
         routeItems = new ArrayList<>();
+        nextStop = new ArrayList<>();
+        nextStop.add(route.getRouteItems().get(0));
+
+        fullRoute = new ArrayList<>();
 
         routeItems = route.getRouteItems();
 
         for (RouteItem ri : routeItems) {
-            waypoints.add(new Waypoint(
-                    ri.getStopPoint().getEasting(),
-                    ri.getStopPoint().getNorthing()));
+            fullRoute.add(new LatLng(
+                    ri.getStopPoint().getNorthing(),
+                    ri.getStopPoint().getEasting()));
         }
+
 
         return this;
     }
+
+    public  RouteManager loadPolylines(){
+        polylineToNextStop = createPolylineOption(nextStop).width(5).color(Color.GREEN);
+        polylinefullRoute = createPolylineOption(routeItems).width(5).color(Color.BLUE);
+        return this;
+    }
+
 
     /**
      * Check if current location is in proximity of next StopPoint.
@@ -278,7 +233,7 @@ public final class RouteManager extends Locator {
                     + routeItems.get(0).getStopPoint().getNorthing());
 
             routeItems.remove(0);
-            waypoints.remove(0);
+            nextStop.remove(0);
 
             inProximity = false;
         }
@@ -299,16 +254,20 @@ public final class RouteManager extends Locator {
         return routeItems.get(0);
     }
 
-    public List<Waypoint> getWaypoints() {
-        return waypoints;
+    public PolylineOptions getPolylinefullRoute() {
+        return polylinefullRoute;
+    }
+
+    public PolylineOptions getPolylineToNextStop() {
+        return polylineToNextStop;
     }
 
     public List<RouteItem> getRouteItems() {
         return routeItems;
     }
 
-    public List<RouteStep> getSteps() {
-        return steps;
+    public List<Instruction> getInstructions() {
+        return instructions;
     }
 
     /*********************************************************************************************/
@@ -324,7 +283,7 @@ public final class RouteManager extends Locator {
      */
     public CameraPosition getCameraPosition(LatLng latLng) {
         return new CameraPosition.Builder()
-                .bearing((steps != null) ? (float) steps.get(0).getHeading() : 0.0f)
+                .bearing((instructions != null) ? (float) instructions.get(0).getPostTurnAzimuth() : 0.0f)
                 .target(latLng)
                 .tilt(80f)
                 .zoom(15f)
@@ -343,23 +302,6 @@ public final class RouteManager extends Locator {
             showMessage("You are off-route.");
         } else {
             showMessage("You are not off-route.");
-        }
-    }
-
-    /**
-     * Prints the response message from DirectionsResponse to display response code.
-     *
-     * @param response from Mapbox Directions api
-     */
-    private void printResponseMessage(Response<DirectionsResponse> response) {
-        if (!response.isSuccess()) {
-            try {
-                Log.d(LOG_TAG, "Error: " + response.errorBody().string());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.d(LOG_TAG, "Response code: " + response.code());
         }
     }
 

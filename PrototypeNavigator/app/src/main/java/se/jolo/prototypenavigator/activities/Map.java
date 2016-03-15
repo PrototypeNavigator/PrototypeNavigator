@@ -2,11 +2,18 @@ package se.jolo.prototypenavigator.activities;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.AutoTransition;
@@ -23,6 +30,8 @@ import android.widget.Toast;
 
 import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.Style;
@@ -35,6 +44,7 @@ import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.model.Route;
+import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.utils.Speech;
@@ -209,6 +219,20 @@ public class Map extends AppCompatActivity {
         }
     }
 
+    private Drawable getScaledDrawable(int newWidth, int newHeight, int id) {
+
+        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), id);
+
+        Matrix matrix = new Matrix();
+        float scaleWidth = ((float) newWidth) / bitmap.getWidth();
+        float scaleHeight = ((float) newHeight) / bitmap.getHeight();
+        matrix.postScale(scaleWidth, scaleHeight);
+        matrix.postRotate(0);
+        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+        return new BitmapDrawable(this.getResources(), scaledBitmap);
+    }
+
     /*********************************************************************************************/
     /****                                     Route                                           ****/
     /*********************************************************************************************/
@@ -300,9 +324,16 @@ public class Map extends AppCompatActivity {
      * @param waypoints list of waypoints
      */
     private void addMarkers(List<Waypoint> waypoints) {
-        for (Waypoint w : waypoints) {
+        IconFactory mIconFactory = IconFactory.getInstance(this);
+        Drawable mIconDrawable = getScaledDrawable(25,25, R.drawable.dot2);
+
+        Icon icon = mIconFactory.fromDrawable(mIconDrawable);
+
+        List<RouteItem> routeItems = routeManager.getRouteItems();
+        for (int i = 0; i<waypoints.size(); i++){
+            Waypoint w = waypoints.get(i);
             mapView.addMarker(new MarkerOptions()
-                    .position(new LatLng(w.getLatitude(), w.getLongitude())));
+                    .position(new LatLng(w.getLatitude(), w.getLongitude())).icon(icon).title(routeItems.get(i).getStopPointItems().get(0).getDeliveryAddress()));
             Log.d("marker", w.toString());
         }
     }

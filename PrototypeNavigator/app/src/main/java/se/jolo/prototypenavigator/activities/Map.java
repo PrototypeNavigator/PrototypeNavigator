@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,7 +20,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.AutoTransition;
@@ -87,6 +85,7 @@ public class Map extends AppCompatActivity implements LocationListener{
     private Handler handler;
     private Runnable task;
     private int count;
+    private boolean demoRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +115,7 @@ public class Map extends AppCompatActivity implements LocationListener{
         setSupportActionBar(myToolbar);
         addMarkers(waypoints);
 
-        mockLocation();
+
 
         mapView.onCreate(savedInstanceState);
     }
@@ -127,7 +126,7 @@ public class Map extends AppCompatActivity implements LocationListener{
 
     public void mockLocation() {
 
-        if((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+        if ((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
 
             mockLocationProvider = new MockLocationProvider(LocationManager.GPS_PROVIDER, this);
 
@@ -168,8 +167,10 @@ public class Map extends AppCompatActivity implements LocationListener{
 
         if (count < waypoints.size()) {
             task.run();
+            demoRunning = true;
         } else {
             handler.removeCallbacks(task);
+            demoRunning = false;
         }
     }
 
@@ -499,6 +500,14 @@ public class Map extends AppCompatActivity implements LocationListener{
                 sendToDetails.putExtra("route", route);
                 startActivity(sendToDetails);
                 return true;
+            case R.id.startStopDemo:
+                if (demoRunning) {
+                    handler.removeCallbacks(task);
+                    demoRunning = false;
+                } else {
+                    mockLocation();
+                    demoRunning = true;
+                }
         }
 
         return super.onOptionsItemSelected(item);

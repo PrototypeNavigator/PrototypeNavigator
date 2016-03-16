@@ -84,7 +84,6 @@ public class Map extends AppCompatActivity implements LocationListener{
     private MockLocationProvider mockLocationProvider;
     private Handler handler;
     private Runnable task;
-    private int count;
     private boolean demoRunning = false;
 
     @Override
@@ -149,23 +148,20 @@ public class Map extends AppCompatActivity implements LocationListener{
     }
 
     public void mockLoop() {
-
         handler = new Handler();
-        count = 0;
-
         task = new Runnable() {
             @Override
             public void run() {
-                if (count < waypoints.size()) {
-                    mockLocationProvider.pushLocation(waypoints.get(count).getLatitude(),
-                                                      waypoints.get(count).getLongitude());
-                    count++;
+                if (!routeManager.getCurrentRoute().isEmpty()) {
+                    mockLocationProvider.pushLocation(routeManager.getCurrentRoute().get(1).getLatitude(),
+                                                      routeManager.getCurrentRoute().get(1).getLongitude());
                 }
+
                 handler.postDelayed(task, 3000);
             }
         };
 
-        if (count < waypoints.size()) {
+        if (!routeManager.getCurrentRoute().isEmpty()) {
             task.run();
             demoRunning = true;
         } else {
@@ -178,6 +174,9 @@ public class Map extends AppCompatActivity implements LocationListener{
     public void onLocationChanged(Location location) {
         mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                 getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
+
+        routeManager.setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
+        routeManager.removePolyline(routeManager.getPolylineToNextStop());
 
         Log.d("Location", "Location changed ::: "
                 + location.getLatitude()
@@ -265,9 +264,9 @@ public class Map extends AppCompatActivity implements LocationListener{
             public void onClick(View v) {
                 animateCamera(new LatLng(mapView.getLatLng()));
 
-                if (Locator.ableToGetLocation) {
-                    routeManager.onLocationChanged(locator.getLocation());
-                }
+//                if (Locator.ableToGetLocation) {
+//                    routeManager.onLocationChanged(locator.getLocation());
+//                }
 
                 Toast.makeText(v.getContext(), "at: "
                                 + routeManager.getNextStop().getOrder() + " "

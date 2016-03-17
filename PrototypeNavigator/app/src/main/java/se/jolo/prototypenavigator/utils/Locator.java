@@ -9,9 +9,15 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
+
+import se.jolo.prototypenavigator.activities.Map;
 
 /**
  * Created by Joel on 2016-02-25.
@@ -32,6 +38,9 @@ public class Locator implements LocationListener {
     private Context context;
     private Activity activity;
 
+    private RouteManager routeManager;
+    private MapView mapView;
+
     public Locator() {}
 
     public Locator(Context context, Activity activity) {
@@ -39,12 +48,54 @@ public class Locator implements LocationListener {
         this.activity = activity;
     }
 
+    public void setMapViewAndRouteManager(MapView mapView, RouteManager routeManager) {
+        this.mapView = mapView;
+        this.routeManager = routeManager;
+    }
+
+    /**
+     * Sets camera position to device bearing, if unable to get bearing set it to north.
+     * Sets tilt and zoom.
+     *
+     * @param latLng current location
+     * @return returns newly set CameraPosition
+     */
+    public CameraPosition getCameraPosition(LatLng latLng) {
+        return new CameraPosition.Builder()
+                .bearing(0.0f)
+                .target(latLng)
+                .tilt(80f)
+                .zoom(15f)
+                .build();
+    }
+
     /*********************************************************************************************/
     /****                                 LocationListener                                    ****/
     /*********************************************************************************************/
+
+    /**
+     * Set new location, set camera to new location, check new locations proximity to next
+     * stop-point, updates remaining stop-points, loads route again and removes and re-draws
+     * polyline from location to next stop-point.
+     *
+     * @param location the new location
+     */
     @Override
     public void onLocationChanged(Location location) {
-        setLocation((location != null) ? location : this.location);
+        //setLocation((location != null) ? location : this.location);
+
+        if (mapView != null && routeManager != null) {
+            mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+                    getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
+
+            routeManager.setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
+            routeManager.removePolyline(routeManager.getPolylineToNextStop());
+
+            Log.d(LOG_TAG, "Location changed to ::: "
+                    + location.getLatitude()
+                    + " "
+                    + location.getLongitude());
+        }
     }
 
     @Override
@@ -79,8 +130,8 @@ public class Locator implements LocationListener {
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_LOCATION);
         } else {
-            locationManager.requestLocationUpdates(GPS_PROVIDER, 10, 5, locationListener);
-            locationManager.requestLocationUpdates(NETWORK_PROVIDER, 10, 5, locationListener);
+            locationManager.requestLocationUpdates(GPS_PROVIDER, 100, 5, locationListener);
+            locationManager.requestLocationUpdates(NETWORK_PROVIDER, 100, 5, locationListener);
             location = locationManager.getLastKnownLocation(GPS_PROVIDER);
 
             if (location == null) {

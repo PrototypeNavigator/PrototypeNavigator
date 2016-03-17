@@ -34,7 +34,7 @@ import se.jolo.prototypenavigator.model.RouteItem;
 /**
  * Created by Joel on 2016-02-24.
  */
-public final class RouteManager extends Locator {
+public final class RouteManager {
 
     private static final String LOG_TAG = "ROUTER";
     private Context context;
@@ -46,7 +46,6 @@ public final class RouteManager extends Locator {
     private List<RouteStep> steps;
 
     private boolean inProximity;
-    private Locator locator;
     private Location currentLocation;
 
     private DirectionsRoute currentRoute;
@@ -56,11 +55,10 @@ public final class RouteManager extends Locator {
     private Toolbar toolbar;
 
     public RouteManager(Context context, MapView mapView, String MAPBOX_ACCESS_TOKEN,
-                        Locator locator, TextView textView, Toolbar toolbar) {
+                        TextView textView, Toolbar toolbar) {
         this.context = context;
         this.mapView = mapView;
         this.MAPBOX_ACCESS_TOKEN = MAPBOX_ACCESS_TOKEN;
-        this.locator = locator;
         this.inProximity = false;
         this.textView = textView;
         this.toolbar = toolbar;
@@ -69,27 +67,6 @@ public final class RouteManager extends Locator {
     /*********************************************************************************************/
     /****                                     Location                                        ****/
     /*********************************************************************************************/
-
-    /**
-     * Set new location, set camera to new location, check new locations proximity to next
-     * stop-point, updates remaining stop-points, loads route again and removes and re-draws
-     * polyline from location to next stop-point.
-     *
-     * @param location the new location
-     */
-    @Override
-    public void onLocationChanged(Location location) {
-        super.onLocationChanged(location);
-
-        location = (location != null) ? location : locator.getLocation() ;
-
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
-                getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
-
-        setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
-        removePolyline(getPolylineToNextStop());
-
-    }
 
     public RouteManager setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;

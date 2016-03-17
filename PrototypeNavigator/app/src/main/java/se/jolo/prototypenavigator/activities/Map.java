@@ -104,7 +104,7 @@ public class Map extends AppCompatActivity implements LocationListener{
         myToolbar = makeToolbar();
         viewGroup = makeViewGroup();
         textView = makeTextView();
-        routeManager = loadManager(locator);
+        routeManager = loadManager();
         waypoints = routeManager.getWaypoints();
         findMeBtn = initFindMeBtn();
         plus = initPlusBtn();
@@ -114,7 +114,7 @@ public class Map extends AppCompatActivity implements LocationListener{
         setSupportActionBar(myToolbar);
         addMarkers(waypoints);
 
-
+        locator.setMapViewAndRouteManager(mapView, routeManager);
 
         mapView.onCreate(savedInstanceState);
     }
@@ -350,11 +350,10 @@ public class Map extends AppCompatActivity implements LocationListener{
      * Initialize RouteManager, loading RouteItems and Waypoints. Setting current location.
      * Loads selected route.
      *
-     * @param locator LocationHandler
      * @return loaded RouteManager
      */
-    private RouteManager loadManager(Locator locator) {
-        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator, textView, myToolbar);
+    private RouteManager loadManager() {
+        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, textView, myToolbar);
         routeManager.loadRouteItemsAndWaypoints(route).setCurrentLocation(locator.getLocation()).loadRoute();
 
         return routeManager;

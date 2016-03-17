@@ -3,11 +3,13 @@ package se.jolo.prototypenavigator.utils;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
@@ -18,6 +20,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import se.jolo.prototypenavigator.activities.Map;
+import se.jolo.prototypenavigator.demo.MockLocationProvider;
 
 /**
  * Created by Joel on 2016-02-25.
@@ -41,6 +44,11 @@ public class Locator implements LocationListener {
     private RouteManager routeManager;
     private MapView mapView;
 
+    private MockLocationProvider mockLocationProvider;
+    private Handler handler;
+    private Runnable task;
+    private boolean demoRunning = false;
+
     public Locator() {}
 
     public Locator(Context context, Activity activity) {
@@ -48,25 +56,55 @@ public class Locator implements LocationListener {
         this.activity = activity;
     }
 
-    public void setMapViewAndRouteManager(MapView mapView, RouteManager routeManager) {
-        this.mapView = mapView;
-        this.routeManager = routeManager;
+    /*********************************************************************************************/
+    /****                                  MockLocation                                       ****/
+    /*********************************************************************************************/
+
+    public void mockLocation() {
+
+        if ((activity.getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+
+            mockLocationProvider = new MockLocationProvider(LocationManager.GPS_PROVIDER, context);
+
+            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(activity, new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            }
+        }
+
+        mockLoop();
     }
 
-    /**
-     * Sets camera position to device bearing, if unable to get bearing set it to north.
-     * Sets tilt and zoom.
-     *
-     * @param latLng current location
-     * @return returns newly set CameraPosition
-     */
-    public CameraPosition getCameraPosition(LatLng latLng) {
-        return new CameraPosition.Builder()
-                .bearing(0.0f)
-                .target(latLng)
-                .tilt(80f)
-                .zoom(15f)
-                .build();
+    public void mockLoop() {
+        handler = new Handler();
+        task = new Runnable() {
+            @Override
+            public void run() {
+                if (!routeManager.getCurrentRoute().isEmpty()) {
+                    mockLocationProvider.pushLocation(routeManager.getCurrentRoute().get(1).getLatitude(),
+                            routeManager.getCurrentRoute().get(1).getLongitude());
+                }
+
+                handler.postDelayed(task, 3000);
+            }
+        };
+
+        if (!routeManager.getCurrentRoute().isEmpty()) {
+            task.run();
+            demoRunning = true;
+        } else {
+            handler.removeCallbacks(task);
+            demoRunning = false;
+        }
     }
 
     /*********************************************************************************************/
@@ -102,10 +140,14 @@ public class Locator implements LocationListener {
     public void onStatusChanged(String provider, int status, Bundle extras) {}
 
     @Override
-    public void onProviderEnabled(String provider) {}
+    public void onProviderEnabled(String provider) {
+        Log.d("Location", "Enabled location provider ::: " + provider);
+    }
 
     @Override
-    public void onProviderDisabled(String provider) {}
+    public void onProviderDisabled(String provider) {
+        Log.d("Location", "Disabled location provider ::: " + provider);
+    }
 
     /*********************************************************************************************/
     /****                                     Location                                        ****/
@@ -182,5 +224,50 @@ public class Locator implements LocationListener {
     @SuppressWarnings("ResourceType")
     public static void toggleTracking(MapView mapView) {
         mapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
+    }
+
+    /*********************************************************************************************/
+    /****                                       Other                                         ****/
+    /*********************************************************************************************/
+
+    public void setMapViewAndRouteManager(MapView mapView, RouteManager routeManager) {
+        this.mapView = mapView;
+        this.routeManager = routeManager;
+    }
+
+    /**
+     * Sets camera position to device bearing, if unable to get bearing set it to north.
+     * Sets tilt and zoom.
+     *
+     * @param latLng current location
+     * @return returns newly set CameraPosition
+     */
+    public CameraPosition getCameraPosition(LatLng latLng) {
+        return new CameraPosition.Builder()
+                .bearing(0.0f)
+                .target(latLng)
+                .tilt(80f)
+                .zoom(15f)
+                .build();
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public Runnable getTask() {
+        return task;
+    }
+
+    public boolean isDemoRunning() {
+        return demoRunning;
+    }
+
+    public void setDemoRunning(boolean demoRunning) {
+        this.demoRunning = demoRunning;
+    }
+
+    public MockLocationProvider getMockLocationProvider() {
+        return mockLocationProvider;
     }
 }

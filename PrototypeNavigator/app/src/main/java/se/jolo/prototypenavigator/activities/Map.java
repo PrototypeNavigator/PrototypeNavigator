@@ -57,7 +57,7 @@ import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.utils.Speech;
 
-public class Map extends AppCompatActivity implements LocationListener{
+public class Map extends AppCompatActivity {
 
     private final static String LOG_TAG = "MapActivity";
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
@@ -80,11 +80,6 @@ public class Map extends AppCompatActivity implements LocationListener{
 
     private ViewGroup viewGroup;
     private Uri uri;
-
-    private MockLocationProvider mockLocationProvider;
-    private Handler handler;
-    private Runnable task;
-    private boolean demoRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,102 +115,8 @@ public class Map extends AppCompatActivity implements LocationListener{
     }
 
     /*********************************************************************************************/
-    /****                                    Location                                         ****/
-    /*********************************************************************************************/
-
-    public void mockLocation() {
-
-        if ((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-
-            mockLocationProvider = new MockLocationProvider(LocationManager.GPS_PROVIDER, this);
-
-            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(this, new String[]{
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            } else {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-            }
-        }
-
-        mockLoop();
-    }
-
-    public void mockLoop() {
-        handler = new Handler();
-        task = new Runnable() {
-            @Override
-            public void run() {
-                if (!routeManager.getCurrentRoute().isEmpty()) {
-                    mockLocationProvider.pushLocation(routeManager.getCurrentRoute().get(1).getLatitude(),
-                                                      routeManager.getCurrentRoute().get(1).getLongitude());
-                }
-
-                handler.postDelayed(task, 3000);
-            }
-        };
-
-        if (!routeManager.getCurrentRoute().isEmpty()) {
-            task.run();
-            demoRunning = true;
-        } else {
-            handler.removeCallbacks(task);
-            demoRunning = false;
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
-                getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
-
-        routeManager.setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
-        routeManager.removePolyline(routeManager.getPolylineToNextStop());
-
-        Log.d("Location", "Location changed ::: "
-                + location.getLatitude()
-                + " "
-                + location.getLongitude());
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        Log.d("Location", "Enabled location provider ::: " + provider);
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        Log.d("Location", "Disabled location provider ::: " + provider);
-    }
-
-    /*********************************************************************************************/
     /****                                     Other                                           ****/
     /*********************************************************************************************/
-
-    /**
-     * Sets camera position to device bearing, if unable to get bearing set it to north.
-     * Sets tilt and zoom.
-     *
-     * @param latLng current location
-     * @return returns newly set CameraPosition
-     */
-    public CameraPosition getCameraPosition(LatLng latLng) {
-        return new CameraPosition.Builder()
-                .bearing((steps != null) ? (float) steps.get(0).getHeading() : 0.0f)
-                .target(latLng)
-                .tilt(80f)
-                .zoom(15f)
-                .build();
-    }
 
     private ViewGroup makeViewGroup() {
         return (ViewGroup) findViewById(R.id.textAndMenu);
@@ -499,12 +400,12 @@ public class Map extends AppCompatActivity implements LocationListener{
                 startActivity(sendToDetails);
                 return true;
             case R.id.startStopDemo:
-                if (demoRunning) {
-                    handler.removeCallbacks(task);
-                    demoRunning = false;
+                if (locator.isDemoRunning()) {
+                    locator.getHandler().removeCallbacks(locator.getTask());
+                    locator.setDemoRunning(false);
                 } else {
-                    mockLocation();
-                    demoRunning = true;
+                    locator.mockLocation();
+                    locator.setDemoRunning(true);
                 }
         }
 
@@ -546,7 +447,7 @@ public class Map extends AppCompatActivity implements LocationListener{
     protected void onDestroy() {
         Log.d(LOG_TAG, "Destroy");
         super.onDestroy();
-        mockLocationProvider.shutdown();
+        locator.getMockLocationProvider().shutdown();
         mapView.onDestroy();
     }
 

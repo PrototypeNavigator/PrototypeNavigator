@@ -97,11 +97,11 @@ public class Map extends AppCompatActivity {
         loadRoute(extras, loader);
 
         routeManager = loadManager(locator);
-        mapView = loadMap();
+
         myToolbar = makeToolbar();
         viewGroup = makeViewGroup();
         textView = makeTextView();
-
+        mapView = loadMap();
        // waypoints = routeManager.getWaypoints();
         findMeBtn = initFindMeBtn();
         plus = initPlusBtn();
@@ -325,6 +325,7 @@ public class Map extends AppCompatActivity {
         }
 
         mapView.addPolyline(routeManager.getPolylineToNextStop());
+        textView.setText(routeManager.getInstruction().getReadableInstruction());
         return mapView;
     }
 

@@ -8,55 +8,59 @@ import se.jolo.prototypenavigator.model.Instruction;
  * Created by Holstad on 18/03/16.
  */
 public class InstructionTranslator {
-    private String language;
+    private String instructionCode;
+    private String streetName;
     private static final HashMap<String, String> MANEUVERS;
     static {
         MANEUVERS = new HashMap<>();
         MANEUVERS.put("0","Okänd manöver");
         MANEUVERS.put("1","Fortsätt på ");
-        MANEUVERS.put("2","Sväng svagt till höger på ");
-        MANEUVERS.put("3","Sväng till höger på ");
-        MANEUVERS.put("4","Sväng skarpt till höger på ");
-        MANEUVERS.put("5","Gör en u-sväng vid ");
-        MANEUVERS.put("6","Sväng skarpt till vänster på ");
-        MANEUVERS.put("7","Okänd manöver");
-        MANEUVERS.put("8","Okänd manöver");
-        MANEUVERS.put("9","Okänd manöver");
-        MANEUVERS.put("10","Okänd manöver");
-        MANEUVERS.put("11-1","Okänd manöver");
-        MANEUVERS.put("11-2","Okänd manöver");
-        MANEUVERS.put("11-3","Okänd manöver");
-        MANEUVERS.put("11-4","Okänd manöver");
-        MANEUVERS.put("11-5","Okänd manöver");
-        MANEUVERS.put("11-6","Okänd manöver");
-        MANEUVERS.put("11-7","Okänd manöver");
-        MANEUVERS.put("11-8","Okänd manöver");
-        MANEUVERS.put("11-9","Okänd manöver");
-        MANEUVERS.put("9","Okänd manöver");
-        MANEUVERS.put("9","Okänd manöver");
-        MANEUVERS.put("9","Okänd manöver");
-        MANEUVERS.put("9","Okänd manöver");
-        MANEUVERS.put("9","Okänd manöver");
-        MANEUVERS.put("9","Okänd manöver");
+        MANEUVERS.put("2","Sväng svagt höger <>");
+        MANEUVERS.put("3","Sväng höger ");
+        MANEUVERS.put("4","Sväng skarpt höger <>");
+        MANEUVERS.put("5","Gör en u-sväng <>");
+        MANEUVERS.put("6","Sväng skarpt vänster <>");
+        MANEUVERS.put("7","Sväng vänster till ");
+        MANEUVERS.put("8","Sväng svgt vänster till <>");
+        MANEUVERS.put("9","Du har nått ett stop");
+        MANEUVERS.put("10","Fortsätt <>");
+        MANEUVERS.put("11-1","I rondellen, ta den 1:a utfarten");
+        MANEUVERS.put("11-2","I rondellen, ta den 2:a utfarten");
+        MANEUVERS.put("11-3","I rondellen, ta den 3:e utfarten");
+        MANEUVERS.put("11-4","I rondellen, ta den 4:e utfarten");
+        MANEUVERS.put("11-5","I rondellen, ta den 5:e utfarten");
+        MANEUVERS.put("11-6","I rondellen, ta den 6:e utfarten");
+        MANEUVERS.put("11-7","I rondellen, ta den 7:e utfarten");
+        MANEUVERS.put("11-8","I rondellen, ta den 8:e utfarten");
+        MANEUVERS.put("11-9","I rondellen, ta den 9:e utfarten");
+        MANEUVERS.put("15","Du har nått din destination");
     }
-    public InstructionTranslator(){}
+    public InstructionTranslator(String instructionCode, String streetName){
+        this.instructionCode = instructionCode;
+        this.streetName = streetName;
+    }
+
+    public String getInstruction(){
+        return setInstruction();
+    }
+
+    private String setInstruction(){
+        String instruction=null;
+        if (streetName.equals("")){
+            instruction = MANEUVERS.get(instructionCode).replaceFirst("<>", "");
+        }else{
+            if(instructionCode.equals("10")){
+                instruction = MANEUVERS.get(instructionCode).replaceFirst("<>", "på  " + streetName);
+            } else if(instructionCode.equals("5")){
+                instruction = MANEUVERS.get(instructionCode).replaceFirst("<>", "vid " + streetName);
+            }else {
+                instruction = MANEUVERS.get(instructionCode).replaceFirst("<>", "till " + streetName);
+            }
+        }
+
+        return instruction.toString();
+    }
 
 }
 
-/*
-directions = new HashMap<String, String>();
-        directions.put("6","Turn sharp left< on %s>");
-        directions.put("7","Turn left< on %s>");
-        directions.put("8","Turn slight left< on %s>");
-        directions.put("9","You have reached a waypoint of your trip");
-        directions.put("10","<Go on %s>");
-        directions.put("11-1","Enter roundabout and leave at first exit< on %s>");
-        directions.put("11-2","Enter roundabout and leave at second exit< on %s>");
-        directions.put("11-3","Enter roundabout and leave at third exit< on %s>");
-        directions.put("11-4","Enter roundabout and leave at fourth exit< on %s>");
-        directions.put("11-5","Enter roundabout and leave at fifth exit< on %s>");
-        directions.put("11-6","Enter roundabout and leave at sixth exit< on %s>");
-        directions.put("11-7","Enter roundabout and leave at seventh exit< on %s>");
-        directions.put("11-8","Enter roundabout and leave at eighth exit< on %s>");
-        directions.put("11-9","Enter roundabout and leave at nineth exit< on %s>");
-        directions.put("15","You have reached your destination");*/
+

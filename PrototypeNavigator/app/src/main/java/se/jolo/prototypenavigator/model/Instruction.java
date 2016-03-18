@@ -3,6 +3,8 @@ package se.jolo.prototypenavigator.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import se.jolo.prototypenavigator.utils.InstructionTranslator;
+
 /**
  * Created by Holstad on 11/03/16.
  */
@@ -35,6 +37,7 @@ public final class Instruction implements Parcelable {
         this.postTurnAzimuth = postTurnAzimuth;
         this.mode = mode;
     }
+
 
     /**********************************************************************************************/
     /**********************                    Getters                        *********************/
@@ -74,6 +77,11 @@ public final class Instruction implements Parcelable {
 
     public String getMode() {
         return mode;
+    }
+
+    public String getReadableInstruction(){
+        InstructionTranslator instructionTranslator = new InstructionTranslator(instructionCode,streetName);
+        return instructionTranslator.getInstruction();
     }
 
     /**********************************************************************************************/

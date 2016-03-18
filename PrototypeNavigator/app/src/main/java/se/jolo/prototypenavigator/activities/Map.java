@@ -256,7 +256,7 @@ public class Map extends AppCompatActivity {
      * @return loaded RouteManager
      */
     private RouteManager loadManager(Locator locator) {
-        routeManager = new RouteManager(this);
+        routeManager = new RouteManager(this, locator);
         routeManager.loadRouteItemsAndWaypoints(route).loadPolylines();
         return routeManager;
     }

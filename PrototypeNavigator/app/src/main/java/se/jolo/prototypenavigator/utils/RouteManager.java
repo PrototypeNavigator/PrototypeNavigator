@@ -43,8 +43,9 @@ public final class RouteManager {
     private PolylineOptions polylineToNextStop;
     private PolylineOptions polylinefullRoute;
 
-    public RouteManager(Context context) {
+    public RouteManager(Context context, Locator locator) {
         this.context = context;
+        this.locator = locator;
     }
 
     /*********************************************************************************************/

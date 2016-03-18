@@ -214,7 +214,7 @@ public final class RouteManager {
                     + routeItems.get(0).getStopPoint().getType() + " at: "
                     + routeItems.get(0).getStopPoint().getEasting() + " "
                     + routeItems.get(0).getStopPoint().getNorthing());
-
+            instructions.remove(0);
             routeItems.remove(0);
             nextStop.remove(0);
 
@@ -235,6 +235,10 @@ public final class RouteManager {
      */
     public RouteItem getNextStop() {
         return routeItems.get(0);
+    }
+
+    public Instruction getInstruction(){
+        return instructions.get(0);
     }
 
     public PolylineOptions getPolylinefullRoute() {

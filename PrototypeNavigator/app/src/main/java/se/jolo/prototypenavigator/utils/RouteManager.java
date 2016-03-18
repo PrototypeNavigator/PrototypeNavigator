@@ -36,7 +36,7 @@ import se.jolo.prototypenavigator.task.OsrmJsonTask;
 /**
  * Created by Joel on 2016-02-24.
  */
-public final class RouteManager extends Locator {
+public final class RouteManager {
 
     private static final String LOG_TAG = "ROUTER";
 
@@ -48,7 +48,7 @@ public final class RouteManager extends Locator {
     private List<Instruction> instructions;
     private ArrayList<RouteItem> nextStop;
 
-    private boolean inProximity = false;;
+    private boolean inProximity = false;
     private Locator locator;
     private Location currentLocation;
 
@@ -86,6 +86,7 @@ public final class RouteManager extends Locator {
 
     public RouteManager setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
+
         return this;
     }
 
@@ -177,7 +178,6 @@ public final class RouteManager extends Locator {
                     ri.getStopPoint().getNorthing(),
                     ri.getStopPoint().getEasting()));
         }
-
 
         return this;
     }

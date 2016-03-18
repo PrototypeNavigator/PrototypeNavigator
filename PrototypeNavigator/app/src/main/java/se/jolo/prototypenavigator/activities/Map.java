@@ -39,6 +39,7 @@ import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.Style;
@@ -101,19 +102,20 @@ public class Map extends AppCompatActivity implements LocationListener{
 
         loadRoute(extras, loader);
 
+        routeManager = loadManager(locator);
         mapView = loadMap();
         myToolbar = makeToolbar();
         viewGroup = makeViewGroup();
         textView = makeTextView();
-        routeManager = loadManager(locator);
-        waypoints = routeManager.getWaypoints();
+
+       // waypoints = routeManager.getWaypoints();
         findMeBtn = initFindMeBtn();
         plus = initPlusBtn();
         minus = initMinusBtn();
         centroid = setCentroid(locator);
 
         setSupportActionBar(myToolbar);
-        addMarkers(waypoints);
+        addMarkers();
 
 
 
@@ -355,9 +357,8 @@ public class Map extends AppCompatActivity implements LocationListener{
      * @return loaded RouteManager
      */
     private RouteManager loadManager(Locator locator) {
-        routeManager = new RouteManager(this, mapView, MAPBOX_ACCESS_TOKEN, locator, textView, myToolbar);
-        routeManager.loadRouteItemsAndWaypoints(route).setCurrentLocation(locator.getLocation()).loadRoute();
-
+        routeManager = new RouteManager(this);
+        routeManager.loadRouteItemsAndWaypoints(route).setCurrentLocation(locator.getLocation()).loadPolylines();
         return routeManager;
     }
 
@@ -408,7 +409,6 @@ public class Map extends AppCompatActivity implements LocationListener{
         mapView.setCompassGravity(Gravity.BOTTOM);
         mapView.setLogoVisibility(View.INVISIBLE);
         mapView.removeView(mapView.getTouchables().get(1));
-
         mapView.setOnMapClickListener(new MapView.OnMapClickListener() {
             @Override
             public void onMapClick(@NonNull LatLng point) {
@@ -416,6 +416,8 @@ public class Map extends AppCompatActivity implements LocationListener{
                 routeManager.checkOffRoute(target);
             }
         });
+
+
 
         if (Locator.ableToGetLocation) {
             Locator.enableLocation(mapView);
@@ -425,28 +427,27 @@ public class Map extends AppCompatActivity implements LocationListener{
                     + "woods/cave/cellar and/or the elevator", Toast.LENGTH_LONG).show();
         }
 
+        mapView.addPolyline(routeManager.getPolylineToNextStop());
         return mapView;
     }
 
     /**
      * Adds Waypoint markers for full Route.
      *
-     * @param waypoints list of waypoints
+     *
      */
-    private void addMarkers(List<Waypoint> waypoints) {
+    private void addMarkers() {
         IconFactory mIconFactory = IconFactory.getInstance(this);
         Drawable mIconDrawable = getScaledDrawable(25,25, R.drawable.dot2);
 
         Icon icon = mIconFactory.fromDrawable(mIconDrawable);
 
         List<RouteItem> routeItems = routeManager.getRouteItems();
-        for (int i = 0; i<waypoints.size(); i++){
-            Waypoint w = waypoints.get(i);
+        for (int i = 0; i<routeItems.size(); i++){
+            RouteItem r = routeItems.get(i);
             mapView.addMarker(new MarkerOptions()
-                    .position(new LatLng(w.getLatitude(), w.getLongitude()))
-                    .icon(icon)
-                    .title(routeItems.get(i).getStopPointItems().get(0).getDeliveryAddress()));
-            Log.d("marker", w.toString());
+                    .position(new LatLng(r.getStopPoint().getNorthing(), r.getStopPoint().getEasting())).icon(icon).title(routeItems.get(i).getStopPointItems().get(0).getDeliveryAddress()));
+
         }
     }
 
@@ -500,14 +501,31 @@ public class Map extends AppCompatActivity implements LocationListener{
                 sendToDetails.putExtra("route", route);
                 startActivity(sendToDetails);
                 return true;
+
+            case R.id.showRoute:
+                PolylineOptions polylineOptions = routeManager.getPolylinefullRoute();
+
+                if(item.getTitle().equals("Visa rutt på karta")){
+                    item.setTitle("göm rutt");
+                    mapView.addPolyline(polylineOptions);
+                    return true;
+                }else {
+                    item.setTitle("Visa rutt på karta");
+                    mapView.removeAnnotation(polylineOptions.getPolyline());
+                    return true;
+                }
             case R.id.startStopDemo:
                 if (demoRunning) {
                     handler.removeCallbacks(task);
                     demoRunning = false;
+                    return true;
                 } else {
                     mockLocation();
                     demoRunning = true;
+                    return true;
                 }
+
+
         }
 
         return super.onOptionsItemSelected(item);

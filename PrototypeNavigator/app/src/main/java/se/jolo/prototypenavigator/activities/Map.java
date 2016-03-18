@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -326,6 +327,9 @@ public class Map extends AppCompatActivity {
 
         mapView.addPolyline(routeManager.getPolylineToNextStop());
         textView.setText(routeManager.getInstruction().getReadableInstruction());
+        myToolbar.setTitleTextColor(Color.WHITE);
+        myToolbar.setTitle(routeManager.getNextStop().getStopPointItems().get(0).getDeliveryAddress());
+
         return mapView;
     }
 

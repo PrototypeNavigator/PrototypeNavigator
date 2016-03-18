@@ -2,26 +2,15 @@ package se.jolo.prototypenavigator.utils;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Location;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mapbox.directions.DirectionsCriteria;
-import com.mapbox.directions.MapboxDirections;
-import com.mapbox.directions.service.models.DirectionsResponse;
 import com.mapbox.directions.service.models.DirectionsRoute;
-import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.constants.GeoConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.views.MapView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +19,6 @@ import java.util.concurrent.ExecutionException;
 import se.jolo.prototypenavigator.model.Instruction;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
-import se.jolo.prototypenavigator.model.StopPoint;
 import se.jolo.prototypenavigator.task.OsrmJsonTask;
 
 /**
@@ -50,7 +38,6 @@ public final class RouteManager {
 
     private boolean inProximity = false;
     private Locator locator;
-    private Location currentLocation;
 
     private DirectionsRoute currentRoute;
     private PolylineOptions polylineToNextStop;
@@ -68,7 +55,6 @@ public final class RouteManager {
      * Set new location, set camera to new location, check new locations proximity to next
      * stop-point, updates remaining stop-points, loads route again and removes and re-draws
      * polyline from location to next stop-point.
-     *
      */
 /*    @Override
     public void onLocationChanged(Location location) {
@@ -83,15 +69,8 @@ public final class RouteManager {
         removePolyline(getPolylineToNextStop());
 
     }*/
-
     public List<LatLng> getPoints() {
         return polylinefullRoute.getPoints();
-    }
-
-    public RouteManager setCurrentLocation(Location currentLocation) {
-        this.currentLocation = currentLocation;
-
-        return this;
     }
 
     /*********************************************************************************************/
@@ -123,7 +102,7 @@ public final class RouteManager {
      */
     public PolylineOptions createPolylineOption(List<RouteItem> routeItems) {
         HashMap<String, List> stopsAndInstructions = stopsAndInstructions(routeItems);
-        if(routeItems.size()<=1){
+        if (routeItems.size() <= 1) {
             instructions = stopsAndInstructions.get(OsrmJsonTask.INSTRUCTIONS);
         }
         PolylineOptions polylineOptions = new PolylineOptions();
@@ -132,15 +111,15 @@ public final class RouteManager {
     }
 
 
-    public HashMap<String,List> stopsAndInstructions(List<RouteItem> routeItems){
+    public HashMap<String, List> stopsAndInstructions(List<RouteItem> routeItems) {
 
         OsrmJsonTask osrmJsonTask = new OsrmJsonTask();
-        ArrayList<LatLng>routeStops = new ArrayList<>();
+        ArrayList<LatLng> routeStops = new ArrayList<>();
 
-        if (routeItems.size()<=1){
-            routeStops.add(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()));
-            routeStops.add(new LatLng(routeItems.get(0).getStopPoint().getNorthing(),routeItems.get(0).getStopPoint().getEasting()));
-        }else {
+        if (routeItems.size() <= 1) {
+            routeStops.add(new LatLng(locator.getLocation().getLatitude(), locator.getLocation().getLongitude()));
+            routeStops.add(new LatLng(routeItems.get(0).getStopPoint().getNorthing(), routeItems.get(0).getStopPoint().getEasting()));
+        } else {
             for (RouteItem routeItem : routeItems) {
                 routeStops.add(new LatLng(routeItem.getStopPoint().getNorthing(), routeItem.getStopPoint().getEasting()));
             }
@@ -186,7 +165,7 @@ public final class RouteManager {
         return this;
     }
 
-    public RouteManager loadPolylines(){
+    public RouteManager loadPolylines() {
         polylineToNextStop = createPolylineOption(nextStop).width(5).color(Color.GREEN);
         polylinefullRoute = createPolylineOption(routeItems).width(5).color(Color.BLUE);
         return this;
@@ -205,8 +184,8 @@ public final class RouteManager {
                 routeItems.get(0).getStopPoint().getEasting());
 
         LatLng latLngPosition = new LatLng(
-                currentLocation.getLatitude(),
-                currentLocation.getLongitude());
+                locator.getLocation().getLatitude(),
+                locator.getLocation().getLongitude());
 
         if (latLngRouteItem.distanceTo(latLngPosition) < 10.0) {
             inProximity = true;

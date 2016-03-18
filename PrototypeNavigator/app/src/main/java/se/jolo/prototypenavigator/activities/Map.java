@@ -257,7 +257,7 @@ public class Map extends AppCompatActivity {
      */
     private RouteManager loadManager(Locator locator) {
         routeManager = new RouteManager(this);
-        routeManager.loadRouteItemsAndWaypoints(route).setCurrentLocation(locator.getLocation()).loadPolylines();
+        routeManager.loadRouteItemsAndWaypoints(route).loadPolylines();
         return routeManager;
     }
 
@@ -343,7 +343,9 @@ public class Map extends AppCompatActivity {
         for (int i = 0; i<routeItems.size(); i++){
             RouteItem r = routeItems.get(i);
             mapView.addMarker(new MarkerOptions()
-                    .position(new LatLng(r.getStopPoint().getNorthing(), r.getStopPoint().getEasting())).icon(icon).title(routeItems.get(i).getStopPointItems().get(0).getDeliveryAddress()));
+                    .position(new LatLng(r.getStopPoint().getNorthing(), r.getStopPoint().getEasting()))
+                    .icon(icon)
+                    .title(routeItems.get(i).getStopPointItems().get(0).getDeliveryAddress()));
 
         }
     }
@@ -398,7 +400,6 @@ public class Map extends AppCompatActivity {
                 sendToDetails.putExtra("route", route);
                 startActivity(sendToDetails);
                 return true;
-
             case R.id.showRoute:
                 PolylineOptions polylineOptions = routeManager.getPolylinefullRoute();
 

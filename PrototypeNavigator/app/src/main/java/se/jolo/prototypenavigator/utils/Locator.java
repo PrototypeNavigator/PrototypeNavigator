@@ -126,8 +126,7 @@ public class Locator implements LocationListener {
             mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                     getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
 
-            routeManager.setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadPolylines();
-            //routeManager.removePolyline(routeManager.getPolylineToNextStop());
+            routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylines();
 
             Log.d(LOG_TAG, "Location changed to ::: "
                     + location.getLatitude()
@@ -177,7 +176,7 @@ public class Locator implements LocationListener {
             location = locationManager.getLastKnownLocation(GPS_PROVIDER);
 
             if (location == null) {
-                location = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+                location = locationManager.getLastKnownLocation(GPS_PROVIDER);
             }
         }
 

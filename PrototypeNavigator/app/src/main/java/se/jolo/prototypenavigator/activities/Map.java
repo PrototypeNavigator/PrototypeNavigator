@@ -1,19 +1,25 @@
 package se.jolo.prototypenavigator.activities;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.AutoTransition;
@@ -34,6 +40,7 @@ import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -44,13 +51,14 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.R;
+import se.jolo.prototypenavigator.demo.MockLocationProvider;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.utils.Speech;
 
-public class Map extends AppCompatActivity {
+public class Map extends AppCompatActivity implements LocationListener{
 
     private final static String LOG_TAG = "MapActivity";
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
@@ -73,6 +81,12 @@ public class Map extends AppCompatActivity {
 
     private ViewGroup viewGroup;
     private Uri uri;
+
+    private MockLocationProvider mockLocationProvider;
+    private Handler handler;
+    private Runnable task;
+    private int count;
+    private boolean demoRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,12 +117,108 @@ public class Map extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         addMarkers();
 
+
+
         mapView.onCreate(savedInstanceState);
+    }
+
+    /*********************************************************************************************/
+    /****                                    Location                                         ****/
+    /*********************************************************************************************/
+
+    public void mockLocation() {
+
+        if ((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+
+            mockLocationProvider = new MockLocationProvider(LocationManager.GPS_PROVIDER, this);
+
+            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            }
+        }
+
+        mockLoop();
+    }
+
+    public void mockLoop() {
+
+        handler = new Handler();
+        count = 0;
+
+        task = new Runnable() {
+            @Override
+            public void run() {
+                if (count < waypoints.size()) {
+                    mockLocationProvider.pushLocation(waypoints.get(count).getLatitude(),
+                                                      waypoints.get(count).getLongitude());
+                    count++;
+                }
+                handler.postDelayed(task, 3000);
+            }
+        };
+
+        if (count < waypoints.size()) {
+            task.run();
+            demoRunning = true;
+        } else {
+            handler.removeCallbacks(task);
+            demoRunning = false;
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+                getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
+
+        Log.d("Location", "Location changed ::: "
+                + location.getLatitude()
+                + " "
+                + location.getLongitude());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Log.d("Location", "Enabled location provider ::: " + provider);
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Log.d("Location", "Disabled location provider ::: " + provider);
     }
 
     /*********************************************************************************************/
     /****                                     Other                                           ****/
     /*********************************************************************************************/
+
+    /**
+     * Sets camera position to device bearing, if unable to get bearing set it to north.
+     * Sets tilt and zoom.
+     *
+     * @param latLng current location
+     * @return returns newly set CameraPosition
+     */
+    public CameraPosition getCameraPosition(LatLng latLng) {
+        return new CameraPosition.Builder()
+                .bearing((steps != null) ? (float) steps.get(0).getHeading() : 0.0f)
+                .target(latLng)
+                .tilt(80f)
+                .zoom(15f)
+                .build();
+    }
 
     private ViewGroup makeViewGroup() {
         return (ViewGroup) findViewById(R.id.textAndMenu);
@@ -337,6 +447,7 @@ public class Map extends AppCompatActivity {
             RouteItem r = routeItems.get(i);
             mapView.addMarker(new MarkerOptions()
                     .position(new LatLng(r.getStopPoint().getNorthing(), r.getStopPoint().getEasting())).icon(icon).title(routeItems.get(i).getStopPointItems().get(0).getDeliveryAddress()));
+
         }
     }
 
@@ -390,18 +501,30 @@ public class Map extends AppCompatActivity {
                 sendToDetails.putExtra("route", route);
                 startActivity(sendToDetails);
                 return true;
+
             case R.id.showRoute:
                 PolylineOptions polylineOptions = routeManager.getPolylinefullRoute();
 
                 if(item.getTitle().equals("Visa rutt på karta")){
                     item.setTitle("göm rutt");
                     mapView.addPolyline(polylineOptions);
+                    return true;
                 }else {
                     item.setTitle("Visa rutt på karta");
                     mapView.removeAnnotation(polylineOptions.getPolyline());
+                    return true;
+                }
+            case R.id.startStopDemo:
+                if (demoRunning) {
+                    handler.removeCallbacks(task);
+                    demoRunning = false;
+                    return true;
+                } else {
+                    mockLocation();
+                    demoRunning = true;
+                    return true;
                 }
 
-                return true;
 
         }
 
@@ -443,6 +566,7 @@ public class Map extends AppCompatActivity {
     protected void onDestroy() {
         Log.d(LOG_TAG, "Destroy");
         super.onDestroy();
+        mockLocationProvider.shutdown();
         mapView.onDestroy();
     }
 

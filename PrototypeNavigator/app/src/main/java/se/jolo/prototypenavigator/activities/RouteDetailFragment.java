@@ -3,6 +3,7 @@ package se.jolo.prototypenavigator.activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.deserializers.StopItemViewAdapter;
@@ -19,6 +21,7 @@ import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.task.ImageLoader;
 import se.jolo.prototypenavigator.utils.SimpleDividerItemDecoration;
+import se.jolo.prototypenavigator.utils.UrlBuilderStreetview;
 
 
 public class RouteDetailFragment extends Fragment {
@@ -68,7 +71,7 @@ public class RouteDetailFragment extends Fragment {
 
         }
 
-               /* imageLoader = new ImageLoader();
+                imageLoader = new ImageLoader();
                 imageLoader.execute(new UrlBuilderStreetview(routeItem.getStopPointItems().get(0).getEasting(), routeItem.getStopPointItems().get(0).getNorthing()).getUrl());
                 image = (ImageView) activity.findViewById(R.id.image);
 
@@ -81,7 +84,7 @@ public class RouteDetailFragment extends Fragment {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
-                }*/
+                }
 
         if (savedInstanceState==null){
             recyclerView = getActivity().findViewById(R.id.route_list);

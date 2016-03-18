@@ -84,6 +84,10 @@ public final class RouteManager {
 
     }*/
 
+    public List<LatLng> getPoints() {
+        return polylinefullRoute.getPoints();
+    }
+
     public RouteManager setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
 
@@ -182,7 +186,7 @@ public final class RouteManager {
         return this;
     }
 
-    public  RouteManager loadPolylines(){
+    public RouteManager loadPolylines(){
         polylineToNextStop = createPolylineOption(nextStop).width(5).color(Color.GREEN);
         polylinefullRoute = createPolylineOption(routeItems).width(5).color(Color.BLUE);
         return this;

@@ -89,16 +89,16 @@ public class Locator implements LocationListener {
         task = new Runnable() {
             @Override
             public void run() {
-                if (!routeManager.getCurrentRoute().isEmpty()) {
-                    mockLocationProvider.pushLocation(routeManager.getCurrentRoute().get(1).getLatitude(),
-                            routeManager.getCurrentRoute().get(1).getLongitude());
+                if (!routeManager.getPoints().isEmpty()) {
+                    mockLocationProvider.pushLocation(routeManager.getPoints().get(1).getLatitude(),
+                            routeManager.getPoints().get(1).getLongitude());
                 }
 
                 handler.postDelayed(task, 3000);
             }
         };
 
-        if (!routeManager.getCurrentRoute().isEmpty()) {
+        if (!routeManager.getPoints().isEmpty()) {
             task.run();
             demoRunning = true;
         } else {
@@ -126,8 +126,8 @@ public class Locator implements LocationListener {
             mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                     getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
 
-            routeManager.setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRoute();
-            routeManager.removePolyline(routeManager.getPolylineToNextStop());
+            routeManager.setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadPolylines();
+            //routeManager.removePolyline(routeManager.getPolylineToNextStop());
 
             Log.d(LOG_TAG, "Location changed to ::: "
                     + location.getLatitude()

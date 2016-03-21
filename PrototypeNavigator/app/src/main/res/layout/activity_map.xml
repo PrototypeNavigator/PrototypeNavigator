@@ -27,6 +27,7 @@
             android:textAlignment="center"
             android:subtitleTextColor="@android:color/white"
             android:titleTextColor="@android:color/white"
+            mapbox:theme="@style/toolbar"
             />
 
         <TextView
@@ -57,9 +58,10 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:src="@drawable/abc_btn_radio_to_on_mtrl_015"
-        android:tint="@color/colorPrimaryDark"
+        android:tint="@color/darkTransparent"
         android:id="@+id/findMeBtn"
-        mapbox:backgroundTint="@color/colorPrimary" />
+        mapbox:backgroundTint="@color/white"
+        />
 
     <Button
         android:backgroundTint="@color/lightTransparent"

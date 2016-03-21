@@ -25,6 +25,7 @@ public class Locator implements LocationListener {
     public static boolean ableToGetLocation = false;
 
     private Location location;
+    private Location lastLocation;
 
     private Context context;
     private Activity activity;
@@ -50,6 +51,7 @@ public class Locator implements LocationListener {
      */
     @Override
     public void onLocationChanged(Location location) {
+        lastLocation = this.location;
         this.location = location;
     }
 
@@ -141,6 +143,7 @@ public class Locator implements LocationListener {
     }
 
     public void setLocation(Location location) {
+        lastLocation = this.location;
         this.location = location;
     }
 }

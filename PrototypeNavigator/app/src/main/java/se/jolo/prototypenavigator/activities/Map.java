@@ -408,15 +408,12 @@ public class Map extends AppCompatActivity implements LocationListener {
         mapView = (MapView) findViewById(R.id.mapboxMapView);
         mapView.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
-        if (day) {
-            mapView.setStyleUrl(Style.LIGHT);
-        } else {
-            mapView.setStyleUrl(Style.DARK);
-        }
+        mapView.setStyleUrl(Style.MAPBOX_STREETS);
 
         mapView.setCompassGravity(Gravity.BOTTOM);
         mapView.setLogoVisibility(View.INVISIBLE);
         mapView.removeView(mapView.getTouchables().get(1));
+
         mapView.setOnMapClickListener(new MapView.OnMapClickListener() {
             @Override
             public void onMapClick(@NonNull LatLng point) {
@@ -446,7 +443,9 @@ public class Map extends AppCompatActivity implements LocationListener {
      */
     private void addMarkers() {
         IconFactory mIconFactory = IconFactory.getInstance(this);
+
         Drawable mIconDrawable = getScaledDrawable(25, 25, R.drawable.dot2);
+
 
         Icon icon = mIconFactory.fromDrawable(mIconDrawable);
 
@@ -537,14 +536,13 @@ public class Map extends AppCompatActivity implements LocationListener {
                     mockRunner = new MockLocationRunner(this, this, routeManager.getPoints());
                 }
             case R.id.dayVsNight:
-                if (item.getTitle().equals("Dag")) {
-                    item.setTitle("Natt");
-                    day = false;
-                    loadMap();
-                } else {
-                    item.setTitle("Dag");
-                    day = true;
-                    loadMap();
+
+                if(item.getTitle().equals("Visa mörk karta")){
+                    item.setTitle("Visa ljus karta");
+                    mapView.setStyleUrl(Style.DARK);
+                }else {
+                    item.setTitle("Visa mörk karta");
+                    mapView.setStyleUrl(Style.MAPBOX_STREETS);
                 }
         }
 
@@ -586,6 +584,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     protected void onDestroy() {
         Log.d(LOG_TAG, "Destroy");
         super.onDestroy();
+
         if (mockRunner != null && mockRunner.isDemoRunning()) {
             mockRunner.kill();
         }

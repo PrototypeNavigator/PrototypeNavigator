@@ -29,7 +29,6 @@
         android:layout_above="@+id/btnLoadPreRoute"
         android:layout_alignParentStart="true"
         android:theme="@style/button"
-        style="@style/Widget.AppCompat.Button.Colored"
         />
 
     <Button
@@ -40,7 +39,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:theme="@style/button"
-        style="@style/Widget.AppCompat.Button.Colored"/>
+        />
 
     <Spinner
         android:layout_width="wrap_content"

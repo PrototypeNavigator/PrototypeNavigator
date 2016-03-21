@@ -343,7 +343,7 @@ public class Map extends AppCompatActivity {
      */
     private void addMarkers() {
         IconFactory mIconFactory = IconFactory.getInstance(this);
-        Drawable mIconDrawable = getScaledDrawable(25,25, R.drawable.dot2);
+        Drawable mIconDrawable = getScaledDrawable(10,10, R.drawable.dot2);
 
         Icon icon = mIconFactory.fromDrawable(mIconDrawable);
 

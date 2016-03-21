@@ -444,7 +444,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     private void addMarkers() {
         IconFactory mIconFactory = IconFactory.getInstance(this);
 
-        Drawable mIconDrawable = getScaledDrawable(25, 25, R.drawable.dot2);
+        Drawable mIconDrawable = getScaledDrawable(15, 15, R.drawable.dot2);
 
 
         Icon icon = mIconFactory.fromDrawable(mIconDrawable);
@@ -514,7 +514,7 @@ public class Map extends AppCompatActivity implements LocationListener {
                 PolylineOptions polylineOptions = routeManager.getPolylinefullRoute();
 
                 if (item.getTitle().equals("Visa rutt på karta")) {
-                    item.setTitle("göm rutt");
+                    item.setTitle("Göm rutt");
                     mapView.addPolyline(polylineOptions);
                     return true;
                 } else {
@@ -528,21 +528,25 @@ public class Map extends AppCompatActivity implements LocationListener {
                         mockRunner.getHandler().removeCallbacks(mockRunner.getTask());
                         mockRunner.kill();
                         mockRunner.setDemoRunning(false);
+                        return true;
                     } else {
                         mockRunner.mockLocation();
                         mockRunner.setDemoRunning(true);
+                        return true;
                     }
                 } else {
                     mockRunner = new MockLocationRunner(this, this, routeManager.getPoints());
+                    return true;
                 }
             case R.id.dayVsNight:
-
                 if(item.getTitle().equals("Visa mörk karta")){
                     item.setTitle("Visa ljus karta");
                     mapView.setStyleUrl(Style.DARK);
+                    return true;
                 }else {
                     item.setTitle("Visa mörk karta");
                     mapView.setStyleUrl(Style.MAPBOX_STREETS);
+                    return true;
                 }
         }
 

@@ -306,16 +306,12 @@ public class Map extends AppCompatActivity {
 
         mapView = (MapView) findViewById(R.id.mapboxMapView);
         mapView.setAccessToken(MAPBOX_ACCESS_TOKEN);
-        if(day){
-            mapView.setStyleUrl(Style.LIGHT);
-        }else {
-            mapView.setStyleUrl(Style.DARK);
-        }
-
+        mapView.setStyleUrl(Style.MAPBOX_STREETS);
 
         mapView.setCompassGravity(Gravity.BOTTOM);
         mapView.setLogoVisibility(View.INVISIBLE);
         mapView.removeView(mapView.getTouchables().get(1));
+
         mapView.setOnMapClickListener(new MapView.OnMapClickListener() {
             @Override
             public void onMapClick(@NonNull LatLng point) {
@@ -433,14 +429,12 @@ public class Map extends AppCompatActivity {
                     locator.setDemoRunning(true);
                 }
             case R.id.dayVsNight:
-                if(item.getTitle().equals("Dag")){
-                    item.setTitle("Natt");
-                    day = false;
-                    loadMap();
+                if(item.getTitle().equals("Visa mörk karta")){
+                    item.setTitle("Visa ljus karta");
+                    mapView.setStyleUrl(Style.DARK);
                 }else {
-                    item.setTitle("Dag");
-                    day = true;
-                    loadMap();
+                    item.setTitle("Visa mörk karta");
+                    mapView.setStyleUrl(Style.MAPBOX_STREETS);
                 }
         }
 
@@ -482,7 +476,9 @@ public class Map extends AppCompatActivity {
     protected void onDestroy() {
         Log.d(LOG_TAG, "Destroy");
         super.onDestroy();
-        locator.getMockLocationProvider().shutdown();
+        if(locator.getMockLocationProvider()!=null){
+            locator.getMockLocationProvider().shutdown();
+        }
         mapView.onDestroy();
     }
 

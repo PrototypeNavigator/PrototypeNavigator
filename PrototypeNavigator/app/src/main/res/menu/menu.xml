@@ -15,5 +15,7 @@
     <item
         android:id="@+id/startStopDemo"
         android:title="@string/startStopDemo" />
-    />
+    <item
+        android:id="@+id/dayVsNight"
+        android:title="Dag"/>
 </menu>

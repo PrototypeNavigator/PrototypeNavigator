@@ -80,6 +80,8 @@ public class Map extends AppCompatActivity {
     private Locator locator;
     private Route route;
 
+    private boolean day = true;
+
     private ViewGroup viewGroup;
     private Uri uri;
 
@@ -304,7 +306,12 @@ public class Map extends AppCompatActivity {
 
         mapView = (MapView) findViewById(R.id.mapboxMapView);
         mapView.setAccessToken(MAPBOX_ACCESS_TOKEN);
-        mapView.setStyleUrl(Style.MAPBOX_STREETS);
+        if(day){
+            mapView.setStyleUrl(Style.LIGHT);
+        }else {
+            mapView.setStyleUrl(Style.DARK);
+        }
+
 
         mapView.setCompassGravity(Gravity.BOTTOM);
         mapView.setLogoVisibility(View.INVISIBLE);
@@ -424,6 +431,16 @@ public class Map extends AppCompatActivity {
                 } else {
                     locator.mockLocation();
                     locator.setDemoRunning(true);
+                }
+            case R.id.dayVsNight:
+                if(item.getTitle().equals("Dag")){
+                    item.setTitle("Natt");
+                    day = false;
+                    loadMap();
+                }else {
+                    item.setTitle("Dag");
+                    day = true;
+                    loadMap();
                 }
         }
 

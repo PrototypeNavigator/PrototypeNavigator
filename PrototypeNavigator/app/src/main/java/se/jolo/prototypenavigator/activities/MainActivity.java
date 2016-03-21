@@ -3,6 +3,8 @@ package se.jolo.prototypenavigator.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,11 +31,16 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
     private TextView tvWelcome;
     private Loader loader;
     private String fileName;
+    private RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        Drawable background = getResources().getDrawable(R.drawable.sky2);
+        relativeLayout.setBackground(background);
 
         initGps();
 

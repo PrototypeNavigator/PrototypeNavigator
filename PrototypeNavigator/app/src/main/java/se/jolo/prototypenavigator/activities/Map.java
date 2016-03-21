@@ -414,6 +414,7 @@ public class Map extends AppCompatActivity implements LocationListener {
             mapView.setStyleUrl(Style.DARK);
         }
 
+
         mapView.setCompassGravity(Gravity.BOTTOM);
         mapView.setLogoVisibility(View.INVISIBLE);
         mapView.removeView(mapView.getTouchables().get(1));
@@ -537,14 +538,12 @@ public class Map extends AppCompatActivity implements LocationListener {
                     mockRunner = new MockLocationRunner(this, this, routeManager.getPoints());
                 }
             case R.id.dayVsNight:
-                if (item.getTitle().equals("Dag")) {
-                    item.setTitle("Natt");
-                    day = false;
-                    loadMap();
-                } else {
-                    item.setTitle("Dag");
-                    day = true;
-                    loadMap();
+                if(item.getTitle().equals("Visa mörk karta")){
+                    item.setTitle("Visa ljus karta");
+                    mapView.setStyleUrl(Style.DARK);
+                }else {
+                    item.setTitle("Visa mörk karta");
+                    mapView.setStyleUrl(Style.MAPBOX_STREETS);
                 }
         }
 

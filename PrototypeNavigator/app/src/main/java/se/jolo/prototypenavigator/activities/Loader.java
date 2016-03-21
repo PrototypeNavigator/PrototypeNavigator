@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Random;
 
 import se.jolo.prototypenavigator.model.Route;
@@ -142,7 +143,22 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
      * @return FileArray
      */
     public File[] loadSavedFiles() {
-        return context.getFilesDir().listFiles();
+
+        File[] allFiles = context.getFilesDir().listFiles();
+        ArrayList<File> routeFilesList = new ArrayList<>();
+
+        for (int i = 0; i<allFiles.length; i++){
+            File file = allFiles[i];
+            String fileName = file.getName();
+            if (fileName.startsWith("RouteXmlFile")){
+                routeFilesList.add(file);
+            }
+            Log.d("fileName", file.getName());
+        }
+
+        File[] routeFiles = new File[routeFilesList.size()];
+
+        return routeFiles = routeFilesList.toArray(routeFiles);
     }
 
     /**

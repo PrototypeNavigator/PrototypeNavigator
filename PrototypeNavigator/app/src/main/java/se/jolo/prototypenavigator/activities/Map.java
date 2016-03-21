@@ -525,25 +525,31 @@ public class Map extends AppCompatActivity implements LocationListener {
                     return true;
                 }
             case R.id.startStopDemo:
-                if (mockRunner != null) {
-                    if (mockRunner.isDemoRunning()) {
-                        mockRunner.getHandler().removeCallbacks(mockRunner.getTask());
-                        mockRunner.kill();
-                        mockRunner.setDemoRunning(false);
-                    } else {
-                        mockRunner.mockLocation();
-                        mockRunner.setDemoRunning(true);
-                    }
+                if (mockRunner == null) {
+                    mockRunner = new MockLocationRunner(this, this, routeManager.getPoints(), mapView);
+                }
+
+                if (mockRunner.isDemoRunning()) {
+                    mockRunner.getHandler().removeCallbacks(mockRunner.getTask());
+                    mockRunner.kill();
+                    mockRunner.setDemoRunning(false);
+
+                    return true;
                 } else {
-                    mockRunner = new MockLocationRunner(this, this, routeManager.getPoints());
+                    mockRunner.mockLocation();
+                    mockRunner.setDemoRunning(true);
+
+                    return true;
                 }
             case R.id.dayVsNight:
-                if(item.getTitle().equals("Visa mörk karta")){
+                if (item.getTitle().equals("Visa mörk karta")) {
                     item.setTitle("Visa ljus karta");
                     mapView.setStyleUrl(Style.DARK);
-                }else {
+                    return true;
+                } else {
                     item.setTitle("Visa mörk karta");
                     mapView.setStyleUrl(Style.MAPBOX_STREETS);
+                    return true;
                 }
         }
 

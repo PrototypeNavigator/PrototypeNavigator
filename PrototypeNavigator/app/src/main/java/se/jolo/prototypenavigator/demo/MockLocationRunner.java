@@ -13,7 +13,10 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.views.MapView;
 
 import java.util.List;
 
@@ -26,6 +29,7 @@ public final class MockLocationRunner implements LocationListener {
 
     private Context context;
     private Activity activity;
+    private MapView mapView;
 
     private MockLocationProvider mockLocationProvider;
     private Handler handler;
@@ -35,10 +39,13 @@ public final class MockLocationRunner implements LocationListener {
     private List<LatLng> points;
     private Location location;
 
-    public MockLocationRunner(Context context, Activity activity, List<LatLng> points) {
+    public MockLocationRunner(Context context, Activity activity, List<LatLng> points, MapView mapView) {
         this.context = context;
         this.activity = activity;
         this.points = points;
+        this.mapView = mapView;
+
+        Log.d(LOG_TAG, LOG_TAG + " created!");
     }
 
     public void mockLocation() {
@@ -66,15 +73,18 @@ public final class MockLocationRunner implements LocationListener {
     }
 
     public void mockLoop() {
+
         handler = new Handler();
         task = new Runnable() {
             @Override
             public void run() {
                 if (!points.isEmpty()) {
-                    for (LatLng point : points) {
-                        if ((location.getLatitude() == point.getLatitude()) &&
-                                (location.getLongitude() == point.getLongitude())) {
-                            points.remove(0);
+                    for (LatLng point : points) { // ConcurrentModificationException
+                        if (location != null) {
+                            if ((location.getLatitude() == point.getLatitude()) &&
+                                    (location.getLongitude() == point.getLongitude())) {
+                                points.remove(0);
+                            }
                         }
                     }
 
@@ -88,9 +98,11 @@ public final class MockLocationRunner implements LocationListener {
 
         if (!points.isEmpty()) {
             task.run();
+            Log.d(LOG_TAG, "MockLoop ::: run()");
             demoRunning = true;
         } else {
             handler.removeCallbacks(task);
+            Log.d(LOG_TAG, "MockLoop ::: removeCallbacks()");
             demoRunning = false;
         }
     }
@@ -111,13 +123,16 @@ public final class MockLocationRunner implements LocationListener {
         this.demoRunning = demoRunning;
     }
 
-    public MockLocationProvider getMockLocationProvider() {
-        return mockLocationProvider;
-    }
-
     @Override
     public void onLocationChanged(Location location) {
         this.location = location;
+
+        Log.d(LOG_TAG, "OLC - LatLng ::: " + location.getLatitude() + ", " + location.getLongitude());
+
+        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+                new CameraPosition.Builder()
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))
+                        .build()));
     }
 
     @Override
@@ -138,10 +153,13 @@ public final class MockLocationRunner implements LocationListener {
     public void kill() {
         if (task != null) {
             handler.removeCallbacks(task);
+            Log.d(LOG_TAG, "kill() ::: removeCallbacks()");
         }
 
         demoRunning = false;
         mockLocationProvider.shutdown();
+        Log.d(LOG_TAG, "kill() ::: shutdown()");
         android.os.Process.killProcess(android.os.Process.myPid());
+        Log.d(LOG_TAG, "kill() ::: killProcess()");
     }
 }

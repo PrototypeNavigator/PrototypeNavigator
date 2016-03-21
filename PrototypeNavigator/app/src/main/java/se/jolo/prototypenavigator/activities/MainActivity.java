@@ -37,8 +37,9 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         initGps();
 
         Locator locator = new Locator(this, this);
+        locator.init(locator);
+
         loader = new Loader(this);
-        locator.init();
 
         tvWelcome = (TextView) findViewById(R.id.tvWelcome);
 

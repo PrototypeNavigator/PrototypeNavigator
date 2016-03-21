@@ -2,15 +2,26 @@ package se.jolo.prototypenavigator.utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Location;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mapbox.directions.DirectionsCriteria;
+import com.mapbox.directions.MapboxDirections;
+import com.mapbox.directions.service.models.DirectionsResponse;
 import com.mapbox.directions.service.models.DirectionsRoute;
+import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.constants.GeoConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.views.MapView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +82,7 @@ public final class RouteManager {
 
     }*/
     public List<LatLng> getPoints() {
-        return polylinefullRoute.getPoints();
+        return polylineToNextStop.getPoints();
     }
 
     /*********************************************************************************************/
@@ -125,15 +136,15 @@ public final class RouteManager {
                 routeStops.add(new LatLng(routeItem.getStopPoint().getNorthing(), routeItem.getStopPoint().getEasting()));
             }
         }
+
         osrmJsonTask.execute(UrlBuilderRoute.multiplePoints(routeStops));
+
         try {
             return osrmJsonTask.get();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -215,6 +226,7 @@ public final class RouteManager {
                     + routeItems.get(0).getStopPoint().getType() + " at: "
                     + routeItems.get(0).getStopPoint().getEasting() + " "
                     + routeItems.get(0).getStopPoint().getNorthing());
+
             instructions.remove(0);
             routeItems.remove(0);
             nextStop.remove(0);
@@ -238,7 +250,7 @@ public final class RouteManager {
         return routeItems.get(0);
     }
 
-    public Instruction getInstruction(){
+    public Instruction getInstruction() {
         return instructions.get(0);
     }
 

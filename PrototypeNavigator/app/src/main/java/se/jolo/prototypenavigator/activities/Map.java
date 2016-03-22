@@ -33,13 +33,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
@@ -72,7 +72,6 @@ public class Map extends AppCompatActivity implements LocationListener {
     private Speech speech;
 
     private List<Waypoint> waypoints = null;
-    private List<RouteStep> steps;
     private RouteManager routeManager;
     private MapView mapView;
     private LatLng centroid;
@@ -84,7 +83,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     private Locator locator;
     private LocationManager locationManager;
     private Location location;
-
+    private PolylineOptions polylineToNextStop;
     private MockLocationRunner mockRunner;
 
     private boolean day = true;
@@ -94,7 +93,6 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "Create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
@@ -113,7 +111,6 @@ public class Map extends AppCompatActivity implements LocationListener {
         viewGroup = makeViewGroup();
         textView = makeTextView();
         mapView = loadMap();
-        // waypoints = routeManager.getWaypoints();
         findMeBtn = initFindMeBtn();
         plus = initPlusBtn();
         minus = initMinusBtn();
@@ -142,13 +139,12 @@ public class Map extends AppCompatActivity implements LocationListener {
         this.location = location;
 
         if (mapView != null && routeManager != null) {
-
-            mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+ /*           mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                     new CameraPosition.Builder()
                             .target(new LatLng(location.getLatitude(), location.getLongitude()))
                             .build()));
-
-            routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylines();
+*/
+            routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
 
             Log.d(LOG_TAG, "Location changed to ::: "
                     + location.getLatitude()
@@ -488,6 +484,7 @@ public class Map extends AppCompatActivity implements LocationListener {
                 routeManager.getCameraPosition(latLng)));
     }
 
+
     /*********************************************************************************************/
     /****                                      Menu                                           ****/
     /*********************************************************************************************/
@@ -559,34 +556,29 @@ public class Map extends AppCompatActivity implements LocationListener {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(LOG_TAG, "Start");
         mapView.onStart();
     }
 
     @Override
     public void onResume() {
-        Log.d(LOG_TAG, "Resume");
         super.onResume();
         mapView.onResume();
     }
 
     @Override
     public void onPause() {
-        Log.d(LOG_TAG, "Pause");
         super.onPause();
         mapView.onPause();
     }
 
     @Override
     protected void onStop() {
-        Log.d(LOG_TAG, "Stop");
         super.onStop();
         mapView.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.d(LOG_TAG, "Destroy");
         super.onDestroy();
 
         if (mockRunner != null && mockRunner.isDemoRunning()) {
@@ -600,4 +592,5 @@ public class Map extends AppCompatActivity implements LocationListener {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
+
 }

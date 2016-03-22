@@ -96,11 +96,11 @@ public class Locator implements LocationListener {
                     Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_LOCATION);
         }
 
-        locationManager.requestLocationUpdates(GPS_PROVIDER, 100, 5, locationListener);
+        locationManager.requestLocationUpdates(GPS_PROVIDER, 1000, 5, locationListener);
         location = locationManager.getLastKnownLocation(GPS_PROVIDER);
 
         if (location == null) {
-            locationManager.requestLocationUpdates(NETWORK_PROVIDER, 100, 5, locationListener);
+            locationManager.requestLocationUpdates(NETWORK_PROVIDER, 1000, 5, locationListener);
             location = locationManager.getLastKnownLocation(GPS_PROVIDER);
         }
 
@@ -137,9 +137,11 @@ public class Locator implements LocationListener {
                     Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_LOCATION);
         }
 
-        return (location != null) ? location :
-                (locationManager.getLastKnownLocation(GPS_PROVIDER) != null) ? locationManager.getLastKnownLocation(GPS_PROVIDER)
-                : locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+        return (location != null)
+                ? location
+                : (locationManager.getLastKnownLocation(GPS_PROVIDER) != null)
+                        ? locationManager.getLastKnownLocation(GPS_PROVIDER)
+                        : locationManager.getLastKnownLocation(NETWORK_PROVIDER);
     }
 
     public void setLocation(Location location) {

@@ -13,9 +13,6 @@
         android:id="@+id/showRoute"
         android:title="Visa rutt på karta"/>
     <item
-        android:id="@+id/startStopDemo"
-        android:title="@string/startStopDemo" />
-    <item
         android:id="@+id/dayVsNight"
         android:title="Visa mörk karta"/>
 </menu>

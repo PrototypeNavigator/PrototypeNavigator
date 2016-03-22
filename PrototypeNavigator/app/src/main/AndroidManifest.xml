@@ -34,13 +34,12 @@
                 </intent-filter>
             </activity>
         </activity>
-        <activity android:name=".activities.Map"/>
+        <activity android:name=".activities.Map" />
         <activity
             android:name=".activities.RouteListActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".activities.Map">
-
+            android:parentActivityName=".activities.Map"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="se.jolo.prototypenavigator.activities.Map" />
@@ -59,6 +58,7 @@
             android:name="ispeech_api_key"
             android:value="fa55153dbdbf6300bfc497f4f07ffe2c" />
 
+        <activity android:name=".activities.MapDemo"></activity>
     </application>
 
 </manifest>

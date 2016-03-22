@@ -85,8 +85,6 @@ public class Map extends AppCompatActivity implements LocationListener {
     private LocationManager locationManager;
     private Location location;
 
-    private MockLocationRunner mockRunner;
-
     private boolean day = true;
 
     private ViewGroup viewGroup;
@@ -524,23 +522,6 @@ public class Map extends AppCompatActivity implements LocationListener {
                     mapView.removeAnnotation(polylineOptions.getPolyline());
                     return true;
                 }
-            case R.id.startStopDemo:
-                if (mockRunner == null) {
-                    mockRunner = new MockLocationRunner(this, this, routeManager.getPoints(), mapView);
-                }
-
-                if (mockRunner.isDemoRunning()) {
-                    mockRunner.getHandler().removeCallbacks(mockRunner.getTask());
-                    mockRunner.kill();
-                    mockRunner.setDemoRunning(false);
-
-                    return true;
-                } else {
-                    mockRunner.mockLocation();
-                    mockRunner.setDemoRunning(true);
-
-                    return true;
-                }
             case R.id.dayVsNight:
                 if (item.getTitle().equals("Visa mörk karta")) {
                     item.setTitle("Visa ljus karta");
@@ -591,9 +572,6 @@ public class Map extends AppCompatActivity implements LocationListener {
     protected void onDestroy() {
         Log.d(LOG_TAG, "Destroy");
         super.onDestroy();
-        if (mockRunner != null && mockRunner.isDemoRunning()) {
-            mockRunner.kill();
-        }
         mapView.onDestroy();
     }
 

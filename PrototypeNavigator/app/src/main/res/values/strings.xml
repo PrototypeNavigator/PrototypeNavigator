@@ -4,7 +4,4 @@
     <string name="tvWelcome">pnpn!</string>
     <string name="btnLoadNewRoute">Ladda ny rutt</string>
     <string name="btnLoadPreRoute">Välj rutt</string>
-
-    /* menu */
-    <string name="startStopDemo">Starta/Stoppa Demo</string>
 </resources>

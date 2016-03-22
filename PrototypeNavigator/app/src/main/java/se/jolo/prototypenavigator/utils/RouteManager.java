@@ -2,29 +2,19 @@ package se.jolo.prototypenavigator.utils;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Location;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mapbox.directions.DirectionsCriteria;
-import com.mapbox.directions.MapboxDirections;
-import com.mapbox.directions.service.models.DirectionsResponse;
 import com.mapbox.directions.service.models.DirectionsRoute;
-import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.constants.GeoConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.views.MapView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.model.Instruction;
@@ -42,6 +32,7 @@ public final class RouteManager {
     private Route route;
     private Context context;
 
+    private List<LatLng> points;
     private List<LatLng> fullRoute;
     private List<RouteItem> routeItems;
     private List<Instruction> instructions;
@@ -113,12 +104,16 @@ public final class RouteManager {
      *
      */
     public PolylineOptions createPolylineOption(List<RouteItem> routeItems) {
+
         HashMap<String, List> stopsAndInstructions = stopsAndInstructions(routeItems);
+
         if (routeItems.size() <= 1) {
             instructions = stopsAndInstructions.get(OsrmJsonTask.INSTRUCTIONS);
         }
+
         PolylineOptions polylineOptions = new PolylineOptions();
         polylineOptions.addAll(stopsAndInstructions.get(OsrmJsonTask.ROUTE_GEOMETRY));
+
         return polylineOptions;
     }
 
@@ -177,12 +172,30 @@ public final class RouteManager {
         return this;
     }
 
+    public List<LatLng> updatePolylineNextStop() {
+
+        points = getPoints();
+        LatLng position = new LatLng(locator.getLocation().getLatitude(),
+                                     locator.getLocation().getLongitude());
+
+        for (LatLng point : points) {
+            if (point.equals(position)) {
+                points.remove(point);
+                Log.d(LOG_TAG, "removed point");
+
+                return points;
+            }
+        }
+
+        return points;
+    }
+
     public RouteManager loadPolylines() {
         polylineToNextStop = createPolylineOption(nextStop).width(5).color(Color.GREEN);
+        points = getPoints();
         polylinefullRoute = createPolylineOption(routeItems).width(5).color(Color.BLUE);
         return this;
     }
-
 
     /**
      * Check if current location is in proximity of next StopPoint.

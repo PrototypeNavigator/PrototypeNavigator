@@ -20,6 +20,8 @@ import com.mapbox.mapboxsdk.views.MapView;
 
 import java.util.List;
 
+import se.jolo.prototypenavigator.utils.RouteManager;
+
 /**
  * Created by super on 2016-03-21.
  */
@@ -30,6 +32,7 @@ public final class MockLocationRunner implements LocationListener {
     private Context context;
     private Activity activity;
     private MapView mapView;
+    private RouteManager routeManager;
 
     private MockLocationProvider mockLocationProvider;
     private Handler handler;
@@ -39,22 +42,28 @@ public final class MockLocationRunner implements LocationListener {
     private List<LatLng> points;
     private Location location;
 
-    public MockLocationRunner(Context context, Activity activity, List<LatLng> points, MapView mapView) {
+    public MockLocationRunner(Context context, Activity activity,
+                              RouteManager routeManager, MapView mapView) {
         this.context = context;
         this.activity = activity;
-        this.points = points;
+        this.routeManager = routeManager;
         this.mapView = mapView;
+        points = routeManager.getPoints();
 
         Log.d(LOG_TAG, LOG_TAG + " created!");
     }
 
-    public void mockLocation() {
+    public void mockLocation(LocationListener locationListener) {
 
         if ((activity.getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
 
             mockLocationProvider = new MockLocationProvider(LocationManager.GPS_PROVIDER, context);
 
             LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+            if (locationListener != this) {
+                locationManager.removeUpdates(locationListener);
+            }
 
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -65,7 +74,7 @@ public final class MockLocationRunner implements LocationListener {
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             } else {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 5, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
             }
         }
 
@@ -78,27 +87,25 @@ public final class MockLocationRunner implements LocationListener {
         task = new Runnable() {
             @Override
             public void run() {
+                Log.d(LOG_TAG, "MockLoop ::: run()");
                 if (!points.isEmpty()) {
-                    for (LatLng point : points) { // ConcurrentModificationException
-                        if (location != null) {
-                            if ((location.getLatitude() == point.getLatitude()) &&
-                                    (location.getLongitude() == point.getLongitude())) {
-                                points.remove(0);
-                            }
-                        }
-                    }
+
+                    points = routeManager.updatePolylineNextStop();
 
                     mockLocationProvider.pushLocation(points.get(0).getLatitude(),
-                            points.get(0).getLongitude());
+                                                      points.get(0).getLongitude());
+                    Log.d(LOG_TAG, "location pushed "
+                            + points.get(0).getLatitude()
+                            + " "
+                            + points.get(0).getLongitude());
                 }
 
-                handler.postDelayed(task, 100);
+                handler.postDelayed(task, 1000);
             }
         };
 
         if (!points.isEmpty()) {
             task.run();
-            Log.d(LOG_TAG, "MockLoop ::: run()");
             demoRunning = true;
         } else {
             handler.removeCallbacks(task);
@@ -160,6 +167,5 @@ public final class MockLocationRunner implements LocationListener {
         mockLocationProvider.shutdown();
         Log.d(LOG_TAG, "kill() ::: shutdown()");
         android.os.Process.killProcess(android.os.Process.myPid());
-        Log.d(LOG_TAG, "kill() ::: killProcess()");
     }
 }

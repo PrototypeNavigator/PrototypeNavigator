@@ -58,10 +58,6 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
             @Override
             public void onClick(View v) {
                 collapsingToolbarLayout.setTitle(holder.stopPointItem.getName());
-                /*Context context = v.getContext();
-                Intent intent = new Intent(context, RouteDetailActivity.class);
-                intent.putExtra(RouteDetailFragment.ARG_ITEM_ID, holder.routeItem.getUuid());
-                context.startActivity(intent);*/
                 showPopup(activity, holder.stopPointItem,v.getPivotY(),v.getPivotX());
             }
         });

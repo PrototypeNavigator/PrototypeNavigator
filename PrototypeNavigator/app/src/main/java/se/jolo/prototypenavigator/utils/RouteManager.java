@@ -183,6 +183,11 @@ public final class RouteManager {
         return this;
     }
 
+    public RouteManager loadPolylineNextStop(){
+        polylineToNextStop = createPolylineOption(nextStop).width(5).color(Color.GREEN);
+        return this;
+    }
+
 
     /**
      * Check if current location is in proximity of next StopPoint.

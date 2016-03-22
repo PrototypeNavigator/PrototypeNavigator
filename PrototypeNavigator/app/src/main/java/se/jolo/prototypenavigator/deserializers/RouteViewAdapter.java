@@ -12,7 +12,6 @@ import java.util.List;
 
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.activities.RouteDetailActivity;
-import se.jolo.prototypenavigator.activities.RouteDetailFragment;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 
@@ -49,7 +48,7 @@ public class RouteViewAdapter
 
                     Context context = v.getContext();
                     Intent intent = new Intent(context, RouteDetailActivity.class);
-                    intent.putExtra(RouteDetailFragment.ARG_ITEM_ID, holder.routeItem.getPrimaryStopPointItemUuid());
+                    intent.putExtra(RouteDetailActivity.ARG_ITEM_ID, holder.routeItem.getPrimaryStopPointItemUuid());
                     intent.putExtra("route",route);
                     context.startActivity(intent);
             }

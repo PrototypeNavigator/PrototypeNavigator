@@ -14,6 +14,7 @@ import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.activities.RouteDetailActivity;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
+import se.jolo.prototypenavigator.singleton.RouteHolder;
 
 
 /**
@@ -22,10 +23,10 @@ import se.jolo.prototypenavigator.model.RouteItem;
 public class RouteViewAdapter
         extends RecyclerView.Adapter<RouteViewAdapter.ViewHolder> {
 
-    private final Route route;
+    private Route route;
 
-    public RouteViewAdapter(Route route) {
-        this.route=route;
+    public RouteViewAdapter() {
+        route = RouteHolder.INSTANCE.getRoute();
     }
 
 
@@ -49,7 +50,6 @@ public class RouteViewAdapter
                     Context context = v.getContext();
                     Intent intent = new Intent(context, RouteDetailActivity.class);
                     intent.putExtra(RouteDetailActivity.ARG_ITEM_ID, holder.routeItem.getPrimaryStopPointItemUuid());
-                    intent.putExtra("route",route);
                     context.startActivity(intent);
             }
         });

@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,7 +31,7 @@ import se.jolo.prototypenavigator.model.StopPointItem;
  */
 public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapter.ViewHolder> {
 
-    Point p;
+    private Point p;
     private Activity activity;
     private final List<StopPointItem> stopPointItems;
     private final CollapsingToolbarLayout collapsingToolbarLayout;
@@ -110,7 +111,8 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.popup_layout, viewGroup);
         TextView textView = (TextView) layout.findViewById(R.id.popupText);
-
+        textView.setMovementMethod(new ScrollingMovementMethod());
+        textView.setMaxHeight(900);
         textView.setText(stopPointItem.toString());
 
         // Creating the PopupWindow

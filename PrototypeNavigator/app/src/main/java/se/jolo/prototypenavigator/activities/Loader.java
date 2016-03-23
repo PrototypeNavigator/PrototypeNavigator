@@ -1,6 +1,7 @@
 package se.jolo.prototypenavigator.activities;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import se.jolo.prototypenavigator.model.Route;
+import se.jolo.prototypenavigator.utils.Cipher;
 import se.jolo.prototypenavigator.utils.JsonMapper;
 
 public final class Loader extends AsyncTask<Uri, Integer, Route> {
@@ -39,11 +41,14 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
 
         InputStream inputStream = context.getContentResolver().openInputStream(uri);
 
-        String xmlFromFile = FileUtils.readFileToString(streamToFile(inputStream));
+        byte[] decodedXml = FileUtils.readFileToByteArray(streamToFile(inputStream));
+        String key = "apelsin";
+        byte[] byteContent = Cipher.decrypt(decodedXml, key.getBytes());
 
-        saveLoadedFile(xmlFromFile);
+        String content = new String(byteContent);
 
-        return xmlFromFile;
+        saveLoadedFile(content);
+        return content;
     }
 
     /**
@@ -192,6 +197,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         JsonMapper jsonMapper = new JsonMapper();
 
         try {
+            Log.d("json", String.valueOf(jsonMapper.objectifyRoute(xmlString)).toString());
             return jsonMapper.objectifyRoute(xmlString);
         } catch (IOException | JSONException e) {
             e.printStackTrace();

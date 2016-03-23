@@ -54,6 +54,7 @@ import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.demo.MockLocationRunner;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
+import se.jolo.prototypenavigator.singleton.RouteHolder;
 import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.utils.Speech;
@@ -376,6 +377,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
             try {
                 route = loader.get();
+                RouteHolder.INSTANCE.setRoute(route);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
@@ -384,6 +386,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
             try {
                 route = loader.getPreLoadedRoute(extras.getString("str"));
+                RouteHolder.INSTANCE.setRoute(route);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -504,7 +507,6 @@ public class Map extends AppCompatActivity implements LocationListener {
                 return true;
             case R.id.showDetails:
                 Intent sendToDetails = new Intent(this, RouteListActivity.class);
-                sendToDetails.putExtra("route", route);
                 startActivity(sendToDetails);
                 return true;
             case R.id.showRoute:

@@ -191,7 +191,9 @@ public class StopPointItem implements Parcelable {
                         stringBuilder.append(r.getLastName()+" "+r.getFirstName());
                     }
 
+
                 }
+                stringBuilder.append("\n");
             }
         }
 

@@ -24,6 +24,7 @@ import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.deserializers.StopItemViewAdapter;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
+import se.jolo.prototypenavigator.singleton.RouteHolder;
 import se.jolo.prototypenavigator.task.ImageLoader;
 import se.jolo.prototypenavigator.utils.SimpleDividerItemDecoration;
 import se.jolo.prototypenavigator.utils.UrlBuilderStreetview;
@@ -49,7 +50,7 @@ public class RouteDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
-
+        route = RouteHolder.INSTANCE.getRoute();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -59,12 +60,11 @@ public class RouteDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
-        if (bundle.containsKey(ARG_ITEM_ID) && bundle.containsKey("route")) {
-            route = bundle.getParcelable("route");
+        if (bundle.containsKey(ARG_ITEM_ID)) {
             List<RouteItem> routeItems = route.getRouteItems();
-            int uuid = bundle.getInt(ARG_ITEM_ID);
+            String uuid = bundle.getString(ARG_ITEM_ID);
             for(RouteItem r : routeItems){
-                if (uuid == (r.getPrimaryStopPointItemUuid())){
+                if (uuid.equals(r.getPrimaryStopPointItemUuid())){
                     routeItem = r;
                 }
             }
@@ -109,7 +109,7 @@ public class RouteDetailActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
 
-            navigateUpTo(new Intent(this, RouteListActivity.class).putExtra("route", route));
+            navigateUpTo(new Intent(this, RouteListActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

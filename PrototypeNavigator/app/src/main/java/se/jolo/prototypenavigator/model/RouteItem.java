@@ -12,13 +12,13 @@ import java.util.List;
 public final class RouteItem implements Comparable<RouteItem>, Parcelable {
 
     private int order;
-    private int primaryStopPointItemUuid;
+    private String primaryStopPointItemUuid;
     private StopPoint stopPoint;
     private List<StopPointItem> stopPointItems;
 
     public RouteItem() {}
 
-    public RouteItem(int order, int primaryStopPointItemUuid, StopPoint stopPoint,
+    public RouteItem(int order, String primaryStopPointItemUuid, StopPoint stopPoint,
                      List<StopPointItem> stopPointItems) {
         this.order = order;
         this.primaryStopPointItemUuid = primaryStopPointItemUuid;
@@ -30,7 +30,7 @@ public final class RouteItem implements Comparable<RouteItem>, Parcelable {
         return order;
     }
 
-    public int getPrimaryStopPointItemUuid() {
+    public String getPrimaryStopPointItemUuid() {
         return primaryStopPointItemUuid;
     }
 
@@ -70,7 +70,7 @@ public final class RouteItem implements Comparable<RouteItem>, Parcelable {
 
     protected RouteItem(Parcel in) {
         order = in.readInt();
-        primaryStopPointItemUuid = in.readInt();
+        primaryStopPointItemUuid = in.readString();
         stopPoint = (StopPoint) in.readValue(StopPoint.class.getClassLoader());
         if (in.readByte() == 0x01) {
             stopPointItems = new ArrayList<StopPointItem>();
@@ -88,7 +88,7 @@ public final class RouteItem implements Comparable<RouteItem>, Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(order);
-        dest.writeInt(primaryStopPointItemUuid);
+        dest.writeString(primaryStopPointItemUuid);
         dest.writeValue(stopPoint);
         if (stopPointItems == null) {
             dest.writeByte((byte) (0x00));

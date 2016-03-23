@@ -28,20 +28,22 @@ public final class JsonToObject {
     public static Route jsonToRoute(JsonObject json) throws ParseException {
 
         AuditInfo auditInfo = jsonToAuditInfo(json.getAsJsonObject("auditInfo"));
-        DeliveryOffice deliveryOffice = jsonToDeliveryOffice(json.getAsJsonObject("deliveryOffice"));
-        int name = json.get("name").getAsInt();
+        String deliveryOffice = json.get("deliveryOfficeUuid").getAsString();
+        String name = json.get("name").getAsString();
         String type = json.get("type").getAsString();
         String uuid = json.get("uuid").getAsString();
-        int validityDays = json.get("validityDays").getAsInt();
+        int validityDays = 0 /*json.get("validityDays").getAsInt()*/;
 
         JsonObject routeItems = json.getAsJsonObject("routeItems");
 
         List<RouteItem> routeItem = new ArrayList<>();
-        JsonArray jsonRouteItem = routeItems.getAsJsonArray("routeItem");
+        JsonArray jsonRouteItem = routeItems.getAsJsonArray("routeitem");
         for (int i = 0; i < jsonRouteItem.size(); i++) {
             JsonObject jsonObject = jsonRouteItem.get(i).getAsJsonObject();
             routeItem.add(jsonToRouteItem(jsonObject));
         }
+
+
 
         return new Route(auditInfo, deliveryOffice, name, type, uuid, validityDays, routeItem);
     }
@@ -49,7 +51,7 @@ public final class JsonToObject {
     public static RouteItem jsonToRouteItem(JsonObject json) {
 
         int order = json.get("order").getAsInt();
-        int primaryStopPointItemUuid = json.get("primaryStopPointItemUuid").getAsInt();
+        String primaryStopPointItemUuid = json.get("primaryStopPointItemUuid").getAsString();
         StopPoint stopPoint = jsonToStopPoint(json.getAsJsonObject("stopPoint"));
 
         JsonObject jsonObjectStop = json.getAsJsonObject("stopPointItems");
@@ -96,24 +98,32 @@ public final class JsonToObject {
             odrRecipients.add(jsonToOdrRecipient(jsonOdrRecipientsAsObject));
         }
 
-        JsonObject jsonResident = json.getAsJsonObject("residents");
+        JsonObject jsonResident = null;
+
+        if(json.getAsJsonObject("residents")!=null){
+            jsonResident = json.getAsJsonObject("residents");
+        }
 
         List<Resident> residents = new ArrayList<>();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /////////      resident kan vara  ett jsonObjekt och  en jsonArray                 /////////
         ////////////////////////////////////////////////////////////////////////////////////////////
-
-        if (jsonResident.get("resident").isJsonArray()) {
-            JsonArray jsonResidentArray = jsonResident.getAsJsonArray("resident");
-            for (int i = 0; i < jsonResidentArray.size(); i++) {
-                JsonObject jsonObject = jsonResidentArray.get(i).getAsJsonObject();
-                residents.add(jsonToResident(jsonObject));
+        if(jsonResident!=null){
+            if(jsonResident.get("resident") != null) {
+                if (jsonResident.get("resident").isJsonArray()) {
+                    JsonArray jsonResidentArray = jsonResident.getAsJsonArray("resident");
+                    for (int i = 0; i < jsonResidentArray.size(); i++) {
+                        JsonObject jsonObject = jsonResidentArray.get(i).getAsJsonObject();
+                        residents.add(jsonToResident(jsonObject));
+                    }
+                } else {
+                    JsonObject jsonObjectResident = jsonResident.getAsJsonObject("resident");
+                    residents.add(jsonToResident(jsonObjectResident));
+                }
             }
-        } else {
-            JsonObject jsonObjectResident = jsonResident.getAsJsonObject("resident");
-            residents.add(jsonToResident(jsonObjectResident));
         }
+
 
         return new DeliveryPoint(odr, odrRecipients, residents);
     }
@@ -128,13 +138,21 @@ public final class JsonToObject {
         int deliveryPostalCode = json.get("deliveryPostalCode").getAsInt();
         float easting = json.get("easting").getAsFloat();
         float northing = json.get("northing").getAsFloat();
-        String freeText = json.get("freeText").getAsString();
-        String plannedArrivalTime = json.get("plannedArrivalTime").getAsString();
-        String plannedDepartureTime = null;
+        String freeText = "";
+        String plannedArrivalTime = "";
+        String plannedDepartureTime = "";
         int validityDays = json.get("validityDays").getAsInt();
+
+        if (json.get("freetext") != null){
+            freeText = json.get("freeText").getAsString();
+        }
 
         if (json.get("plannedDepartureTime") != null) {
             plannedDepartureTime = json.get("plannedDepartureTime").getAsString();
+        }
+
+        if (json.get("plannedArrivalTime") != null){
+            plannedArrivalTime = json.get("plannedArrivalTime").getAsString();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,13 +191,13 @@ public final class JsonToObject {
         return new AuditInfo(createdAt, createdBy);
     }
 
-    public static DeliveryOffice jsonToDeliveryOffice(JsonObject json) {
+/*    public static DeliveryOffice jsonToDeliveryOffice(JsonObject json) {
 
         String name = json.get("name").getAsString();
         String uuid = json.get("uuid").getAsString();
 
         return new DeliveryOffice(name, uuid);
-    }
+    }*/
 
 
     public static OdrRecipient jsonToOdrRecipient(JsonObject json) {
@@ -191,9 +209,20 @@ public final class JsonToObject {
     }
 
     public static Resident jsonToResident(JsonObject json) {
+        String firstname = "";
+        String lastname = "";
 
-        String firstname = json.get("firstname").getAsString();
-        String lastname = json.get("lastname").getAsString();
+        if(json.get("firstName") !=null){
+            if(!json.get("firstName").isJsonNull()){
+                firstname = json.get("firstName").getAsString();
+            }
+        }
+        if(json.get("lastName") !=null){
+            if(!json.get("lastName").isJsonNull()){
+                lastname = json.get("lastName").getAsString();
+            }
+        }
+
 
         return new Resident(firstname, lastname);
     }
@@ -201,26 +230,53 @@ public final class JsonToObject {
 
     public static Service jsonToService(JsonObject json) {
 
-        String agreementArrivalTime = json.get("agreementArrivalTime").getAsString();
-        String agreementDepartureTime = json.get("agreementDepartureTime").getAsString();
+        String agreementArrivalTime = "";
+        String agreementDepartureTime = "";
         boolean delivery = json.get("delivery").getAsBoolean();
         boolean pickup = json.get("pickup").getAsBoolean();
-        String products = json.get("products").getAsString();
-        String serviceCode = json.get("serviceCode").getAsString();
-        String serviceName = json.get("serviceName").getAsString();
+        String products = "";
+        String serviceCode = "";
+        String serviceName = "";
 
+        if (json.get("agreementArrivalTime") !=null){
+            if (!json.get("agreementArrivalTime").isJsonNull()){
+                agreementArrivalTime = json.get("agreementArrivalTime").getAsString();
+            }
+        }
+        if (json.get("agreementDepartureTime") !=null){
+            if (!json.get("agreementDepartureTime").isJsonNull()){
+                agreementDepartureTime = json.get("agreementDepartureTime").getAsString();
+            }
+        }
+
+        if (json.get("products") !=null){
+            if (!json.get("products").isJsonNull()){
+                products = json.get("products").getAsString();
+            }
+        }
+        if (json.get("serviceCode") !=null){
+            if (!json.get("serviceCode").isJsonNull()){
+                serviceCode = json.get("serviceCode").getAsString();
+            }
+        }
+        if (json.get("serviceName") !=null){
+            if (!json.get("serviceName").isJsonNull()){
+                serviceName = json.get("serviceName").getAsString();
+            }
+        }
         return new Service(agreementArrivalTime, agreementDepartureTime, delivery,
                 pickup, products, serviceCode, serviceName);
     }
 
     public static StopPoint jsonToStopPoint(JsonObject json) {
-
+        String freeText = "";
         float easting = json.get("easting").getAsFloat();
         float northing = json.get("northing").getAsFloat();
         String type = json.get("type").getAsString();
         String uuid = json.get("uuid").getAsString();
-        String freeText = json.get("freeText").getAsString();
-
+        if(json.get("freeText") != null){
+            freeText = json.get("freeText").getAsString();
+        }
         return new StopPoint(easting, northing, type, uuid, freeText);
     }
 

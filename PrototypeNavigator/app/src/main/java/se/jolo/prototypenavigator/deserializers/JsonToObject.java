@@ -28,11 +28,11 @@ public final class JsonToObject {
     public static Route jsonToRoute(JsonObject json) throws ParseException {
 
         AuditInfo auditInfo = jsonToAuditInfo(json.getAsJsonObject("auditInfo"));
-        DeliveryOffice deliveryOffice = jsonToDeliveryOffice(json.getAsJsonObject("deliveryOffice"));
-        int name = json.get("name").getAsInt();
+        DeliveryOffice deliveryOffice = null;
+        String name = json.get("name").getAsString();
         String type = json.get("type").getAsString();
         String uuid = json.get("uuid").getAsString();
-        int validityDays = json.get("validityDays").getAsInt();
+        int validityDays = 0 /*json.get("validityDays").getAsInt()*/;
 
         JsonObject routeItems = json.getAsJsonObject("routeItems");
 
@@ -49,7 +49,7 @@ public final class JsonToObject {
     public static RouteItem jsonToRouteItem(JsonObject json) {
 
         int order = json.get("order").getAsInt();
-        int primaryStopPointItemUuid = json.get("primaryStopPointItemUuid").getAsInt();
+        String primaryStopPointItemUuid = json.get("primaryStopPointItemUuid").getAsString();
         StopPoint stopPoint = jsonToStopPoint(json.getAsJsonObject("stopPoint"));
 
         JsonObject jsonObjectStop = json.getAsJsonObject("stopPointItems");
@@ -191,9 +191,15 @@ public final class JsonToObject {
     }
 
     public static Resident jsonToResident(JsonObject json) {
+        String firstname = "";
+        String lastname = "";
 
-        String firstname = json.get("firstname").getAsString();
-        String lastname = json.get("lastname").getAsString();
+        if(!json.get("firstname").isJsonNull()){
+            firstname = json.get("firstname").getAsString();
+        }
+        if(!json.get("lastname").isJsonNull()){
+            lastname = json.get("lastname").getAsString();
+        }
 
         return new Resident(firstname, lastname);
     }

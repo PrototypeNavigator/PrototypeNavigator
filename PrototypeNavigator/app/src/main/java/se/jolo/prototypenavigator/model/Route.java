@@ -12,7 +12,7 @@ public final class Route implements Parcelable {
 
     private AuditInfo auditInfo;
     private DeliveryOffice deliveryOffice;
-    private int name;
+    private String name;
     private String type;
     private String uuid;
     private int validityDays;
@@ -20,7 +20,7 @@ public final class Route implements Parcelable {
 
     public Route() {}
 
-    public Route(AuditInfo auditInfo, DeliveryOffice deliveryOffice, int name, String type,
+    public Route(AuditInfo auditInfo, DeliveryOffice deliveryOffice, String name, String type,
                  String uuid, int validityDays, List<RouteItem> routeItems) {
         this.auditInfo = auditInfo;
         this.deliveryOffice = deliveryOffice;
@@ -39,7 +39,7 @@ public final class Route implements Parcelable {
         return deliveryOffice;
     }
 
-    public int getName() {
+    public String getName() {
         return name;
     }
 
@@ -62,7 +62,7 @@ public final class Route implements Parcelable {
     protected Route(Parcel in) {
         auditInfo = (AuditInfo) in.readValue(AuditInfo.class.getClassLoader());
         deliveryOffice = (DeliveryOffice) in.readValue(DeliveryOffice.class.getClassLoader());
-        name = in.readInt();
+        name = in.readString();
         type = in.readString();
         uuid = in.readString();
         validityDays = in.readInt();
@@ -83,7 +83,7 @@ public final class Route implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(auditInfo);
         dest.writeValue(deliveryOffice);
-        dest.writeInt(name);
+        dest.writeString(name);
         dest.writeString(type);
         dest.writeString(uuid);
         dest.writeInt(validityDays);

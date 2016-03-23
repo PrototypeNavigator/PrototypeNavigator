@@ -62,9 +62,9 @@ public class RouteDetailActivity extends AppCompatActivity {
         if (bundle.containsKey(ARG_ITEM_ID) && bundle.containsKey("route")) {
             route = bundle.getParcelable("route");
             List<RouteItem> routeItems = route.getRouteItems();
-            int uuid = bundle.getInt(ARG_ITEM_ID);
+            String uuid = bundle.getString(ARG_ITEM_ID);
             for(RouteItem r : routeItems){
-                if (uuid == (r.getPrimaryStopPointItemUuid())){
+                if (uuid.equals(r.getPrimaryStopPointItemUuid())){
                     routeItem = r;
                 }
             }

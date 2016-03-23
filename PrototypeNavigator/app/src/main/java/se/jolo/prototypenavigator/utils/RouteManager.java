@@ -172,6 +172,19 @@ public final class RouteManager {
         return this;
     }
 
+    public boolean checkStopPointProximity(LatLng position, LatLng target) {
+
+        Log.d(LOG_TAG, "you're "
+                + position.distanceTo(target)
+                + " meters from target");
+
+        if (position.distanceTo(target) < 20.5) {
+            return true;
+        }
+
+        return false;
+    }
+
     public List<LatLng> updatePolylineNextStop() {
 
         points = getPoints();
@@ -179,11 +192,11 @@ public final class RouteManager {
                                      locator.getLocation().getLongitude());
 
         for (LatLng point : points) {
-            if (point.equals(position)) {
+            if (checkStopPointProximity(position, point)) {
                 points.remove(point);
                 Log.d(LOG_TAG, "removed point");
 
-                return points;
+                break;
             }
         }
 

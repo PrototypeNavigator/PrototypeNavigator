@@ -18,6 +18,7 @@ public final class MockLocationProvider {
 
         LocationManager locationManager = (LocationManager)
                 context.getSystemService(Context.LOCATION_SERVICE);
+
         locationManager.addTestProvider(MOCK_PROVIDER,
                 false, false, false, false, false, true, true, 0, 5);
         locationManager.setTestProviderEnabled(MOCK_PROVIDER, true);

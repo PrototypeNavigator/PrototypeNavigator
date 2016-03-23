@@ -3,7 +3,6 @@ package se.jolo.prototypenavigator.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -125,6 +124,17 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         }
     }
 
+
+    private void initMockDemo() {
+        if (loader.loadSavedFiles().length > 0) {
+            Intent mapDemoIntent = new Intent(this, MapDemo.class).putExtra("str", fileName);
+            startActivity(mapDemoIntent);
+        } else {
+            Toast.makeText(this, "No route to load. Please choose a new file", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     /**
      * Buttons to launch either initialization with new file or with previously save file.
      */
@@ -142,6 +152,14 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
             @Override
             public void onClick(View v) {
                 initPreLoadedFile();
+            }
+        });
+
+        Button btnMockDemo = (Button) findViewById(R.id.btnMockDemo);
+        btnMockDemo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initMockDemo();
             }
         });
     }

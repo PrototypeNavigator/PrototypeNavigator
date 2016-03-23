@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.demo.MockLocationRunner;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.utils.Locator;
@@ -141,10 +140,12 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         if (mapView != null && routeManager != null) {
 
+/*
             mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                     new CameraPosition.Builder()
                             .target(new LatLng(location.getLatitude(), location.getLongitude()))
                             .build()));
+*/
 
             routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylines();
 

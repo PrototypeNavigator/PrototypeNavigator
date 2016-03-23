@@ -6,8 +6,8 @@ import android.os.Parcelable;
 /**
  * Created by Joel on 2016-02-08.
  */
-public class DeliveryOffice implements Parcelable {
-
+public class DeliveryOffice  {
+/*
     private String name;
     private String uuid;
 
@@ -61,5 +61,5 @@ public class DeliveryOffice implements Parcelable {
                 "name='" + name + '\'' +
                 ", uuid='" + uuid + '\'' +
                 '}';
-    }
+    }*/
 }

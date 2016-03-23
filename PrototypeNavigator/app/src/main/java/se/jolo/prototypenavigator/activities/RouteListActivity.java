@@ -13,6 +13,7 @@ import android.view.View;
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.deserializers.RouteViewAdapter;
 import se.jolo.prototypenavigator.model.Route;
+import se.jolo.prototypenavigator.singleton.RouteHolder;
 
 
 public class RouteListActivity extends AppCompatActivity {
@@ -23,11 +24,7 @@ public class RouteListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState !=null){
-            route = savedInstanceState.getParcelable("route");
-        }else{
-            route = getIntent().getParcelableExtra("route");
-        }
+        route = RouteHolder.INSTANCE.getRoute();
 
         setContentView(R.layout.activity_route_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.list_toolbar);
@@ -47,12 +44,11 @@ public class RouteListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new RouteViewAdapter(route));
+        recyclerView.setAdapter(new RouteViewAdapter());
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("route", route);
         super.onSaveInstanceState(outState);
     }
     @Override
@@ -60,7 +56,7 @@ public class RouteListActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
 
-            navigateUpTo(new Intent(this, RouteListActivity.class).putExtra("route", route));
+            navigateUpTo(new Intent(this, RouteListActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

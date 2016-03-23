@@ -197,6 +197,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         JsonMapper jsonMapper = new JsonMapper();
 
         try {
+            Log.d("json", String.valueOf(jsonMapper.objectifyRoute(xmlString)).toString());
             return jsonMapper.objectifyRoute(xmlString);
         } catch (IOException | JSONException e) {
             e.printStackTrace();

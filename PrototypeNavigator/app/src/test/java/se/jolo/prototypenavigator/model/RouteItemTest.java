@@ -23,11 +23,11 @@ public class RouteItemTest {
 
     @Before
     public void init() {
-        rI1 = new RouteItem(1, 34, sP, sPI);
-        rI2 = new RouteItem(2, 34, sP, sPI);
-        rI3 = new RouteItem(3, 34, sP, sPI);
-        rI5 = new RouteItem(1, 37, sP, sPI);
-        rI4 = new RouteItem(4, 34, sP, sPI);
+        rI1 = new RouteItem(1, "one", sP, sPI);
+        rI2 = new RouteItem(2, "two", sP, sPI);
+        rI3 = new RouteItem(3, "three", sP, sPI);
+        rI5 = new RouteItem(1, "four", sP, sPI);
+        rI4 = new RouteItem(4, "five", sP, sPI);
     }
 
     @Test

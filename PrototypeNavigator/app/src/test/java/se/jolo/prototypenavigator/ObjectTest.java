@@ -63,14 +63,14 @@ public class ObjectTest {
         assertNotNull(route);
     }
 
-    @Test
+    /*@Test
     public void testRouteName() throws IOException, JSONException {
         when(route.getName()).thenReturn(13757);
 
         int routeName = route.getName();
 
         assertEquals(routeName, 13757);
-    }
+    }*/
 
     @Test
     public void testRouteRouteItemsNotEmpty() {

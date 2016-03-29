@@ -25,7 +25,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
 
     private Context context;
     private Route route = null;
-
+    private String fileName;
     public Loader(Context context) {
         this.context = context;
     }
@@ -38,7 +38,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
      * @throws IOException
      */
     private String readFileContent(Uri uri) throws IOException {
-
+        fileName = uri.getLastPathSegment().replace("primary:", "");
         InputStream inputStream = context.getContentResolver().openInputStream(uri);
 
         byte[] decodedXml = FileUtils.readFileToByteArray(streamToFile(inputStream));
@@ -127,7 +127,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
             } else {
 
                 out = new FileOutputStream(new File(
-                        context.getFilesDir(), "RouteXmlFile-" + new Random().nextInt(1000)));
+                        context.getFilesDir(), "Route-" + fileName));
                 out.write(content.getBytes());
                 out.close();
 
@@ -155,7 +155,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         for (int i = 0; i<allFiles.length; i++){
             File file = allFiles[i];
             String fileName = file.getName();
-            if (fileName.startsWith("RouteXmlFile")){
+            if (fileName.startsWith("Route")){
                 routeFilesList.add(file);
             }
             Log.d("fileName", file.getName());

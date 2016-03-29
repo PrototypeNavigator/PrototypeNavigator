@@ -5,16 +5,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/loadRoute"
-        android:title="Ladda Rutt" />
+        android:title="Byt rutt" />
     <item
         android:id="@+id/showDetails"
-        android:title="Visa Stop" />
+        android:title="Visa stop" />
     <item
         android:id="@+id/showRoute"
         android:title="Visa rutt på karta"/>
-    <item
-        android:id="@+id/startStopDemo"
-        android:title="@string/startStopDemo" />
     <item
         android:id="@+id/dayVsNight"
         android:title="Visa mörk karta"/>

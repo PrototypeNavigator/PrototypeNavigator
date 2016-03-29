@@ -501,7 +501,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.loadRoute:
-                Intent sendToFileBrowser = new Intent(this, FileBrowser.class);
+                Intent sendToFileBrowser = new Intent(this, MainActivity.class);
                 startActivity(sendToFileBrowser);
                 android.os.Process.killProcess(android.os.Process.myPid());
                 return true;
@@ -521,22 +521,7 @@ public class Map extends AppCompatActivity implements LocationListener {
                     mapView.removeAnnotation(polylineOptions.getPolyline());
                     return true;
                 }
-            case R.id.startStopDemo:
-                if (mockRunner != null) {
-                    if (mockRunner.isDemoRunning()) {
-                        mockRunner.getHandler().removeCallbacks(mockRunner.getTask());
-                        mockRunner.kill();
-                        mockRunner.setDemoRunning(false);
-                        return true;
-                    } else {
-                        mockRunner.mockLocation();
-                        mockRunner.setDemoRunning(true);
-                        return true;
-                    }
-                } else {
-                    mockRunner = new MockLocationRunner(this, this, routeManager.getPoints());
-                    return true;
-                }
+
             case R.id.dayVsNight:
                 if(item.getTitle().equals("Visa mörk karta")){
                     item.setTitle("Visa ljus karta");
@@ -582,10 +567,6 @@ public class Map extends AppCompatActivity implements LocationListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (mockRunner != null && mockRunner.isDemoRunning()) {
-            mockRunner.kill();
-        }
         mapView.onDestroy();
     }
 

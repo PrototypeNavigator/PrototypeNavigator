@@ -77,8 +77,6 @@ public class Map extends AppCompatActivity implements LocationListener {
     private LatLng centroid;
     private Route route;
 
-    private static final String GPS_PROVIDER = LocationManager.GPS_PROVIDER;
-    private static final String NETWORK_PROVIDER = LocationManager.NETWORK_PROVIDER;
     private static final int PERMISSIONS_LOCATION = 0;
     private Locator locator;
     private LocationManager locationManager;

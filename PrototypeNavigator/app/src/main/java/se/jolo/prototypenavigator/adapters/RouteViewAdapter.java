@@ -9,15 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.activities.RouteDetailActivity;
+import se.jolo.prototypenavigator.activities.StopPointDetailActivity;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
-
-
-/**
- * Created by Holstad on 29/02/16.
- */
+/*The RouteViewAdapter class sets up a list with RouteItems1*/
 public class RouteViewAdapter
         extends RecyclerView.Adapter<RouteViewAdapter.ViewHolder> {
 
@@ -38,17 +34,17 @@ public class RouteViewAdapter
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.routeItem = route.getRouteItems().get(position);
-        holder.mIdView.setText(route.getRouteItems().get(position).getStopPointItems().get(0).getDeliveryAddress());
+        holder.idView.setText(route.getRouteItems().get(position).getStopPointItems().get(0).getDeliveryAddress());
         //holder.sumOdrH.setText(route.getRouteItems().get(position).getStopPointItems().get(0).getDeliveryAddress());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, RouteDetailActivity.class);
-                    intent.putExtra(RouteDetailActivity.ARG_ITEM_ID, holder.routeItem.getPrimaryStopPointItemUuid());
-                    context.startActivity(intent);
+                Context context = v.getContext();
+                Intent intent = new Intent(context, StopPointDetailActivity.class);
+                intent.putExtra(StopPointDetailActivity.ARG_ITEM_ID, holder.routeItem.getPrimaryStopPointItemUuid());
+                context.startActivity(intent);
             }
         });
     }
@@ -59,21 +55,21 @@ public class RouteViewAdapter
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final View view;
+        public final TextView idView;
+        public final TextView contentView;
         public RouteItem routeItem;
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            this.view = view;
+            idView = (TextView) view.findViewById(R.id.id);
+            contentView = (TextView) view.findViewById(R.id.content);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + contentView.getText() + "'";
         }
     }
 }

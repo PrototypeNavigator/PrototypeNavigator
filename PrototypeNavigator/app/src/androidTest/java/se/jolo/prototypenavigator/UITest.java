@@ -41,5 +41,6 @@ public class UITest {
 
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Visa stop")).perform(click());
+
     }
 }

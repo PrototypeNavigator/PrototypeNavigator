@@ -39,7 +39,6 @@ import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.constants.Style;
@@ -51,10 +50,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.demo.MockLocationRunner;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
+import se.jolo.prototypenavigator.task.Loader;
 import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.utils.Speech;
@@ -85,7 +84,6 @@ public class Map extends AppCompatActivity implements LocationListener {
     private LocationManager locationManager;
     private Location location;
     private PolylineOptions polylineToNextStop;
-    private MockLocationRunner mockRunner;
 
     private boolean day = true;
 

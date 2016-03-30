@@ -1,4 +1,4 @@
-package se.jolo.prototypenavigator.activities;
+package se.jolo.prototypenavigator.task;
 
 import android.content.Context;
 import android.graphics.Bitmap;

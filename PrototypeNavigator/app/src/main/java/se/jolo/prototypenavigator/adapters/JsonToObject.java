@@ -1,4 +1,4 @@
-package se.jolo.prototypenavigator.deserializers;
+package se.jolo.prototypenavigator.adapters;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 import se.jolo.prototypenavigator.model.AuditInfo;
-import se.jolo.prototypenavigator.model.DeliveryOffice;
 import se.jolo.prototypenavigator.model.DeliveryPoint;
 import se.jolo.prototypenavigator.model.OdrRecipient;
 import se.jolo.prototypenavigator.model.Resident;

@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import se.jolo.prototypenavigator.activities.Loader;
+import se.jolo.prototypenavigator.task.Loader;
 import se.jolo.prototypenavigator.activities.MainActivity;
 import se.jolo.prototypenavigator.model.Route;
 

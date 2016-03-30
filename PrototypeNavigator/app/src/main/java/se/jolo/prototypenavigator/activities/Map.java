@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -53,10 +52,12 @@ import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
+import se.jolo.prototypenavigator.task.ImageLoader;
 import se.jolo.prototypenavigator.task.Loader;
 import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.utils.Speech;
+import se.jolo.prototypenavigator.utils.UrlBuilderMarkerImg;
 
 public class Map extends AppCompatActivity implements LocationListener {
 
@@ -113,8 +114,21 @@ public class Map extends AppCompatActivity implements LocationListener {
         centroid = setCentroid(locator);
 
         setSupportActionBar(myToolbar);
-        addMarkers();
 
+        /*Thread for placing markers on map*/
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    addMarkers();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
         mapView.onCreate(savedInstanceState);
     }
 
@@ -327,9 +341,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         }
     }
 
-    private Drawable getScaledDrawable(int newWidth, int newHeight, int id) {
-
-        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), id);
+    private Drawable getScaledDrawable(int newWidth, int newHeight, Bitmap bitmap) {
 
         Matrix matrix = new Matrix();
         float scaleWidth = ((float) newWidth) / bitmap.getWidth();
@@ -443,16 +455,15 @@ public class Map extends AppCompatActivity implements LocationListener {
     /**
      * Adds Waypoint markers for full Route.
      */
-    private void addMarkers() {
+    private void addMarkers() throws ExecutionException, InterruptedException {
         IconFactory mIconFactory = IconFactory.getInstance(this);
-
-        Drawable mIconDrawable = getScaledDrawable(15, 15, R.drawable.dot2);
-
-
-        Icon icon = mIconFactory.fromDrawable(mIconDrawable);
-
         List<RouteItem> routeItems = routeManager.getRouteItems();
         for (int i = 0; i < routeItems.size(); i++) {
+            ImageLoader imageLoader = new ImageLoader();
+            imageLoader.execute(UrlBuilderMarkerImg.getMarkerUrl(i+1));
+            Bitmap bitmap = imageLoader.get();
+            Drawable mIconDrawable = getScaledDrawable(60, 60,bitmap);
+            Icon icon = mIconFactory.fromDrawable(mIconDrawable);
             RouteItem r = routeItems.get(i);
             mapView.addMarker(new MarkerOptions()
                     .position(new LatLng(r.getStopPoint().getNorthing(), r.getStopPoint().getEasting()))

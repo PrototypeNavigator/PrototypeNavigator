@@ -280,22 +280,6 @@ public final class RouteManager {
     /*********************************************************************************************/
 
     /**
-     * Sets camera position to device bearing, if unable to get bearing set it to north.
-     * Sets tilt and zoom.
-     *
-     * @param latLng current location
-     * @return returns newly set CameraPosition
-     */
-    public CameraPosition getCameraPosition(LatLng latLng) {
-        return new CameraPosition.Builder()
-                .bearing((instructions != null) ? (float) instructions.get(0).getPostTurnAzimuth() : 0.0f)
-                .target(latLng)
-                .tilt(80f)
-                .zoom(15f)
-                .build();
-    }
-
-    /**
      * Check in target Waypoint is on rout.
      *
      * @param target to be checked

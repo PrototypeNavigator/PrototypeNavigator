@@ -27,14 +27,12 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
             String stringNumber = httpURLConnection.getHeaderField("content-length");
             int contentLength = Integer.parseInt(stringNumber);
             Log.d("content", stringNumber);
-        //    if (contentLength>15000){
-                bitmap = BitmapFactory.decodeStream((InputStream) url.getContent());
-
-          /*  }else {
-
+            if (contentLength<15000&&urls[0].startsWith("https://maps.googleapis.com/maps")){
                 bitmap=null;
+            }else {
+                bitmap = BitmapFactory.decodeStream((InputStream) url.getContent());
             }
-*/
+
             return bitmap;
         } catch (Exception e) {
             this.exception = e;

@@ -46,7 +46,7 @@
                 android:value="se.jolo.prototypenavigator.activities.Map" />
         </activity>
         <activity
-            android:name=".activities.RouteDetailActivity"
+            android:name=".activities.StopPointDetailActivity"
             android:label="@string/title_route_detail"
             android:parentActivityName=".activities.RouteListActivity"
             android:theme="@style/AppTheme.NoActionBar">

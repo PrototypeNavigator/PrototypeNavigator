@@ -23,13 +23,10 @@ import se.jolo.prototypenavigator.model.DeliveryPoint;
 import se.jolo.prototypenavigator.model.OdrRecipient;
 import se.jolo.prototypenavigator.model.StopPointItem;
 
-
-/**
- * Created by Holstad on 29/02/16.
- */
+/*The StopPointViewAdapter class sets up a list with StopPointItems*/
 public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapter.ViewHolder> {
 
-    private Point p;
+    private Point point;
     private Activity activity;
     private final List<StopPointItem> stopPointItems;
     private final CollapsingToolbarLayout collapsingToolbarLayout;
@@ -53,11 +50,11 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
         holder.mIdView.setText(stopPointItems.get(position).getName());
         odrChecker(holder.stopPointItem,holder);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 collapsingToolbarLayout.setTitle(holder.stopPointItem.getName());
-                showPopup(activity, holder.stopPointItem,v.getPivotY(),v.getPivotX());
+                showPopup(activity, holder.stopPointItem, v.getPivotY(), v.getPivotX());
             }
         });
     }
@@ -67,42 +64,10 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
         return stopPointItems.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView sumOdrH;
-        public final TextView sumOdrV;
-        public final TextView sumOdrF;
-        public final TextView sumOdrK;
-        public final TextView sumOdrT;
-        public final TextView sumOdrL;
-        public StopPointItem stopPointItem;
-
-        public ViewHolder(View view) {
-            super(view);
-            mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            sumOdrH = (TextView) view.findViewById(R.id.sumOdrH);
-            sumOdrV = (TextView) view.findViewById(R.id.sumOdrV);
-            sumOdrF = (TextView) view.findViewById(R.id.sumOdrF);
-            sumOdrK = (TextView) view.findViewById(R.id.sumOdrK);
-            sumOdrT = (TextView) view.findViewById(R.id.sumOdrT);
-            sumOdrL = (TextView) view.findViewById(R.id.sumOdrL);
-
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + sumOdrH.getText() + "'";
-        }
-    }
-
-
-
-
+    /*Setting up the popup*/
     private void showPopup(final Activity activity, StopPointItem stopPointItem,float y,float x) {
-        p = new Point();
-        p.set((int)x,(int)y);
+        point = new Point();
+        point.set((int) x, (int) y);
         // Inflate the popup_layout.xml
         LinearLayout viewGroup = (LinearLayout) activity.findViewById(R.id.popup);
         LayoutInflater layoutInflater = (LayoutInflater) activity
@@ -111,6 +76,8 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
         TextView textView = (TextView) layout.findViewById(R.id.popupText);
         textView.setMovementMethod(new ScrollingMovementMethod());
         textView.setMaxHeight(900);
+
+        // Setting text in popup
         textView.setText(stopPointItem.toString());
 
         // Creating the PopupWindow
@@ -169,5 +136,35 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
                     }
                 }
             }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public final View view;
+        public final TextView mIdView;
+        public final TextView sumOdrH;
+        public final TextView sumOdrV;
+        public final TextView sumOdrF;
+        public final TextView sumOdrK;
+        public final TextView sumOdrT;
+        public final TextView sumOdrL;
+        public StopPointItem stopPointItem;
+
+        public ViewHolder(View view) {
+            super(view);
+            this.view = view;
+            mIdView = (TextView) view.findViewById(R.id.id);
+            sumOdrH = (TextView) view.findViewById(R.id.sumOdrH);
+            sumOdrV = (TextView) view.findViewById(R.id.sumOdrV);
+            sumOdrF = (TextView) view.findViewById(R.id.sumOdrF);
+            sumOdrK = (TextView) view.findViewById(R.id.sumOdrK);
+            sumOdrT = (TextView) view.findViewById(R.id.sumOdrT);
+            sumOdrL = (TextView) view.findViewById(R.id.sumOdrL);
+
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + " '" + sumOdrH.getText() + "'";
+        }
     }
 }

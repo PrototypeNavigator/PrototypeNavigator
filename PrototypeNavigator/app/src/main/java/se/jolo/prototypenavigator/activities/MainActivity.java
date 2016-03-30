@@ -25,6 +25,7 @@ import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.task.Loader;
 import se.jolo.prototypenavigator.utils.Locator;
 
+/*The MainActivity launches the app and gives the user a couple of different options to choose a route.*/
 public final class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private final static String LOG_TAG = "MainActivity";
@@ -56,9 +57,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
     /****                                     Spinner                                         ****/
     /*********************************************************************************************/
 
-    /**
-     * Spinner containing a list of previous routes.
-     */
+    /*Spinner containing a list of previously loaded routes.*/
     public void loadSpinner() {
 
         Spinner spnrLoadRoute = (Spinner) findViewById(R.id.spnrLoadRoute);
@@ -186,38 +185,5 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         });
 
         alertDialog.show();
-    }
-
-    /*********************************************************************************************/
-    /****                                    Lifecycle                                        ****/
-    /*********************************************************************************************/
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 }

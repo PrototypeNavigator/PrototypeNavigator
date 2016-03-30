@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by Joel on 2016-02-08.
@@ -162,7 +163,7 @@ public class StopPointItem implements Parcelable {
            // stringBuilder.append(name).append(newLine);
         }
         if (deliveryAddress!=null && !deliveryAddress.equals("")){
-            stringBuilder.append("Adress: " + deliveryAddress+" ");
+            stringBuilder.append("Adress: " + StringUtils.capitalize(deliveryAddress.toLowerCase())+" ");
         }
         if (deliveryPostalCode!=0){
             stringBuilder.append(deliveryPostalCode).append(newLine);
@@ -186,7 +187,7 @@ public class StopPointItem implements Parcelable {
                 stringBuilder.append("Mottagare: ");
                 for (Resident r : residents){
                     if(residents.size()>1){
-                        stringBuilder.append(r.getLastName()+" "+r.getFirstName()+", ");
+                        stringBuilder.append(StringUtils.capitalize(r.getLastName().toLowerCase())+" "+StringUtils.capitalize(r.getFirstName().toLowerCase())+", ");
                     }else {
                         stringBuilder.append(r.getLastName()+" "+r.getFirstName());
                     }

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import se.jolo.prototypenavigator.R;
 
+/* The FileBrowser class opens the android filebrowser and lets the user select a xml-file. */
 public class FileBrowser extends AppCompatActivity {
 
     private final int REQUEST_ID = 146;
@@ -17,13 +18,6 @@ public class FileBrowser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_browser);
         openFileBrowser();
-    }
-
-    private void openFileBrowser() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-        startActivityForResult(intent, REQUEST_ID);
     }
 
     @Override
@@ -45,33 +39,12 @@ public class FileBrowser extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
+    /*Opens a filebrowser that shows files of the selected filetype, text/xml. */
+    private void openFileBrowser() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/xml");
+        startActivityForResult(intent, REQUEST_ID);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
 }

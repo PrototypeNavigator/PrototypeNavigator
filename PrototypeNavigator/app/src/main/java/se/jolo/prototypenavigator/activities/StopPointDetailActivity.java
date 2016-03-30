@@ -27,20 +27,15 @@ import se.jolo.prototypenavigator.task.ImageLoader;
 import se.jolo.prototypenavigator.utils.SimpleDividerItemDecoration;
 import se.jolo.prototypenavigator.utils.UrlBuilderStreetview;
 
-/**
- * An activity representing a single Route detail screen. This
- * activity is only used narrow width devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link RouteListActivity}.
- */
-public class RouteDetailActivity extends AppCompatActivity {
+/*The StopPointDetailActivity represents a stop point and holds a list with its StopPointItems.*/
+public class StopPointDetailActivity extends AppCompatActivity {
     private ImageView image;
     private Route route;
     private RouteItem routeItem;
     private CollapsingToolbarLayout appBarLayout;
     public static final String ARG_ITEM_ID = "item_id";
 
-    public RouteDetailActivity() {}
+    public StopPointDetailActivity() {}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +66,7 @@ public class RouteDetailActivity extends AppCompatActivity {
             if (appBarLayout != null) {
                 appBarLayout.setTitle(routeItem.getStopPointItems().get(0).getDeliveryAddress());
             }
-
+            /*Loading street view image.*/
             ImageLoader imageLoader = new ImageLoader();
             imageLoader.execute(new UrlBuilderStreetview(routeItem.getStopPointItems().get(0).getEasting(), routeItem.getStopPointItems().get(0).getNorthing()).getUrl());
             image = (ImageView) this.findViewById(R.id.image);
@@ -89,14 +84,13 @@ public class RouteDetailActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
-
             View recyclerView = this.findViewById(R.id.route_list);
             assert recyclerView != null;
             setupRecyclerView((RecyclerView) recyclerView, appBarLayout);
         }
     }
 
+    /*Setting up the RecyclerView with StopPointItems*/
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, CollapsingToolbarLayout collapsingToolbarLayout) {
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
         recyclerView.setAdapter(new StopItemViewAdapter(routeItem.getStopPointItems(), collapsingToolbarLayout,this));

@@ -14,8 +14,7 @@ import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.adapters.RouteViewAdapter;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
-
-
+/*The RouteList Activity represents a route and holds a list with its RouteItems.*/
 public class RouteListActivity extends AppCompatActivity {
 
     private Route route;

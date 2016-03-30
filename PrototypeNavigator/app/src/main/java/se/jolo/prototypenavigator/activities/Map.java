@@ -140,7 +140,9 @@ public class Map extends AppCompatActivity implements LocationListener {
                             .target(new LatLng(location.getLatitude(), location.getLongitude()))
                             .build()));
 */
-            routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
+            if (!Locator.ableToGetLocation) {
+                routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
+            }
 
             Log.d(LOG_TAG, "Location changed to ::: "
                     + location.getLatitude()
@@ -448,7 +450,6 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         Drawable mIconDrawable = getScaledDrawable(15, 15, R.drawable.dot2);
 
-
         Icon icon = mIconFactory.fromDrawable(mIconDrawable);
 
         List<RouteItem> routeItems = routeManager.getRouteItems();
@@ -458,7 +459,6 @@ public class Map extends AppCompatActivity implements LocationListener {
                     .position(new LatLng(r.getStopPoint().getNorthing(), r.getStopPoint().getEasting()))
                     .icon(icon)
                     .title(routeItems.get(i).getStopPointItems().get(0).getDeliveryAddress()));
-
         }
     }
 

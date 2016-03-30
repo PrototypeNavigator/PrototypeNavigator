@@ -3,7 +3,6 @@ package se.jolo.prototypenavigator.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.jolo.prototypenavigator.R;
+import se.jolo.prototypenavigator.task.Loader;
 import se.jolo.prototypenavigator.utils.Locator;
 
 public final class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {

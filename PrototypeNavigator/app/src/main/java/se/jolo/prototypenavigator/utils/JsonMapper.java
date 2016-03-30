@@ -8,7 +8,7 @@ import org.json.XML;
 
 import java.io.IOException;
 
-import se.jolo.prototypenavigator.deserializers.RouteAdapter;
+import se.jolo.prototypenavigator.adapters.RouteAdapter;
 import se.jolo.prototypenavigator.model.Route;
 
 /**

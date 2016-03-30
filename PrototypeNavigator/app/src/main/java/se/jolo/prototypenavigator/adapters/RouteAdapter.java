@@ -1,4 +1,4 @@
-package se.jolo.prototypenavigator.deserializers;
+package se.jolo.prototypenavigator.adapters;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

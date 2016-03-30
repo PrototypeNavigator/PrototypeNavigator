@@ -1,4 +1,4 @@
-package se.jolo.prototypenavigator.deserializers;
+package se.jolo.prototypenavigator.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,7 +21,6 @@ import java.util.List;
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.model.DeliveryPoint;
 import se.jolo.prototypenavigator.model.OdrRecipient;
-import se.jolo.prototypenavigator.model.StopPoint;
 import se.jolo.prototypenavigator.model.StopPointItem;
 
 

@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.deserializers.RouteViewAdapter;
+import se.jolo.prototypenavigator.adapters.RouteViewAdapter;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
 

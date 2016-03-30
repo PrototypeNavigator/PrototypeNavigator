@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import se.jolo.prototypenavigator.model.StopPoint;
+import se.jolo.prototypenavigator.singleton.RouteHolder;
+
 /**
  * Created by Joel on 2016-02-25.
  */
@@ -30,8 +33,7 @@ public class Locator implements LocationListener {
     private Context context;
     private Activity activity;
 
-    public Locator() {
-    }
+    public Locator() {}
 
     public Locator(Context context, Activity activity) {
         this.context = context;
@@ -101,10 +103,15 @@ public class Locator implements LocationListener {
 
         if (location == null) {
             locationManager.requestLocationUpdates(NETWORK_PROVIDER, 1000, 5, locationListener);
-            location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+            location = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
         }
 
         ableToGetLocation = (location != null);
+
+        if (location == null) {
+            location = new Location("passive");
+            location = missingLocation();
+        }
     }
 
     /**
@@ -138,12 +145,23 @@ public class Locator implements LocationListener {
         }
 
         return (location != null) ? location :
-                (locationManager.getLastKnownLocation(GPS_PROVIDER) != null) ? locationManager.getLastKnownLocation(GPS_PROVIDER)
-                : locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+                (locationManager.getLastKnownLocation(GPS_PROVIDER) != null)
+                        ? locationManager.getLastKnownLocation(GPS_PROVIDER)
+                        : locationManager.getLastKnownLocation(NETWORK_PROVIDER);
     }
 
     public void setLocation(Location location) {
         lastLocation = this.location;
         this.location = location;
+    }
+
+    public Location missingLocation() {
+        StopPoint stopPoint = RouteHolder.INSTANCE.getRoute().getRouteItems().get(
+                RouteHolder.INSTANCE.getRoute().getRouteItems().size() / 2).getStopPoint();
+
+        location.setLatitude(stopPoint.getNorthing());
+        location.setLongitude(stopPoint.getEasting());
+
+        return location;
     }
 }

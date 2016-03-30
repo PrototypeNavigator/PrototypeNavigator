@@ -95,14 +95,13 @@ public class Map extends AppCompatActivity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        locator = new Locator(this, this);
-        locator.init(this);
-        //initLocation();
-
         Loader loader = new Loader(this);
         Bundle extras = getIntent().getExtras();
 
         loadRoute(extras, loader);
+
+        locator = new Locator(this, this);
+        locator.init(this);
 
         routeManager = loadManager(locator);
 
@@ -425,6 +424,14 @@ public class Map extends AppCompatActivity implements LocationListener {
         } else {
             Toast.makeText(this, "Unable to acquire location. Please leave the "
                     + "woods/cave/cellar and/or the elevator", Toast.LENGTH_LONG).show();
+
+            mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+                    new CameraPosition.Builder()
+                            .target(new LatLng(locator.getLocation().getLatitude(),
+                                    locator.getLocation().getLongitude()))
+                            .tilt(0.0f)
+                            .zoom(11f)
+                            .build()));
         }
 
         mapView.addPolyline(routeManager.getPolylineToNextStop());
@@ -464,10 +471,7 @@ public class Map extends AppCompatActivity implements LocationListener {
      * @return LatLng, centroid position
      */
     private LatLng setCentroid(Locator locator) {
-
-        LatLng centroid = (locator.getLocation() != null)
-                ? new LatLng(locator.getLocation().getLatitude(), locator.getLocation().getLongitude())
-                : new LatLng(waypoints.get(0).getLatitude(), waypoints.get(0).getLongitude());
+        LatLng centroid = new LatLng(locator.getLocation().getLatitude(), locator.getLocation().getLongitude());
 
         mapView.setCenterCoordinate(centroid);
         animateCamera(centroid);
@@ -481,10 +485,29 @@ public class Map extends AppCompatActivity implements LocationListener {
      * @param latLng new camera position
      */
     public void animateCamera(LatLng latLng) {
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
-                routeManager.getCameraPosition(latLng)));
+        if (Locator.ableToGetLocation) {
+            mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+                    getCameraPosition(latLng, 80f, 15f)));
+        } else {
+            mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
+                    getCameraPosition(latLng, 0f, 14f)));
+        }
     }
 
+    /**
+     * Sets camera position to device bearing, if unable to get bearing set it to north.
+     * Sets tilt and zoom.
+     *
+     * @param latLng current location
+     * @return returns newly set CameraPosition
+     */
+    public CameraPosition getCameraPosition(LatLng latLng, float tilt, float zoom) {
+        return new CameraPosition.Builder()
+                .target(latLng)
+                .tilt(tilt)
+                .zoom(zoom)
+                .build();
+    }
 
     /*********************************************************************************************/
     /****                                      Menu                                           ****/
@@ -521,11 +544,11 @@ public class Map extends AppCompatActivity implements LocationListener {
                 }
 
             case R.id.dayVsNight:
-                if(item.getTitle().equals("Visa mörk karta")){
+                if (item.getTitle().equals("Visa mörk karta")) {
                     item.setTitle("Visa ljus karta");
                     mapView.setStyleUrl(Style.DARK);
                     return true;
-                }else {
+                } else {
                     item.setTitle("Visa mörk karta");
                     mapView.setStyleUrl(Style.MAPBOX_STREETS);
                     return true;

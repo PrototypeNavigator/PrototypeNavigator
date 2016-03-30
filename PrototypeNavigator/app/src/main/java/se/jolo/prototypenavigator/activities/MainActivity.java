@@ -42,14 +42,11 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
         Drawable background = getResources().getDrawable(R.drawable.sky2);
         relativeLayout.setBackground(background);
 
-        initGps();
-
-        Locator locator = new Locator(this, this);
-        locator.init(locator);
-
         loader = new Loader(this);
 
         tvWelcome = (TextView) findViewById(R.id.tvWelcome);
+
+        initGps();
 
         setButtonClickListener();
         loadSpinner();

@@ -44,6 +44,8 @@ import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -66,7 +68,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     private FloatingActionButton findMeBtn;
     private TextView textView;
-    private Toolbar myToolbar;
+    private Toolbar toolbar;
     private Button plus;
     private Button minus;
 
@@ -104,7 +106,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         routeManager = loadManager(locator);
 
-        myToolbar = makeToolbar();
+        toolbar = makeToolbar();
         viewGroup = makeViewGroup();
         textView = makeTextView();
         mapView = loadMap();
@@ -113,7 +115,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         minus = initMinusBtn();
         centroid = setCentroid(locator);
 
-        setSupportActionBar(myToolbar);
+        setSupportActionBar(toolbar);
 
         /*Thread for placing markers on map*/
         Thread thread = new Thread(new Runnable() {
@@ -235,8 +237,8 @@ public class Map extends AppCompatActivity implements LocationListener {
     }
 
     private Toolbar makeToolbar() {
-        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        return myToolbar;
+        toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        return toolbar;
     }
 
     /**
@@ -431,8 +433,14 @@ public class Map extends AppCompatActivity implements LocationListener {
         });
 
         if (Locator.ableToGetLocation) {
+            //Show the instructions if they are not visible.
+            if(textView.getVisibility()!=View.VISIBLE){
+                toggleVisibility(textView);
+            }
             enableMapViewLocation();
             toggleMapViewTracking();
+            mapView.addPolyline(routeManager.getPolylineToNextStop());
+            textView.setText(routeManager.getInstruction().getReadableInstruction());
         } else {
             Toast.makeText(this, "Unable to acquire location. Please leave the "
                     + "woods/cave/cellar and/or the elevator", Toast.LENGTH_LONG).show();
@@ -444,12 +452,16 @@ public class Map extends AppCompatActivity implements LocationListener {
                             .tilt(0.0f)
                             .zoom(11f)
                             .build()));
+            //Hide the instructions if they are visible.
+            if(textView.getVisibility()==View.VISIBLE){
+                toggleVisibility(textView);
+            }
         }
 
-        mapView.addPolyline(routeManager.getPolylineToNextStop());
-        textView.setText(routeManager.getInstruction().getReadableInstruction());
-        myToolbar.setTitleTextColor(Color.WHITE);
-        myToolbar.setTitle(routeManager.getNextStop().getStopPointItems().get(0).getDeliveryAddress());
+
+
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setTitle(StringUtils.capitalize(routeManager.getNextStop().getStopPointItems().get(0).getDeliveryAddress().toLowerCase()));
 
         return mapView;
     }
@@ -464,7 +476,7 @@ public class Map extends AppCompatActivity implements LocationListener {
             ImageLoader imageLoader = new ImageLoader();
             imageLoader.execute(UrlBuilderMarkerImg.getMarkerUrl(i+1));
             Bitmap bitmap = imageLoader.get();
-            Drawable mIconDrawable = getScaledDrawable(60, 60,bitmap);
+            Drawable mIconDrawable = getScaledDrawable(50, 50,bitmap);
             Icon icon = mIconFactory.fromDrawable(mIconDrawable);
             RouteItem r = routeItems.get(i);
             mapView.addMarker(new MarkerOptions()

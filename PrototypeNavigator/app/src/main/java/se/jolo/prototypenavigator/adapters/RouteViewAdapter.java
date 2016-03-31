@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.activities.StopPointDetailActivity;
 import se.jolo.prototypenavigator.model.Route;
@@ -34,7 +36,7 @@ public class RouteViewAdapter
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.routeItem = route.getRouteItems().get(position);
-        holder.idView.setText(route.getRouteItems().get(position).getStopPointItems().get(0).getDeliveryAddress());
+        holder.idView.setText(StringUtils.capitalize(route.getRouteItems().get(position).getStopPointItems().get(0).getDeliveryAddress().toLowerCase()));
         //holder.sumOdrH.setText(route.getRouteItems().get(position).getStopPointItems().get(0).getDeliveryAddress());
 
         holder.view.setOnClickListener(new View.OnClickListener() {

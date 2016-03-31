@@ -8,7 +8,6 @@ import se.jolo.prototypenavigator.model.Route;
 public enum  RouteHolder {
     INSTANCE;
     private Route route;
-    private boolean isLocationEnabled;
 
     private RouteHolder(){}
 
@@ -17,13 +16,6 @@ public enum  RouteHolder {
     }
     public Route getRoute(){
         return route;
-    }
-
-    public boolean isLocationEnabled() {
-        return isLocationEnabled;
-    }
-    public void setIsLocationEnabled(boolean isLocationEnabled) {
-        this.isLocationEnabled = isLocationEnabled;
     }
 
 }

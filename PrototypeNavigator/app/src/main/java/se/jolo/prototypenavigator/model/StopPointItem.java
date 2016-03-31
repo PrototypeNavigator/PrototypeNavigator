@@ -189,7 +189,7 @@ public class StopPointItem implements Parcelable {
                     if(residents.size()>1){
                         stringBuilder.append(StringUtils.capitalize(r.getLastName().toLowerCase())+" "+StringUtils.capitalize(r.getFirstName().toLowerCase())+", ");
                     }else {
-                        stringBuilder.append(StringUtils.capitalize(r.getLastName())+" "+StringUtils.capitalize(r.getFirstName()));
+                        stringBuilder.append(StringUtils.capitalize(r.getLastName().toLowerCase())+" "+StringUtils.capitalize(r.getFirstName().toLowerCase()));
                     }
 
 

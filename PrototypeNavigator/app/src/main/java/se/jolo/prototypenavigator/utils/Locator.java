@@ -14,9 +14,7 @@ import android.util.Log;
 import se.jolo.prototypenavigator.model.StopPoint;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
 
-/**
- * Created by Joel on 2016-02-25.
- */
+
 public class Locator implements LocationListener {
 
     private static final String LOG_TAG = "LOCATOR";

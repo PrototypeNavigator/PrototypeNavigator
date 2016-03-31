@@ -462,7 +462,7 @@ public class Map extends AppCompatActivity implements LocationListener {
             ImageLoader imageLoader = new ImageLoader();
             imageLoader.execute(UrlBuilderMarkerImg.getMarkerUrl(i+1));
             Bitmap bitmap = imageLoader.get();
-            Drawable mIconDrawable = getScaledDrawable(60, 60,bitmap);
+            Drawable mIconDrawable = getScaledDrawable(50, 50,bitmap);
             Icon icon = mIconFactory.fromDrawable(mIconDrawable);
             RouteItem r = routeItems.get(i);
             mapView.addMarker(new MarkerOptions()

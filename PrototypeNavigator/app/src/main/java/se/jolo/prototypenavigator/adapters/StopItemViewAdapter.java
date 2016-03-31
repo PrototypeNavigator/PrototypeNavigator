@@ -7,6 +7,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,20 +71,20 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
         point = new Point();
         point.set((int) x, (int) y);
         // Inflate the popup_layout.xml
-        LinearLayout viewGroup = (LinearLayout) activity.findViewById(R.id.popup);
+        //LinearLayout viewGroup = (LinearLayout) activity.findViewById(R.id.popup);
         LayoutInflater layoutInflater = (LayoutInflater) activity
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = layoutInflater.inflate(R.layout.popup_layout, viewGroup);
+        View layout = layoutInflater.inflate(R.layout.popup_layout,null);
         TextView textView = (TextView) layout.findViewById(R.id.popupText);
         textView.setMovementMethod(new ScrollingMovementMethod());
-        textView.setMaxHeight(900);
+        textView.setMaxHeight(700);
 
         // Setting text in popup
         textView.setText(stopPointItem.toString());
 
         // Creating the PopupWindow
         final PopupWindow popup = new PopupWindow(activity);
-        popup.setAnimationStyle(R.style.animationName);
+       // popup.setAnimationStyle(R.style.animationName);
         popup.setContentView(layout);
         popup.setFocusable(true);
 
@@ -91,11 +93,20 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
         // Clear the default translucent background
         popup.setBackgroundDrawable(new BitmapDrawable());
 
-        // Displaying the popup at the specified location, + offsets.
+        // Displaying the popup at the specified location.
         popup.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
+        //Getting screen size.
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = (int)(size.y*0.8);
+
+        popup.update(0, 0,width,height);
         // Getting a reference to Close button, and close the popup when clicked.
         Button close = (Button) layout.findViewById(R.id.close);
+        Log.d("popup",popup.isShowing()+"");
         close.setOnClickListener(new View.OnClickListener() {
 
             @Override

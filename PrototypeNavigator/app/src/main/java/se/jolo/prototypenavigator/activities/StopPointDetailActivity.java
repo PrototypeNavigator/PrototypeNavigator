@@ -15,6 +15,8 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -64,7 +66,7 @@ public class StopPointDetailActivity extends AppCompatActivity {
 
             appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(routeItem.getStopPointItems().get(0).getDeliveryAddress());
+                appBarLayout.setTitle(StringUtils.capitalize(routeItem.getStopPointItems().get(0).getDeliveryAddress().toLowerCase()));
             }
             /*Loading street view image.*/
             ImageLoader imageLoader = new ImageLoader();

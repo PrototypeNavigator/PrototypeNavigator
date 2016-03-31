@@ -59,6 +59,8 @@
             android:name="ispeech_api_key"
             android:value="fa55153dbdbf6300bfc497f4f07ffe2c" />
 
+        <service android:name=".service.MarkerService"/>
+
     </application>
 
 </manifest>

@@ -1,5 +1,7 @@
 package se.jolo.prototypenavigator.singleton;
 
+import com.mapbox.mapboxsdk.views.MapView;
+
 import se.jolo.prototypenavigator.model.Route;
 
 /**
@@ -8,9 +10,16 @@ import se.jolo.prototypenavigator.model.Route;
 public enum  RouteHolder {
     INSTANCE;
     private Route route;
+    private MapView mapView;
 
     private RouteHolder(){}
 
+    public void setMapView(MapView mapView) {
+        this.mapView = mapView;
+    }
+    public MapView getMapView() {
+        return mapView;
+    }
     public void setRoute(Route route){
         this.route=route;
     }

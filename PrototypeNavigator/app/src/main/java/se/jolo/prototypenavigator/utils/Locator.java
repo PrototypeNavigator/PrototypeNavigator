@@ -31,7 +31,8 @@ public class Locator implements LocationListener {
     private Context context;
     private Activity activity;
 
-    public Locator() {}
+    public Locator() {
+    }
 
     public Locator(Context context, Activity activity) {
         this.context = context;
@@ -80,12 +81,6 @@ public class Locator implements LocationListener {
      */
     public void init(LocationListener locationListener) {
 
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-        if (locationListener != this) {
-            locationManager.removeUpdates(this);
-        }
-
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 context, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -94,6 +89,12 @@ public class Locator implements LocationListener {
             ActivityCompat.requestPermissions(activity, new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_LOCATION);
+        }
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        if (locationListener != this) {
+            locationManager.removeUpdates(this);
         }
 
         locationManager.requestLocationUpdates(GPS_PROVIDER, 1000, 5, locationListener);
@@ -106,15 +107,16 @@ public class Locator implements LocationListener {
 
         ableToGetLocation = (location != null);
 
-        if (location == null) {
-            location = new Location("passive");
+        if (!ableToGetLocation) {
             location = missingLocation();
+            Log.d(LOG_TAG, "missingLocation() called");
         }
+
+        Log.d(LOG_TAG, "Locator.init() finished. provider: " + locationManager.getProviders(true)
+        + ", location: " + location);
     }
 
-    /**
-     * Check with provider if GPS is enabled.
-     */
+    /* Check with provider if GPS is enabled. */
     public static boolean isGpsEnabled(Context context) {
         LocationManager locationManager = (LocationManager)
                 context.getSystemService(Context.LOCATION_SERVICE);
@@ -154,6 +156,8 @@ public class Locator implements LocationListener {
     }
 
     public Location missingLocation() {
+        Location location = new Location("passive");
+
         StopPoint stopPoint = RouteHolder.INSTANCE.getRoute().getRouteItems().get(
                 RouteHolder.INSTANCE.getRoute().getRouteItems().size() / 2).getStopPoint();
 

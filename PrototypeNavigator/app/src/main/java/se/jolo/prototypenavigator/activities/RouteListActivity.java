@@ -3,6 +3,7 @@ package se.jolo.prototypenavigator.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +19,7 @@ import se.jolo.prototypenavigator.singleton.RouteHolder;
 public class RouteListActivity extends AppCompatActivity {
 
     private Route route;
-
+    private AppBarLayout appBarLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,9 +27,9 @@ public class RouteListActivity extends AppCompatActivity {
         route = RouteHolder.INSTANCE.getRoute();
 
         setContentView(R.layout.activity_route_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.list_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.routeItemList_toolbar);
+        toolbar.setTitle("Ruttstop");
         setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

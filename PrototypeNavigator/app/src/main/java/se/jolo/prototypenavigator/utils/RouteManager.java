@@ -2,26 +2,14 @@ package se.jolo.prototypenavigator.utils;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Location;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mapbox.directions.DirectionsCriteria;
-import com.mapbox.directions.MapboxDirections;
-import com.mapbox.directions.service.models.DirectionsResponse;
 import com.mapbox.directions.service.models.DirectionsRoute;
-import com.mapbox.directions.service.models.RouteStep;
 import com.mapbox.directions.service.models.Waypoint;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.constants.GeoConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.views.MapView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,16 +18,12 @@ import java.util.concurrent.ExecutionException;
 import se.jolo.prototypenavigator.model.Instruction;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
-import se.jolo.prototypenavigator.task.OsrmJsonTask;
-
-/**
- * Created by Joel on 2016-02-24.
- */
+import se.jolo.prototypenavigator.task.OsrmCall;
+/* The RouteManager class manages polylines and instructions. */
 public final class RouteManager {
 
     private static final String LOG_TAG = "ROUTER";
 
-    private Route route;
     private Context context;
 
     private List<LatLng> fullRoute;
@@ -50,37 +34,13 @@ public final class RouteManager {
     private boolean inProximity = false;
     private Locator locator;
 
-    private DirectionsRoute currentRoute;
-    private PolylineOptions polylineToNextStop;
-    private PolylineOptions polylinefullRoute;
+    private PolylineOptions polylineToNextStop, polylinefullRoute;
 
     public RouteManager(Context context, Locator locator) {
         this.context = context;
         this.locator = locator;
     }
 
-    /*********************************************************************************************/
-    /****                                     Location                                        ****/
-    /*********************************************************************************************/
-
-    /**
-     * Set new location, set camera to new location, check new locations proximity to next
-     * stop-point, updates remaining stop-points, loads route again and removes and re-draws
-     * polyline from location to next stop-point.
-     */
-/*    @Override
-    public void onLocationChanged(Location location) {
-        super.onLocationChanged(location);
-
-        location = (location != null) ? location : locator.getLocation() ;
-
-        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
-                getCameraPosition(new LatLng(location.getLatitude(), location.getLongitude()))));
-
-        setCurrentLocation(location).checkStopPointProximity().updateStopPointsRemaining().loadRouteToNextStop();
-        removePolyline(getPolylineToNextStop());
-
-    }*/
     public List<LatLng> getPoints() {
         return polylineToNextStop.getPoints();
     }
@@ -89,43 +49,19 @@ public final class RouteManager {
     /****                                     Routing                                         ****/
     /*********************************************************************************************/
 
-    /**
-     * Makes a list of waypoints containing current location and next stop-point, to enable
-     * drawing a route between the two.
-     *
-     * @return list of waypoints
-     */
-   /* public List<LatLng> getCurrentRoute() {
-
-        List<LatLng> positionAndNextWaypoint = new ArrayList<>();
-
-        positionAndNextWaypoint.add(new LatLng(
-                currentLocation.getLatitude(),
-                currentLocation.getLongitude()));
-        positionAndNextWaypoint.add(nextStop.get(0));
-
-        return positionAndNextWaypoint;
-    }*/
-
-    /**
-     *
-     *
-     *
-     */
     public PolylineOptions createPolylineOption(List<RouteItem> routeItems) {
         HashMap<String, List> stopsAndInstructions = stopsAndInstructions(routeItems);
         if (routeItems.size() <= 1) {
-            instructions = stopsAndInstructions.get(OsrmJsonTask.INSTRUCTIONS);
+            instructions = stopsAndInstructions.get(OsrmCall.INSTRUCTIONS);
         }
         PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.addAll(stopsAndInstructions.get(OsrmJsonTask.ROUTE_GEOMETRY));
+        polylineOptions.addAll(stopsAndInstructions.get(OsrmCall.ROUTE_GEOMETRY));
         return polylineOptions;
     }
 
-
     public HashMap<String, List> stopsAndInstructions(List<RouteItem> routeItems) {
 
-        OsrmJsonTask osrmJsonTask = new OsrmJsonTask();
+        OsrmCall osrmCall = new OsrmCall();
         ArrayList<LatLng> routeStops = new ArrayList<>();
 
         if (routeItems.size() <= 1) {
@@ -137,10 +73,10 @@ public final class RouteManager {
             }
         }
 
-        osrmJsonTask.execute(UrlBuilderRoute.multiplePoints(routeStops));
+        osrmCall.execute(UrlBuilderRoute.multiplePoints(routeStops));
 
         try {
-            return osrmJsonTask.get();
+            return osrmCall.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -152,12 +88,7 @@ public final class RouteManager {
     /****                                    RoutItems                                        ****/
     /*********************************************************************************************/
 
-    /**
-     * Loads waypoints and route-items from parent Route object.
-     *
-     * @param route object containing the route-items
-     * @return self for fluidity
-     */
+    /* Loads waypoints and route-items from parent Route object. */
     public RouteManager loadRouteItemsAndWaypoints(Route route) {
 
         routeItems = new ArrayList<>();
@@ -188,12 +119,7 @@ public final class RouteManager {
         return this;
     }
 
-
-    /**
-     * Check if current location is in proximity of next StopPoint.
-     *
-     * @return self for fluidity
-     */
+    /* Check if current location is in proximity of next StopPoint. */
     public RouteManager checkStopPointProximity() {
 
         LatLng latLngRouteItem = new LatLng(
@@ -217,11 +143,7 @@ public final class RouteManager {
         return this;
     }
 
-    /**
-     * If in proximity of next StopPoint, remove it to get next coming StopPoint.
-     *
-     * @return self for fluidity
-     */
+    /* If in proximity of next StopPoint, remove it to get next coming StopPoint. */
     public RouteManager updateStopPointsRemaining() {
 
         if (inProximity) {
@@ -248,9 +170,19 @@ public final class RouteManager {
         return this;
     }
 
-    /**
-     * @return next stop in route
-     */
+    /*********************************************************************************************/
+    /****                                  Info & Other                                       ****/
+    /*********************************************************************************************/
+
+    /* Simple toaster. */
+    private void showMessage(String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    /*********************************************************************************************/
+    /****                                      Getters                                        ****/
+    /*********************************************************************************************/
+
     public RouteItem getNextStop() {
         return routeItems.get(0);
     }
@@ -275,31 +207,4 @@ public final class RouteManager {
         return instructions;
     }
 
-    /*********************************************************************************************/
-    /****                                  Info & Other                                       ****/
-    /*********************************************************************************************/
-
-    /**
-     * Check in target Waypoint is on rout.
-     *
-     * @param target to be checked
-     */
-    public void checkOffRoute(Waypoint target) {
-        if (currentRoute == null) {
-            showMessage("Unable to get location");
-        } else if (currentRoute.isOffRoute(target)) {
-            showMessage("You are off-route.");
-        } else {
-            showMessage("You are not off-route.");
-        }
-    }
-
-    /**
-     * Simple toaster.
-     *
-     * @param message toast text
-     */
-    private void showMessage(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
 }

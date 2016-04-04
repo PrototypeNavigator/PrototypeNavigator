@@ -2,6 +2,7 @@ package se.jolo.prototypenavigator.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -11,12 +12,19 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -49,13 +57,13 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.stopPointItem = stopPointItems.get(position);
-        holder.mIdView.setText(stopPointItems.get(position).getName());
+        holder.idView.setText(StringUtils.capitalize(stopPointItems.get(position).getName().toLowerCase()));
         odrChecker(holder.stopPointItem,holder);
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                collapsingToolbarLayout.setTitle(holder.stopPointItem.getName());
+                collapsingToolbarLayout.setTitle(StringUtils.capitalize(holder.stopPointItem.getName().toLowerCase()));
                 showPopup(activity, holder.stopPointItem, v.getPivotY(), v.getPivotX());
             }
         });
@@ -104,14 +112,25 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
         int height = (int)(size.y*0.8);
 
         popup.update(0, 0,width,height);
-        // Getting a reference to Close button, and close the popup when clicked.
-        Button close = (Button) layout.findViewById(R.id.close);
-        Log.d("popup",popup.isShowing()+"");
-        close.setOnClickListener(new View.OnClickListener() {
 
+        // Getting a reference to Close button, and close the popup when clicked.
+        final ImageView close = (ImageView) layout.findViewById(R.id.close);
+        Log.d("popup", popup.isShowing() + "");
+
+        final Animation animation = AnimationUtils.loadAnimation(activity, R.anim.rotate_around_center_point);
+        close.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                popup.dismiss();
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        v.startAnimation(animation);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        v.clearAnimation();
+                        popup.dismiss();
+                        break;
+                }
+                return true;
             }
         });
     }
@@ -150,8 +169,9 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+
         public final View view;
-        public final TextView mIdView;
+        public final TextView idView;
         public final TextView sumOdrH;
         public final TextView sumOdrV;
         public final TextView sumOdrF;
@@ -163,7 +183,7 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
         public ViewHolder(View view) {
             super(view);
             this.view = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
+            idView = (TextView) view.findViewById(R.id.id);
             sumOdrH = (TextView) view.findViewById(R.id.sumOdrH);
             sumOdrV = (TextView) view.findViewById(R.id.sumOdrV);
             sumOdrF = (TextView) view.findViewById(R.id.sumOdrF);

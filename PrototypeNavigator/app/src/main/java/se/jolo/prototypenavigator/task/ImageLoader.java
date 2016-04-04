@@ -9,15 +9,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by Holstad on 01/03/16.
- */
 public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
 
     private Exception exception;
 
     public ImageLoader(){}
-
 
     protected Bitmap doInBackground(String... urls) {
         Bitmap bitmap;
@@ -40,9 +36,5 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
         }
     }
 
-
-    protected void onPostExecute(Bitmap bitmap) {
-        // TODO: check this.exception
-        // TODO: do something with the feed
-    }
+    protected void onPostExecute(Bitmap bitmap) {}
 }

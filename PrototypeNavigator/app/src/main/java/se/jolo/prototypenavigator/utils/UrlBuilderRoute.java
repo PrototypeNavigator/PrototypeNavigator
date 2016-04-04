@@ -10,9 +10,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Holstad on 10/03/16.
- */
 public class UrlBuilderRoute {
     private static String TAG = "UrlBuilderRoute";
     private static String BASE_URL = "http://188.166.12.62/viaroute?instructions=true&";
@@ -33,14 +30,11 @@ public class UrlBuilderRoute {
     public static URL multiplePoints(ArrayList<LatLng> points){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(BASE_URL);
-        //int i = 1;
         for(LatLng latLng: points){
             stringBuilder.append(LOCATION);
             stringBuilder.append(latLng.getLatitude()+",");
             stringBuilder.append(latLng.getLongitude()+"&");
 
-            //Log.d(TAG,i+" ::::: "+latLng.getLatitude()+" "+latLng.getLongitude());
-            //i++;
         }
         stringBuilder.setLength(stringBuilder.length() - 1);
         Log.d(TAG,stringBuilder.toString());

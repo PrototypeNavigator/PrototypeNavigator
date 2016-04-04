@@ -6,9 +6,6 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Joel on 2016-02-08.
- */
 public final class RouteItem implements Comparable<RouteItem>, Parcelable {
 
     private int order;

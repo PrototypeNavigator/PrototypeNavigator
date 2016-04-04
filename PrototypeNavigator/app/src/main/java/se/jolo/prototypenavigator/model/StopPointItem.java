@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * Created by Joel on 2016-02-08.
- */
 public class StopPointItem implements Parcelable {
 
     private String uuid;
@@ -21,8 +18,8 @@ public class StopPointItem implements Parcelable {
     private float easting;
     private float northing;
     private String freeText;
-    private String plannedArrivalTime;      // should be some sort of time
-    private String plannedDepartureTime;    // should be some sort of time
+    private String plannedArrivalTime;
+    private String plannedDepartureTime;
     private int validityDays;
     private List<DeliveryPoint> deliveryPoints;
     private Service service = null;

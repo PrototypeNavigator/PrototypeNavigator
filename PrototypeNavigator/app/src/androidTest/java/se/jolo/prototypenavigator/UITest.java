@@ -9,7 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import se.jolo.prototypenavigator.activities.MainActivity;
+import se.jolo.prototypenavigator.activities.Launcher;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -24,8 +24,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 public class UITest {
     @Rule
-    public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(
-            MainActivity.class);
+    public ActivityTestRule<Launcher> activityRule = new ActivityTestRule<>(
+            Launcher.class);
 
     @Test
     public void openRouteTest(){

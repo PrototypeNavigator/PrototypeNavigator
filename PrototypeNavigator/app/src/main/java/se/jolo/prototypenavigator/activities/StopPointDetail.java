@@ -29,15 +29,15 @@ import se.jolo.prototypenavigator.task.ImageLoader;
 import se.jolo.prototypenavigator.utils.SimpleDividerItemDecoration;
 import se.jolo.prototypenavigator.utils.UrlBuilderStreetview;
 
-/*The StopPointDetailActivity represents a stop point and holds a list with its StopPointItems.*/
-public class StopPointDetailActivity extends AppCompatActivity {
+/*The StopPointDetail class represents a stop point and holds a list with its StopPointItems.*/
+public class StopPointDetail extends AppCompatActivity {
     private ImageView image;
     private Route route;
     private RouteItem routeItem;
     private CollapsingToolbarLayout appBarLayout;
     public static final String ARG_ITEM_ID = "item_id";
 
-    public StopPointDetailActivity() {}
+    public StopPointDetail() {}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +103,7 @@ public class StopPointDetailActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
 
-            navigateUpTo(new Intent(this, RouteListActivity.class));
+            navigateUpTo(new Intent(this, RouteList.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

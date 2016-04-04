@@ -5,9 +5,6 @@ import android.os.Parcelable;
 
 import se.jolo.prototypenavigator.utils.InstructionTranslator;
 
-/**
- * Created by Holstad on 11/03/16.
- */
 public final class Instruction implements Parcelable {
 
     private String instructionCode;

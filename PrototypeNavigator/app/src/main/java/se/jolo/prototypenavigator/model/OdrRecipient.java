@@ -3,9 +3,6 @@ package se.jolo.prototypenavigator.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by Joel on 2016-02-08.
- */
 public class OdrRecipient implements Parcelable {
 
     private int amount = 0;

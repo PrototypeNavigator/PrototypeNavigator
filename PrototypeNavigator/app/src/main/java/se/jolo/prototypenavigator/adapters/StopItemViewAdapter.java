@@ -169,6 +169,7 @@ public class StopItemViewAdapter extends RecyclerView.Adapter<StopItemViewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+
         public final View view;
         public final TextView idView;
         public final TextView sumOdrH;

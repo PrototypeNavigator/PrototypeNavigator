@@ -2,10 +2,7 @@ package se.jolo.prototypenavigator.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-/**
- * Created by super on 2016-03-14.
- */
+/* The Cipher class decodes the encrypted xml file. */
 public final class Cipher {
 
     private Cipher() {}

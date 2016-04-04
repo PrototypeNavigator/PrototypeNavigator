@@ -3,9 +3,6 @@ package se.jolo.prototypenavigator.utils;
 import android.location.Location;
 import android.util.Log;
 
-/**
- * Created by Holstad on 01/03/16.
- */
 public class UrlBuilderStreetview {
     private final StringBuilder stringBuilder = new StringBuilder();
     private final String BASE_URL = "https://maps.googleapis.com/maps/api/streetview?size=800x800&location=";

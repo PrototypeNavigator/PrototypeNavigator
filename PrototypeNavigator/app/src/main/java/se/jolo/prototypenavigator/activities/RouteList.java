@@ -15,8 +15,8 @@ import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.adapters.RouteViewAdapter;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
-/*The RouteList Activity represents a route and holds a list with its RouteItems.*/
-public class RouteListActivity extends AppCompatActivity {
+/*The RouteList class represents a route and holds a list with its RouteItems.*/
+public class RouteList extends AppCompatActivity {
 
     private Route route;
     private AppBarLayout appBarLayout;
@@ -40,9 +40,8 @@ public class RouteListActivity extends AppCompatActivity {
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
 
-
     }
-
+    /*Setting up the RecyclerView with RouteItems*/
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new RouteViewAdapter());
     }
@@ -56,7 +55,7 @@ public class RouteListActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
 
-            navigateUpTo(new Intent(this, RouteListActivity.class));
+            navigateUpTo(new Intent(this, RouteList.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

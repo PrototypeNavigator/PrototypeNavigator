@@ -21,11 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import se.jolo.prototypenavigator.model.Instruction;
-
-/**
- * Created by Holstad on 10/03/16.
- */
-public class OsrmJsonTask extends AsyncTask<URL,String,HashMap<String,List>> {
+/* The OsrmCall class makes and recives a geoJson call and maps out polyline with instructions. */
+public class OsrmCall extends AsyncTask<URL,String,HashMap<String,List>> {
     private String jsonString;
     private String TAG = "PolylineDecoder";
     public static String ROUTE_GEOMETRY = "route_geometry";
@@ -71,10 +68,6 @@ public class OsrmJsonTask extends AsyncTask<URL,String,HashMap<String,List>> {
                     instructions.add(instruction);
                 }
             }
-
-            /*for (Instruction i: instructions){
-                Log.d(TAG,i.toString());
-            }*/
 
             // Adding lists to hashmap
             lists.put(ROUTE_GEOMETRY,polyline);

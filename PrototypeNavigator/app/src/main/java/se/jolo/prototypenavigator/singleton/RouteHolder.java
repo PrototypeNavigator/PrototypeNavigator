@@ -4,15 +4,13 @@ import com.mapbox.mapboxsdk.views.MapView;
 
 import se.jolo.prototypenavigator.model.Route;
 
-/**
- * The RouteHolder class holds information that is necessary for the app, across multiple activities.
- */
+/* The RouteHolder class holds information that is necessary for the app, across multiple activities. */
 public enum  RouteHolder {
     INSTANCE;
     private Route route;
     private MapView mapView;
 
-    private RouteHolder(){}
+    RouteHolder(){}
 
     public void setMapView(MapView mapView) {
         this.mapView = mapView;

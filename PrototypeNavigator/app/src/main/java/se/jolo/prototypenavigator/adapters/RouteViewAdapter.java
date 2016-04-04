@@ -11,11 +11,11 @@ import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 
 import se.jolo.prototypenavigator.R;
-import se.jolo.prototypenavigator.activities.StopPointDetailActivity;
+import se.jolo.prototypenavigator.activities.StopPointDetail;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
-/*The RouteViewAdapter class sets up a list with RouteItems1*/
+/* The RouteViewAdapter class sets up a list with RouteItems. */
 public class RouteViewAdapter
         extends RecyclerView.Adapter<RouteViewAdapter.ViewHolder> {
 
@@ -44,8 +44,8 @@ public class RouteViewAdapter
             public void onClick(View v) {
 
                 Context context = v.getContext();
-                Intent intent = new Intent(context, StopPointDetailActivity.class);
-                intent.putExtra(StopPointDetailActivity.ARG_ITEM_ID, holder.routeItem.getPrimaryStopPointItemUuid());
+                Intent intent = new Intent(context, StopPointDetail.class);
+                intent.putExtra(StopPointDetail.ARG_ITEM_ID, holder.routeItem.getPrimaryStopPointItemUuid());
                 context.startActivity(intent);
             }
         });

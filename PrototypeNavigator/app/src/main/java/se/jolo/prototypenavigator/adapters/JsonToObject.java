@@ -19,9 +19,7 @@ import se.jolo.prototypenavigator.model.Service;
 import se.jolo.prototypenavigator.model.StopPoint;
 import se.jolo.prototypenavigator.model.StopPointItem;
 
-/**
- * Created by Joel on 2016-02-11.
- */
+/* Temporary json to object adapter class. */
 public final class JsonToObject {
 
     public static Route jsonToRoute(JsonObject json) throws ParseException {
@@ -41,8 +39,6 @@ public final class JsonToObject {
             JsonObject jsonObject = jsonRouteItem.get(i).getAsJsonObject();
             routeItem.add(jsonToRouteItem(jsonObject));
         }
-
-
 
         return new Route(auditInfo, deliveryOffice, name, type, uuid, validityDays, routeItem);
     }
@@ -278,7 +274,6 @@ public final class JsonToObject {
         }
         return new StopPoint(easting, northing, type, uuid, freeText);
     }
-
 
     public static Date stringToDate(String dateString) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

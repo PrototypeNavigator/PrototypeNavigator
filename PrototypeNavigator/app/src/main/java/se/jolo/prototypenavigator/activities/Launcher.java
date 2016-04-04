@@ -28,10 +28,10 @@ import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.task.Loader;
 import se.jolo.prototypenavigator.utils.Locator;
 
-/*The MainActivity launches the app and gives the user a couple of different options to choose a route.*/
-public final class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+/*The Launcher class launches the app and gives the user a couple of different options to choose a route.*/
+public final class Launcher extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private final static String LOG_TAG = "MainActivity";
+    private final static String LOG_TAG = "Launcher";
     private TextView tvWelcome;
     private Loader loader;
     private String fileName;
@@ -176,7 +176,7 @@ public final class MainActivity extends AppCompatActivity implements AdapterView
      */
     private void showGpsDialog() {
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Launcher.this);
 
         alertDialog.setTitle("GPS settings");
         alertDialog.setMessage("GPS not enabled! This app is pointless without GPS.");

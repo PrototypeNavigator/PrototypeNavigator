@@ -10,10 +10,7 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 
 import se.jolo.prototypenavigator.model.Route;
-
-/**
- * Created by Joel on 2016-02-11.
- */
+/*  */
 public class RouteAdapter implements JsonDeserializer<Route> {
 
     @Override

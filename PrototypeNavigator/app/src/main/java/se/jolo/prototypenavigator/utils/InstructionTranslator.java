@@ -3,10 +3,7 @@ package se.jolo.prototypenavigator.utils;
 import java.util.HashMap;
 
 import se.jolo.prototypenavigator.model.Instruction;
-
-/**
- * Created by Holstad on 18/03/16.
- */
+/* The InstructionTranslator class decodes instruction data to a readable string. */
 public class InstructionTranslator {
     private String instructionCode;
     private String streetName;

@@ -20,7 +20,7 @@ import java.util.Random;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.utils.Cipher;
 import se.jolo.prototypenavigator.utils.JsonMapper;
-
+/* The Looader class loads a xml file returns a route object. */
 public final class Loader extends AsyncTask<Uri, Integer, Route> {
 
     private Context context;
@@ -30,13 +30,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         this.context = context;
     }
 
-    /**
-     * Convert a files content to a string. Gets file with provided URI.
-     *
-     * @param uri to File
-     * @return String from file content
-     * @throws IOException
-     */
+    /* Convert a files content to a string. Gets file with provided URI. */
     private String readFileContent(Uri uri) throws IOException {
         fileName = uri.getLastPathSegment().replace("primary:", "");
         InputStream inputStream = context.getContentResolver().openInputStream(uri);
@@ -51,24 +45,12 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         return content;
     }
 
-    /**
-     * Convert a files content to a string.
-     *
-     * @param file File to be converted
-     * @return String from File content
-     * @throws IOException
-     */
+    /* Convert a files content to a string. */
     private String readFileContent(File file) throws IOException {
         return FileUtils.readFileToString(file);
     }
 
-    /**
-     * Converts InputStream to file
-     *
-     * @param in InputStream
-     * @return File
-     * @throws IOException
-     */
+    /* Converts InputStream to file. */
     private File streamToFile(InputStream in) throws IOException {
 
         final File tempFile = File.createTempFile("temp", ".tmp");
@@ -81,14 +63,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         return tempFile;
     }
 
-    /**
-     * Checks in Application directory for files with provided string content.
-     *
-     * @param out     FileOutputStream
-     * @param content Route String in XML format
-     * @return boolean true if content exists in other file, false if not
-     * @throws IOException
-     */
+    /* Checks in Application directory for files with provided string content. */
     private boolean checkForDuplicate(FileOutputStream out, String content) throws IOException {
 
         File tmpFile = File.createTempFile("tmp", ".tmp");
@@ -108,13 +83,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         return false;
     }
 
-    /**
-     * Saves String content as a file.
-     *
-     * @param content Route String in XML format
-     * @return boolean true if save is successful, false if content exists in other file, or
-     * if save unsuccessful
-     */
+    /* Saves String content as a file. */
     private boolean saveLoadedFile(String content) {
 
         FileOutputStream out = null;
@@ -142,11 +111,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         return false;
     }
 
-    /**
-     * Returns a list of files from Application files directory.
-     *
-     * @return FileArray
-     */
+    /* Returns a list of files from Application files directory. */
     public File[] loadSavedFiles() {
 
         File[] allFiles = context.getFilesDir().listFiles();
@@ -166,13 +131,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         return routeFiles = routeFilesList.toArray(routeFiles);
     }
 
-    /**
-     * Searches with filename through saved route files. If match found return as Route object
-     *
-     * @param fileName query
-     * @return desired file as Route object
-     * @throws IOException
-     */
+    /* Searches with filename through saved route files. If match found return as Route object. */
     public Route getPreLoadedRoute(String fileName) throws IOException {
 
         File[] files = loadSavedFiles();
@@ -186,12 +145,7 @@ public final class Loader extends AsyncTask<Uri, Integer, Route> {
         return null;
     }
 
-    /**
-     * Takes a string and converts it to a Route object.
-     *
-     * @param xmlString Route string in XML format
-     * @return Route object
-     */
+    /* Takes a string and converts it to a Route object. */
     private Route loadRoute(String xmlString) {
 
         JsonMapper jsonMapper = new JsonMapper();

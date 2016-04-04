@@ -61,6 +61,7 @@ import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.utils.Speech;
 import se.jolo.prototypenavigator.utils.UrlBuilderMarkerImg;
 
+/* The Map class displays a map and all map related components. */
 public class Map extends AppCompatActivity implements LocationListener {
 
     private final static String LOG_TAG = "MapActivity";
@@ -69,8 +70,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     private FloatingActionButton findMeBtn;
     private TextView textView;
     private Toolbar toolbar;
-    private Button plus;
-    private Button minus;
+    private Button plus, minus;
 
     private Speech speech;
 
@@ -85,8 +85,6 @@ public class Map extends AppCompatActivity implements LocationListener {
     private LocationManager locationManager;
     private Location location;
     private PolylineOptions polylineToNextStop;
-
-    private boolean day = true;
 
     private ViewGroup viewGroup;
     private Uri uri;
@@ -138,12 +136,9 @@ public class Map extends AppCompatActivity implements LocationListener {
     /****                                   Location                                          ****/
     /*********************************************************************************************/
 
-    /**
-     * Set new location, set camera to new location, check new locations proximity to next
+    /* Set new location, set camera to new location, check new locations proximity to next
      * stop-point, updates remaining stop-points, loads route again and removes and re-draws
      * polyline from location to next stop-point.
-     *
-     * @param location the new location
      */
     @Override
     public void onLocationChanged(Location location) {
@@ -212,13 +207,8 @@ public class Map extends AppCompatActivity implements LocationListener {
         mapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
     }
 
-    /**
-     * Sets camera position to device bearing, if unable to get bearing set it to north.
-     * Sets tilt and zoom.
-     *
-     * @param latLng current location
-     * @return returns newly set CameraPosition
-     */
+    /* Sets camera position to device bearing, if unable to get bearing set it to north.
+     * Sets tilt and zoom. */
     public CameraPosition getCameraPosition(LatLng latLng) {
         return new CameraPosition.Builder()
                 .bearing(0.0f)
@@ -241,11 +231,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         return toolbar;
     }
 
-    /**
-     * Initialize TextView and setting OnClickListener to toggle visibility.
-     *
-     * @return newly initialized TextView
-     */
+    /* Initialize TextView and setting OnClickListener to toggle visibility. */
     private TextView makeTextView() {
 
         textView = (TextView) findViewById(R.id.textTop);
@@ -264,12 +250,8 @@ public class Map extends AppCompatActivity implements LocationListener {
         return textView;
     }
 
-    /**
-     * Initialize FloatingActionButton to call animateCamera() with at current location.
-     * If able to get location calls onLocationChange() in RouteManager.
-     *
-     * @return FloatingActionButton
-     */
+    /* Initialize FloatingActionButton to call animateCamera() with at current location.
+     * If able to get location calls onLocationChange() in RouteManager. */
     private FloatingActionButton initFindMeBtn() {
 
         findMeBtn = (FloatingActionButton) findViewById(R.id.findMeBtn);
@@ -278,10 +260,6 @@ public class Map extends AppCompatActivity implements LocationListener {
             @Override
             public void onClick(View v) {
                 animateCamera(new LatLng(mapView.getLatLng()));
-
-//                if (Locator.ableToGetLocation) {
-//                    routeManager.onLocationChanged(locator.getLocation());
-//                }
 
                 Toast.makeText(v.getContext(), "at: "
                                 + routeManager.getNextStop().getOrder() + " "
@@ -293,11 +271,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         return findMeBtn;
     }
 
-    /**
-     * Initialize plus button
-     *
-     * @return plus
-     */
+    /* Initialize plus button */
     private Button initPlusBtn() {
 
         plus = (Button) findViewById(R.id.plus);
@@ -312,11 +286,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         return plus;
     }
 
-    /**
-     * Initialize plus button
-     *
-     * @return minus
-     */
+    /* Initialize plus button */
     private Button initMinusBtn() {
 
         minus = (Button) findViewById(R.id.minus);
@@ -333,11 +303,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         return minus;
     }
 
-    /**
-     * Toggles visibility of NextStep-view
-     *
-     * @param views NextStep
-     */
+    /* Toggles visibility of NextStep-view. */
     private static void toggleVisibility(View... views) {
         for (View view : views) {
             boolean isVisible = view.getVisibility() == View.VISIBLE;
@@ -361,24 +327,15 @@ public class Map extends AppCompatActivity implements LocationListener {
     /****                                     Route                                           ****/
     /*********************************************************************************************/
 
-    /**
-     * Initialize RouteManager, loading RouteItems and Waypoints. Setting current location.
-     * Loads selected route.
-     *
-     * @return loaded RouteManager
-     */
+    /* Initialize RouteManager, loading RouteItems and Waypoints. Setting current location.
+     * Loads selected route. */
     private RouteManager loadManager(Locator locator) {
         routeManager = new RouteManager(this, locator);
         routeManager.loadRouteItemsAndWaypoints(route).loadPolylines();
         return routeManager;
     }
 
-    /**
-     * Loads a newly selected Route from URI, or loads previously saved Route.
-     *
-     * @param extras bundle containing URI
-     * @param loader loading the route from file
-     */
+    /* Loads a newly selected Route from URI, or loads previously saved Route. */
     public void loadRoute(Bundle extras, Loader loader) {
 
         if (extras.get("uri") != null) {
@@ -408,11 +365,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     /****                                      Map                                            ****/
     /*********************************************************************************************/
 
-    /**
-     * Initializes the MapView setting values and location tracking if able.
-     *
-     * @return newly set MapView
-     */
+    /*Initializes the MapView setting values and location tracking if able.*/
     private MapView loadMap() {
 
         mapView = (MapView) findViewById(R.id.mapboxMapView);
@@ -428,7 +381,6 @@ public class Map extends AppCompatActivity implements LocationListener {
             @Override
             public void onMapClick(@NonNull LatLng point) {
                 Waypoint target = new Waypoint(point.getLongitude(), point.getLatitude());
-                routeManager.checkOffRoute(target);
             }
         });
 
@@ -466,9 +418,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         return mapView;
     }
 
-    /**
-     * Adds Waypoint markers for full Route.
-     */
+    /*Adds Waypoint markers for full Route.*/
     private void addMarkers() throws ExecutionException, InterruptedException {
         IconFactory mIconFactory = IconFactory.getInstance(this);
         List<RouteItem> routeItems = routeManager.getRouteItems();
@@ -486,12 +436,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         }
     }
 
-    /**
-     * Set centroid to current location if able, else set it to next waypoint.
-     *
-     * @param locator LocationHandler
-     * @return LatLng, centroid position
-     */
+    /*Set centroid to current location if able, else set it to next waypoint.*/
     private LatLng setCentroid(Locator locator) {
         LatLng centroid = new LatLng(locator.getLocation().getLatitude(), locator.getLocation().getLongitude());
 
@@ -501,11 +446,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         return centroid;
     }
 
-    /**
-     * Set camera position, angle and zoom.
-     *
-     * @param latLng new camera position
-     */
+    /*Set camera position, angle and zoom.*/
     public void animateCamera(LatLng latLng) {
         if (Locator.ableToGetLocation) {
             mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
@@ -516,13 +457,8 @@ public class Map extends AppCompatActivity implements LocationListener {
         }
     }
 
-    /**
-     * Sets camera position to device bearing, if unable to get bearing set it to north.
-     * Sets tilt and zoom.
-     *
-     * @param latLng current location
-     * @return returns newly set CameraPosition
-     */
+    /* Sets camera position to device bearing, if unable to get bearing set it to north.
+     * Sets tilt and zoom.*/
     public CameraPosition getCameraPosition(LatLng latLng, float tilt, float zoom) {
         return new CameraPosition.Builder()
                 .target(latLng)
@@ -544,12 +480,12 @@ public class Map extends AppCompatActivity implements LocationListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.loadRoute:
-                Intent sendToFileBrowser = new Intent(this, MainActivity.class);
+                Intent sendToFileBrowser = new Intent(this, Launcher.class);
                 startActivity(sendToFileBrowser);
                 android.os.Process.killProcess(android.os.Process.myPid());
                 return true;
             case R.id.showDetails:
-                Intent sendToDetails = new Intent(this, RouteListActivity.class);
+                Intent sendToDetails = new Intent(this, RouteList.class);
                 startActivity(sendToDetails);
                 return true;
             case R.id.showRoute:

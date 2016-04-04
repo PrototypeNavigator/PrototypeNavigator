@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 
 import se.jolo.prototypenavigator.task.Loader;
-import se.jolo.prototypenavigator.activities.MainActivity;
+import se.jolo.prototypenavigator.activities.Launcher;
 import se.jolo.prototypenavigator.model.Route;
 
 import static junit.framework.Assert.assertNotNull;
@@ -22,8 +22,8 @@ import static junit.framework.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 public class PreLoadedFilesTest {
     @Rule
-    public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(
-            MainActivity.class);
+    public ActivityTestRule<Launcher> activityRule = new ActivityTestRule<>(
+            Launcher.class);
 
     @Test
     public void checkPreLoadedFiles() throws IOException {

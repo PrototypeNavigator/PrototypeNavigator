@@ -22,7 +22,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar"
             app:contentScrim="@color/colorPrimary"
-            app:expandedTitleTextAppearance="@android:color/transparent"
+            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
             >
 
             <ImageView

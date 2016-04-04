@@ -5,9 +5,6 @@ import android.os.Parcelable;
 
 import java.util.Date;
 
-/**
- * Created by Joel on 2016-02-08.
- */
 public final class AuditInfo implements Parcelable {
 
 

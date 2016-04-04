@@ -14,7 +14,7 @@ import android.util.Log;
 import se.jolo.prototypenavigator.model.StopPoint;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
 
-
+/* The Locator class manages location and non location. */
 public class Locator implements LocationListener {
 
     private static final String LOG_TAG = "LOCATOR";
@@ -46,10 +46,7 @@ public class Locator implements LocationListener {
     /**
      * Set new location, set camera to new location, check new locations proximity to next
      * stop-point, updates remaining stop-points, loads route again and removes and re-draws
-     * polyline from location to next stop-point.
-     *
-     * @param location the new location
-     */
+     * polyline from location to next stop-point. */
     @Override
     public void onLocationChanged(Location location) {
         lastLocation = this.location;
@@ -124,11 +121,7 @@ public class Locator implements LocationListener {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    /**
-     * Get location from GPS, if unable, get location from network.
-     *
-     * @return location
-     */
+    /* Get location from GPS, if unable, get location from network. */
     public Location getLocation() {
 
         LocationManager locationManager = (LocationManager)

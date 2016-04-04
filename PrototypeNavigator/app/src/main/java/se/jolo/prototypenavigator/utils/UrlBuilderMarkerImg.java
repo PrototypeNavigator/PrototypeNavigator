@@ -2,9 +2,6 @@ package se.jolo.prototypenavigator.utils;
 
 import android.util.Log;
 
-/**
- * Created by Holstad on 30/03/16.
- */
 public class UrlBuilderMarkerImg {
     private static final StringBuilder stringBuilder = new StringBuilder();
     private static final String BASE_URL = "https://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld=";

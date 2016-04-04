@@ -5,9 +5,6 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Joel on 2016-02-08.
- */
 public final class Route implements Parcelable {
 
     private AuditInfo auditInfo;

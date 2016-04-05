@@ -50,12 +50,16 @@ public final class RouteManager {
     /*********************************************************************************************/
 
     public PolylineOptions createPolylineOption(List<RouteItem> routeItems) {
+
         HashMap<String, List> stopsAndInstructions = stopsAndInstructions(routeItems);
+
         if (routeItems.size() <= 1) {
             instructions = stopsAndInstructions.get(OsrmCall.INSTRUCTIONS);
         }
+
         PolylineOptions polylineOptions = new PolylineOptions();
         polylineOptions.addAll(stopsAndInstructions.get(OsrmCall.ROUTE_GEOMETRY));
+
         return polylineOptions;
     }
 
@@ -111,11 +115,13 @@ public final class RouteManager {
     public RouteManager loadPolylines() {
         polylineToNextStop = createPolylineOption(nextStop).width(5).color(Color.GREEN);
         polylinefullRoute = createPolylineOption(routeItems).width(5).color(Color.BLUE);
+
         return this;
     }
 
     public RouteManager loadPolylineNextStop(){
         polylineToNextStop = createPolylineOption(nextStop).width(5).color(Color.GREEN);
+
         return this;
     }
 
@@ -206,5 +212,4 @@ public final class RouteManager {
     public List<Instruction> getInstructions() {
         return instructions;
     }
-
 }

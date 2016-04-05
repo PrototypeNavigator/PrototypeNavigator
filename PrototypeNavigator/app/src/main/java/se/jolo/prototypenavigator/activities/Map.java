@@ -2,7 +2,10 @@ package se.jolo.prototypenavigator.activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -18,6 +21,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.AutoTransition;
@@ -53,6 +57,7 @@ import java.util.concurrent.ExecutionException;
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.model.Route;
 import se.jolo.prototypenavigator.model.RouteItem;
+import se.jolo.prototypenavigator.service.MarkerService;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
 import se.jolo.prototypenavigator.task.ImageLoader;
 import se.jolo.prototypenavigator.task.Loader;
@@ -82,9 +87,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     private static final int PERMISSIONS_LOCATION = 0;
     private Locator locator;
-    private LocationManager locationManager;
     private Location location;
-    private PolylineOptions polylineToNextStop;
 
     private ViewGroup viewGroup;
     private Uri uri;
@@ -93,6 +96,8 @@ public class Map extends AppCompatActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        RouteHolder.INSTANCE.setContext(this.getApplicationContext());
 
         Loader loader = new Loader(this);
         Bundle extras = getIntent().getExtras();
@@ -115,22 +120,22 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         setSupportActionBar(toolbar);
 
-        /*Thread for placing markers on map*/
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    addMarkers();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
+        Intent markerServiceIntent = new Intent(this, MarkerService.class);
+        this.startService(markerServiceIntent);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("markers"));
+
         mapView.onCreate(savedInstanceState);
     }
+    List<MarkerOptions> markers;
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            markers = RouteHolder.INSTANCE.getMarkers();
+            Log.d(LOG_TAG, intent.getStringExtra("Status") + " markers size ::: " + markers.size());
+            mapView.addMarkers(markers);
+        }
+    };
 
     /*********************************************************************************************/
     /****                                   Location                                          ****/
@@ -138,20 +143,16 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     /* Set new location, set camera to new location, check new locations proximity to next
      * stop-point, updates remaining stop-points, loads route again and removes and re-draws
-     * polyline from location to next stop-point.
-     */
+     * polyline from location to next stop-point. */
     @Override
     public void onLocationChanged(Location location) {
         locator.setLocation(location);
         this.location = location;
 
         if (mapView != null && routeManager != null) {
- /*           mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
-                    new CameraPosition.Builder()
-                            .target(new LatLng(location.getLatitude(), location.getLongitude()))
-                            .build()));
-*/
+
             if (!Locator.ableToGetLocation) {
+                //animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
                 routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
             }
 
@@ -311,18 +312,6 @@ public class Map extends AppCompatActivity implements LocationListener {
         }
     }
 
-    private Drawable getScaledDrawable(int newWidth, int newHeight, Bitmap bitmap) {
-
-        Matrix matrix = new Matrix();
-        float scaleWidth = ((float) newWidth) / bitmap.getWidth();
-        float scaleHeight = ((float) newHeight) / bitmap.getHeight();
-        matrix.postScale(scaleWidth, scaleHeight);
-        matrix.postRotate(0);
-        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-        return new BitmapDrawable(this.getResources(), scaledBitmap);
-    }
-
     /*********************************************************************************************/
     /****                                     Route                                           ****/
     /*********************************************************************************************/
@@ -332,6 +321,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     private RouteManager loadManager(Locator locator) {
         routeManager = new RouteManager(this, locator);
         routeManager.loadRouteItemsAndWaypoints(route).loadPolylines();
+
         return routeManager;
     }
 
@@ -389,8 +379,10 @@ public class Map extends AppCompatActivity implements LocationListener {
             if(textView.getVisibility()!=View.VISIBLE){
                 toggleVisibility(textView);
             }
+
             enableMapViewLocation();
             toggleMapViewTracking();
+
             mapView.addPolyline(routeManager.getPolylineToNextStop());
             textView.setText(routeManager.getInstruction().getReadableInstruction());
         } else {
@@ -410,30 +402,12 @@ public class Map extends AppCompatActivity implements LocationListener {
             }
         }
 
-
-
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setTitle(StringUtils.capitalize(routeManager.getNextStop().getStopPointItems().get(0).getDeliveryAddress().toLowerCase()));
 
-        return mapView;
-    }
+        RouteHolder.INSTANCE.setMapView(mapView);
 
-    /*Adds Waypoint markers for full Route.*/
-    private void addMarkers() throws ExecutionException, InterruptedException {
-        IconFactory mIconFactory = IconFactory.getInstance(this);
-        List<RouteItem> routeItems = routeManager.getRouteItems();
-        for (int i = 0; i < routeItems.size(); i++) {
-            ImageLoader imageLoader = new ImageLoader();
-            imageLoader.execute(UrlBuilderMarkerImg.getMarkerUrl(i+1));
-            Bitmap bitmap = imageLoader.get();
-            Drawable mIconDrawable = getScaledDrawable(50, 50,bitmap);
-            Icon icon = mIconFactory.fromDrawable(mIconDrawable);
-            RouteItem r = routeItems.get(i);
-            mapView.addMarker(new MarkerOptions()
-                    .position(new LatLng(r.getStopPoint().getNorthing(), r.getStopPoint().getEasting()))
-                    .icon(icon)
-                    .title(routeItems.get(i).getStopPointItems().get(0).getDeliveryAddress()));
-        }
+        return mapView;
     }
 
     /*Set centroid to current location if able, else set it to next waypoint.*/

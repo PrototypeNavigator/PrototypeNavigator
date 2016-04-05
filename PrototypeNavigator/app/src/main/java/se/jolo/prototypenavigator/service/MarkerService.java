@@ -6,8 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
@@ -15,6 +19,7 @@ import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -25,24 +30,37 @@ import se.jolo.prototypenavigator.utils.UrlBuilderMarkerImg;
 
 public class MarkerService extends Service {
 
+    private static final String LOG_TAG = "MarkerService";
     private MapView mapView;
+    private List<MarkerOptions> markers;
+
+    public Thread thread;
 
     private void addMarkers() throws ExecutionException, InterruptedException {
 
         IconFactory mIconFactory = IconFactory.getInstance(this);
         List<RouteItem> routeItems = RouteHolder.INSTANCE.getRoute().getRouteItems();
+
         for (int i = 0; i < routeItems.size(); i++) {
+
             ImageLoader imageLoader = new ImageLoader();
             imageLoader.execute(UrlBuilderMarkerImg.getMarkerUrl(i + 1));
             Bitmap bitmap = imageLoader.get();
+
             Drawable mIconDrawable = getScaledDrawable(50, 50, bitmap);
             Icon icon = mIconFactory.fromDrawable(mIconDrawable);
-            RouteItem r = routeItems.get(i);
-            mapView.addMarker(new MarkerOptions()
-                    .position(new LatLng(r.getStopPoint().getNorthing(), r.getStopPoint().getEasting()))
+
+            RouteItem routeItem = routeItems.get(i);
+
+            markers.add(new MarkerOptions()
+                    .position(new LatLng(routeItem.getStopPoint().getNorthing(), routeItem.getStopPoint().getEasting()))
                     .icon(icon)
                     .title(routeItems.get(i).getStopPointItems().get(0).getDeliveryAddress()));
+
+            Log.d(LOG_TAG, "markers ::: " + markers.size());
         }
+
+        sendMarkersToMap();
     }
 
     private Drawable getScaledDrawable(int newWidth, int newHeight, Bitmap bitmap) {
@@ -57,7 +75,6 @@ public class MarkerService extends Service {
         return new BitmapDrawable(this.getResources(), scaledBitmap);
     }
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -68,8 +85,9 @@ public class MarkerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         mapView = RouteHolder.INSTANCE.getMapView();
+        markers = new ArrayList<>();
 
-        Thread thread = new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -84,9 +102,29 @@ public class MarkerService extends Service {
         return START_STICKY;
     }
 
+    private void sendMarkersToMap() {
+
+        Log.d(LOG_TAG, "context ::: " + RouteHolder.INSTANCE.getContext());
+
+        Intent markersIntent = new Intent("markers");
+        markersIntent.putExtra("Status", "done");
+        RouteHolder.INSTANCE.setMarkers(markers);
+
+        Log.d(LOG_TAG, "markers ::: " + markers.isEmpty());
+
+        LocalBroadcastManager.getInstance(RouteHolder.INSTANCE.getContext()).sendBroadcast(markersIntent);
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    public List<MarkerOptions> getMarkers() {
+        return markers;
+    }
+
+    public Thread getThread() {
+        return thread;
     }
 }

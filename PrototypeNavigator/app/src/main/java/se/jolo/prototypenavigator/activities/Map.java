@@ -142,9 +142,7 @@ public class Map extends AppCompatActivity implements LocationListener {
             Log.d(LOG_TAG, "markers size ::: " + markers.size()
                     + " mapview ::: " + mapView.toString());
 
-            if (mapView.getAllAnnotations().isEmpty()) {
-                mapView.addMarkers(markers);
-            }
+            mapView.addMarkers(markers);
         }
     }
 
@@ -527,13 +525,13 @@ public class Map extends AppCompatActivity implements LocationListener {
     public void onPause() {
         super.onPause();
         mapView.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         mapView.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -547,5 +545,4 @@ public class Map extends AppCompatActivity implements LocationListener {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
-
 }

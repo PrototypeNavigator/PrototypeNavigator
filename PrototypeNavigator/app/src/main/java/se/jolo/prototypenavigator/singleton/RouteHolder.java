@@ -3,7 +3,6 @@ package se.jolo.prototypenavigator.singleton;
 import android.content.Context;
 
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.views.MapView;
 
 import java.util.List;
 

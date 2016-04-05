@@ -7,14 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,8 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapbox.directions.service.models.Waypoint;
-import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -56,15 +49,12 @@ import java.util.concurrent.ExecutionException;
 
 import se.jolo.prototypenavigator.R;
 import se.jolo.prototypenavigator.model.Route;
-import se.jolo.prototypenavigator.model.RouteItem;
 import se.jolo.prototypenavigator.service.MarkerService;
 import se.jolo.prototypenavigator.singleton.RouteHolder;
-import se.jolo.prototypenavigator.task.ImageLoader;
 import se.jolo.prototypenavigator.task.Loader;
 import se.jolo.prototypenavigator.utils.Locator;
 import se.jolo.prototypenavigator.utils.RouteManager;
 import se.jolo.prototypenavigator.utils.Speech;
-import se.jolo.prototypenavigator.utils.UrlBuilderMarkerImg;
 
 /* The Map class displays a map and all map related components. */
 public class Map extends AppCompatActivity implements LocationListener {

@@ -120,20 +120,38 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         setSupportActionBar(toolbar);
 
-        Intent markerServiceIntent = new Intent(this, MarkerService.class);
-        this.startService(markerServiceIntent);
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("markers"));
+        addMarkers();
 
         mapView.onCreate(savedInstanceState);
     }
-    List<MarkerOptions> markers;
+
+    private void addMarkers() {
+
+        if (RouteHolder.INSTANCE.getMarkers() == null
+                || RouteHolder.INSTANCE.getMarkers().isEmpty()) {
+
+            Intent markerServiceIntent = new Intent(this, MarkerService.class);
+            this.startService(markerServiceIntent);
+
+            LocalBroadcastManager.getInstance(this).registerReceiver(
+                    broadcastReceiver, new IntentFilter("markers"));
+        } else {
+
+            List<MarkerOptions> markers;
+            markers = RouteHolder.INSTANCE.getMarkers();
+            Log.d(LOG_TAG, "markers size ::: " + markers.size()
+                    + " mapview ::: " + mapView.toString());
+
+            if (mapView.getAllAnnotations().isEmpty()) {
+                mapView.addMarkers(markers);
+            }
+        }
+    }
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            markers = RouteHolder.INSTANCE.getMarkers();
-            Log.d(LOG_TAG, intent.getStringExtra("Status") + " markers size ::: " + markers.size());
-            mapView.addMarkers(markers);
+            addMarkers();
         }
     };
 
@@ -376,7 +394,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         if (Locator.ableToGetLocation) {
             //Show the instructions if they are not visible.
-            if(textView.getVisibility()!=View.VISIBLE){
+            if (textView.getVisibility() != View.VISIBLE) {
                 toggleVisibility(textView);
             }
 
@@ -397,15 +415,13 @@ public class Map extends AppCompatActivity implements LocationListener {
                             .zoom(11f)
                             .build()));
             //Hide the instructions if they are visible.
-            if(textView.getVisibility()==View.VISIBLE){
+            if (textView.getVisibility() == View.VISIBLE) {
                 toggleVisibility(textView);
             }
         }
 
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setTitle(StringUtils.capitalize(routeManager.getNextStop().getStopPointItems().get(0).getDeliveryAddress().toLowerCase()));
-
-        RouteHolder.INSTANCE.setMapView(mapView);
 
         return mapView;
     }
@@ -503,6 +519,8 @@ public class Map extends AppCompatActivity implements LocationListener {
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                broadcastReceiver, new IntentFilter("markers"));
     }
 
     @Override
@@ -515,6 +533,7 @@ public class Map extends AppCompatActivity implements LocationListener {
     protected void onStop() {
         super.onStop();
         mapView.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     @Override

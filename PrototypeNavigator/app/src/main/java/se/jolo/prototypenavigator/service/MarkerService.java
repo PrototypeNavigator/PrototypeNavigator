@@ -31,15 +31,18 @@ import se.jolo.prototypenavigator.utils.UrlBuilderMarkerImg;
 public class MarkerService extends Service {
 
     private static final String LOG_TAG = "MarkerService";
-    private MapView mapView;
     private List<MarkerOptions> markers;
+    private List<RouteItem> routeItems;
 
     public Thread thread;
 
     private void addMarkers() throws ExecutionException, InterruptedException {
 
         IconFactory mIconFactory = IconFactory.getInstance(this);
-        List<RouteItem> routeItems = RouteHolder.INSTANCE.getRoute().getRouteItems();
+
+        Log.d(LOG_TAG, "RouteHolder ::: routeItems.size() ::: " + RouteHolder.INSTANCE.getRoute().getRouteItems().size()
+                        + " routeItems.size() ::: " + routeItems.size());
+        routeItems = RouteHolder.INSTANCE.getRoute().getRouteItems();
 
         for (int i = 0; i < routeItems.size(); i++) {
 
@@ -75,33 +78,6 @@ public class MarkerService extends Service {
         return new BitmapDrawable(this.getResources(), scaledBitmap);
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-        mapView = RouteHolder.INSTANCE.getMapView();
-        markers = new ArrayList<>();
-
-        thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    addMarkers();
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-
-        return START_STICKY;
-    }
-
     private void sendMarkersToMap() {
 
         Log.d(LOG_TAG, "context ::: " + RouteHolder.INSTANCE.getContext());
@@ -115,16 +91,35 @@ public class MarkerService extends Service {
         LocalBroadcastManager.getInstance(RouteHolder.INSTANCE.getContext()).sendBroadcast(markersIntent);
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        markers = new ArrayList<>();
+        routeItems = new ArrayList<>();
+
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    addMarkers();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+
+        return START_NOT_STICKY;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    public List<MarkerOptions> getMarkers() {
-        return markers;
-    }
-
-    public Thread getThread() {
-        return thread;
     }
 }

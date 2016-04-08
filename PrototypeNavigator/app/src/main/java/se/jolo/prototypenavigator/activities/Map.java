@@ -129,8 +129,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
             List<MarkerOptions> markers;
             markers = RouteHolder.INSTANCE.getMarkers();
-            Log.d(LOG_TAG, "markers size ::: " + markers.size()
-                    + " mapview ::: " + mapView.toString());
+            Log.d(LOG_TAG, markers.size() + " markers added");
 
             mapView.addMarkers(markers);
         }

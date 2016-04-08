@@ -27,6 +27,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -65,7 +67,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     private FloatingActionButton findMeBtn;
     private TextView textView, loadText;
-    private ImageView loadImage;
+    private ImageView loadImage = null;
     private Toolbar toolbar;
     private Button plus, minus;
 
@@ -109,7 +111,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         plus = initPlusBtn();
         minus = initMinusBtn();
         centroid = setCentroid(locator);
-
+        initProgress();
         setSupportActionBar(toolbar);
 
         addMarkers();
@@ -121,26 +123,27 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         if (RouteHolder.INSTANCE.getMarkers() == null
                 || RouteHolder.INSTANCE.getMarkers().isEmpty()) {
-
+            showProgerss();
             Intent markerServiceIntent = new Intent(this, MarkerService.class);
             this.startService(markerServiceIntent);
-
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     broadcastReceiver, new IntentFilter("markers"));
         } else {
-
             List<MarkerOptions> markers;
+            showProgerss();
             markers = RouteHolder.INSTANCE.getMarkers();
             Log.d(LOG_TAG, "markers size ::: " + markers.size()
                     + " mapview ::: " + mapView.toString());
 
             mapView.addMarkers(markers);
+            hideProgress();
         }
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            hideProgress();
             addMarkers();
         }
     };
@@ -159,8 +162,8 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         if (mapView != null && routeManager != null) {
 
-            if (!Locator.ableToGetLocation) {
-                //animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
+            if (Locator.ableToGetLocation) {
+                animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
                 routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
             }
 
@@ -235,6 +238,25 @@ public class Map extends AppCompatActivity implements LocationListener {
         return (ViewGroup) findViewById(R.id.textAndMenu);
     }
 
+    private void initProgress(){
+        loadText = (TextView) findViewById(R.id.loadText);
+        loadImage = (ImageView) findViewById(R.id.loadImage);
+        final Animation animation = AnimationUtils.loadAnimation(this, R.anim.together);
+        loadImage.startAnimation(animation);
+        loadImage.setVisibility(View.INVISIBLE);
+        loadText.setVisibility(View.INVISIBLE);
+    }
+    private void showProgerss(){
+            loadImage.setVisibility(View.VISIBLE);
+            loadText.setVisibility(View.VISIBLE);
+    }
+    private void hideProgress(){
+        loadImage.clearAnimation();
+        loadImage.setVisibility(View.INVISIBLE);
+        loadText.setVisibility(View.INVISIBLE);
+    }
+
+
     private Toolbar makeToolbar() {
         toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         return toolbar;
@@ -268,12 +290,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         findMeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animateCamera(new LatLng(mapView.getLatLng()));
-
-                Toast.makeText(v.getContext(), "at: "
-                                + routeManager.getNextStop().getOrder() + " "
-                                + routeManager.getNextStop().getStopPoint().getType(),
-                        Toast.LENGTH_LONG).show();
+                animateCamera(new LatLng(locator.getLocation()));
             }
         });
 

@@ -120,11 +120,11 @@ public class Map extends AppCompatActivity implements LocationListener {
         if (RouteHolder.INSTANCE.getMarkers() == null
                 || RouteHolder.INSTANCE.getMarkers().isEmpty()) {
 
-            Intent markerServiceIntent = new Intent(this, MarkerService.class);
-            this.startService(markerServiceIntent);
-
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     broadcastReceiver, new IntentFilter("markers"));
+
+            Intent markerServiceIntent = new Intent(this, MarkerService.class);
+            this.startService(markerServiceIntent);
         } else {
 
             List<MarkerOptions> markers;
@@ -139,6 +139,8 @@ public class Map extends AppCompatActivity implements LocationListener {
         @Override
         public void onReceive(Context context, Intent intent) {
             addMarkers();
+            String result = getResultData();
+            Log.d(LOG_TAG, "is this a loop? any reslult: " + result);
         }
     };
 
@@ -156,7 +158,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         if (mapView != null && routeManager != null) {
 
-            if (!Locator.ableToGetLocation) {
+            if (Locator.ableToGetLocation) {
                 animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
                 routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
                 textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());

@@ -8,17 +8,37 @@ import org.json.XML;
 
 import java.io.IOException;
 
-import se.jolo.prototypenavigator.adapters.RouteAdapter;
+import se.jolo.prototypenavigator.adapters.json.DeliveryPointAdapter;
+import se.jolo.prototypenavigator.adapters.json.OdrRecipientAdapter;
+import se.jolo.prototypenavigator.adapters.json.RouteAdapter;
+import se.jolo.prototypenavigator.adapters.json.AuditInfoAdapter;
+import se.jolo.prototypenavigator.adapters.json.RouteItemAdapter;
+import se.jolo.prototypenavigator.adapters.json.StopPointAdapter;
+import se.jolo.prototypenavigator.adapters.json.StopPointItemAdapter;
+import se.jolo.prototypenavigator.model.AuditInfo;
+import se.jolo.prototypenavigator.model.DeliveryPoint;
+import se.jolo.prototypenavigator.model.OdrRecipient;
 import se.jolo.prototypenavigator.model.Route;
+import se.jolo.prototypenavigator.model.RouteItem;
+import se.jolo.prototypenavigator.model.StopPoint;
+import se.jolo.prototypenavigator.model.StopPointItem;
 
 public class JsonMapper {
 
-    private static final String TAG = "JsonMapper";
-    private final Gson gson;
+    private static final String LOG_TAG = "JsonMapper";
+    private static Gson gson;
 
     public JsonMapper() {
         GsonBuilder builder = new GsonBuilder();
+
         builder.registerTypeAdapter(Route.class, new RouteAdapter());
+        builder.registerTypeAdapter(AuditInfo.class, new AuditInfoAdapter());
+        builder.registerTypeAdapter(RouteItem.class, new RouteItemAdapter());
+        builder.registerTypeAdapter(StopPoint.class, new StopPointAdapter());
+        builder.registerTypeAdapter(StopPointItem.class, new StopPointItemAdapter());
+        builder.registerTypeAdapter(DeliveryPoint.class, new DeliveryPointAdapter());
+        builder.registerTypeAdapter(OdrRecipient.class, new OdrRecipientAdapter());
+
         gson = builder.create();
     }
 
@@ -28,5 +48,9 @@ public class JsonMapper {
 
     public String xmlToJson(String xmlString) throws IOException, JSONException {
         return XML.toJSONObject(xmlString).toString();
+    }
+
+    public static Gson getGson() {
+        return gson;
     }
 }

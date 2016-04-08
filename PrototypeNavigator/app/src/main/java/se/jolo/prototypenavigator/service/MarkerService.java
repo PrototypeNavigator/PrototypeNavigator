@@ -77,8 +77,6 @@ public class MarkerService extends Service {
 
     private void sendMarkersToMap() {
 
-        Log.d(LOG_TAG, "context ::: " + RouteHolder.INSTANCE.getContext());
-
         Intent markersIntent = new Intent("markers");
         markersIntent.putExtra("Status", "done");
         RouteHolder.INSTANCE.setMarkers(markers);

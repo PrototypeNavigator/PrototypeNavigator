@@ -6,6 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Map">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </RelativeLayout>
 
     <com.mapbox.mapboxsdk.views.MapView
         android:id="@+id/mapboxMapView"
@@ -13,8 +18,10 @@
         android:layout_height="match_parent"
         mapbox:access_token="pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw"
         />
+
     <RelativeLayout
         android:layout_width="wrap_content"
+
         android:layout_height="wrap_content"
         android:id="@+id/textAndMenu">
         <android.support.v7.widget.Toolbar
@@ -85,4 +92,18 @@
         android:layout_below="@+id/plus"
         android:layout_alignParentEnd="true" />
 
+    <ImageView
+        android:id="@+id/loadImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+    <TextView
+        android:id="@+id/loadText"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:text="Laddar rutt..."
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/loadImage"
+        />
 </RelativeLayout>

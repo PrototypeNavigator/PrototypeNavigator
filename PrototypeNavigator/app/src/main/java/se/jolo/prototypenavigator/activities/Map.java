@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,7 +64,8 @@ public class Map extends AppCompatActivity implements LocationListener {
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
 
     private FloatingActionButton findMeBtn;
-    private TextView textView;
+    private TextView textView, loadText;
+    private ImageView loadImage;
     private Toolbar toolbar;
     private Button plus, minus;
 

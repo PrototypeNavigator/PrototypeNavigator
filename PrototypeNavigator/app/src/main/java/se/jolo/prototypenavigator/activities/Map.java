@@ -66,8 +66,9 @@ public class Map extends AppCompatActivity implements LocationListener {
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
 
     private FloatingActionButton findMeBtn;
-    private TextView textView, loadText;
+    private TextView textViewInstruction, loadText;
     private ImageView loadImage = null;
+
     private Toolbar toolbar;
     private Button plus, minus;
 
@@ -105,7 +106,7 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         toolbar = makeToolbar();
         viewGroup = makeViewGroup();
-        textView = makeTextView();
+        textViewInstruction = makeTextView();
         mapView = loadMap();
         findMeBtn = initFindMeBtn();
         plus = initPlusBtn();
@@ -132,8 +133,7 @@ public class Map extends AppCompatActivity implements LocationListener {
             List<MarkerOptions> markers;
             showProgerss();
             markers = RouteHolder.INSTANCE.getMarkers();
-            Log.d(LOG_TAG, "markers size ::: " + markers.size()
-                    + " mapview ::: " + mapView.toString());
+            Log.d(LOG_TAG, markers.size() + " markers added");
 
             mapView.addMarkers(markers);
             hideProgress();
@@ -165,6 +165,7 @@ public class Map extends AppCompatActivity implements LocationListener {
             if (Locator.ableToGetLocation) {
                 animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
                 routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
+                textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());
             }
 
             Log.d(LOG_TAG, "Location changed to ::: "
@@ -265,20 +266,20 @@ public class Map extends AppCompatActivity implements LocationListener {
     /* Initialize TextView and setting OnClickListener to toggle visibility. */
     private TextView makeTextView() {
 
-        textView = (TextView) findViewById(R.id.textTop);
+        textViewInstruction = (TextView) findViewById(R.id.textTop);
 
-        textView.setOnClickListener(new View.OnClickListener() {
+        textViewInstruction.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 TransitionManager.beginDelayedTransition(viewGroup, new AutoTransition());
-                toggleVisibility(textView);
+                toggleVisibility(textViewInstruction);
                 speech = new Speech(Map.this);
-                speech.say(textView.getText().toString());
+                speech.say(textViewInstruction.getText().toString());
             }
         });
 
-        return textView;
+        return textViewInstruction;
     }
 
     /* Initialize FloatingActionButton to call animateCamera() with at current location.
@@ -401,15 +402,15 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         if (Locator.ableToGetLocation) {
             //Show the instructions if they are not visible.
-            if (textView.getVisibility() != View.VISIBLE) {
-                toggleVisibility(textView);
+            if (textViewInstruction.getVisibility() != View.VISIBLE) {
+                toggleVisibility(textViewInstruction);
             }
 
             enableMapViewLocation();
             toggleMapViewTracking();
 
             mapView.addPolyline(routeManager.getPolylineToNextStop());
-            textView.setText(routeManager.getInstruction().getReadableInstruction());
+            textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());
         } else {
             Toast.makeText(this, "Unable to acquire location. Please leave the "
                     + "woods/cave/cellar and/or the elevator", Toast.LENGTH_LONG).show();
@@ -422,8 +423,8 @@ public class Map extends AppCompatActivity implements LocationListener {
                             .zoom(11f)
                             .build()));
             //Hide the instructions if they are visible.
-            if (textView.getVisibility() == View.VISIBLE) {
-                toggleVisibility(textView);
+            if (textViewInstruction.getVisibility() == View.VISIBLE) {
+                toggleVisibility(textViewInstruction);
             }
         }
 

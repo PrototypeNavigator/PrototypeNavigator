@@ -161,13 +161,8 @@ public class Map extends AppCompatActivity implements LocationListener {
         this.location = location;
 
         if (mapView != null && routeManager != null) {
-
-            if (Locator.ableToGetLocation) {
-                animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
-                routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
-                textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());
-            }
-
+            routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
+            textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());
             Log.d(LOG_TAG, "Location changed to ::: "
                     + location.getLatitude()
                     + " "
@@ -239,7 +234,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         return (ViewGroup) findViewById(R.id.textAndMenu);
     }
 
-    private void initProgress(){
+    private void initProgress() {
         loadText = (TextView) findViewById(R.id.loadText);
         loadImage = (ImageView) findViewById(R.id.loadImage);
         final Animation animation = AnimationUtils.loadAnimation(this, R.anim.together);
@@ -247,11 +242,13 @@ public class Map extends AppCompatActivity implements LocationListener {
         loadImage.setVisibility(View.INVISIBLE);
         loadText.setVisibility(View.INVISIBLE);
     }
-    private void showProgerss(){
-            loadImage.setVisibility(View.VISIBLE);
-            loadText.setVisibility(View.VISIBLE);
+
+    private void showProgerss() {
+        loadImage.setVisibility(View.VISIBLE);
+        loadText.setVisibility(View.VISIBLE);
     }
-    private void hideProgress(){
+
+    private void hideProgress() {
         loadImage.clearAnimation();
         loadImage.setVisibility(View.INVISIBLE);
         loadText.setVisibility(View.INVISIBLE);
@@ -407,7 +404,7 @@ public class Map extends AppCompatActivity implements LocationListener {
             }
 
             enableMapViewLocation();
-            toggleMapViewTracking();
+            //toggleMapViewTracking();
 
             mapView.addPolyline(routeManager.getPolylineToNextStop());
             textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());
@@ -446,10 +443,10 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     /*Set camera position, angle and zoom.*/
     public void animateCamera(LatLng latLng) {
-        if (Locator.ableToGetLocation) {
+        if (Locator.ableToGetLocation && mapView != null) {
             mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                     getCameraPosition(latLng, 80f, 15f)));
-        } else {
+        } else if (!Locator.ableToGetLocation && mapView != null) {
             mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                     getCameraPosition(latLng, 0f, 14f)));
         }

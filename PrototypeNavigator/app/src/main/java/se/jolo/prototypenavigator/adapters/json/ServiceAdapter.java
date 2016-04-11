@@ -8,11 +8,9 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-import se.jolo.prototypenavigator.adapters.JsonToObject;
 import se.jolo.prototypenavigator.model.Service;
-import se.jolo.prototypenavigator.utils.JsonMapper;
 
-public class ServiceAdapter implements JsonDeserializer<Service>{
+public class ServiceAdapter implements JsonDeserializer<Service> {
 
     @Override
     public Service deserialize(JsonElement jsonElement, Type typeOfT,
@@ -20,6 +18,42 @@ public class ServiceAdapter implements JsonDeserializer<Service>{
 
         JsonObject json = jsonElement.getAsJsonObject();
 
-        return JsonToObject.jsonToService(json);
+        String agreementArrivalTime = "";
+        String agreementDepartureTime = "";
+        boolean delivery = json.get("delivery").getAsBoolean();
+        boolean pickup = json.get("pickup").getAsBoolean();
+        String products = "";
+        String serviceCode = "";
+        String serviceName = "";
+
+        if (json.get("agreementArrivalTime") != null) {
+            if (!json.get("agreementArrivalTime").isJsonNull()) {
+                agreementArrivalTime = json.get("agreementArrivalTime").getAsString();
+            }
+        }
+        if (json.get("agreementDepartureTime") != null) {
+            if (!json.get("agreementDepartureTime").isJsonNull()) {
+                agreementDepartureTime = json.get("agreementDepartureTime").getAsString();
+            }
+        }
+
+        if (json.get("products") != null) {
+            if (!json.get("products").isJsonNull()) {
+                products = json.get("products").getAsString();
+            }
+        }
+        if (json.get("serviceCode") != null) {
+            if (!json.get("serviceCode").isJsonNull()) {
+                serviceCode = json.get("serviceCode").getAsString();
+            }
+        }
+        if (json.get("serviceName") != null) {
+            if (!json.get("serviceName").isJsonNull()) {
+                serviceName = json.get("serviceName").getAsString();
+            }
+        }
+
+        return new Service(agreementArrivalTime, agreementDepartureTime, delivery,
+                pickup, products, serviceCode, serviceName);
     }
 }

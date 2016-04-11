@@ -8,7 +8,6 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-import se.jolo.prototypenavigator.adapters.JsonToObject;
 import se.jolo.prototypenavigator.model.StopPoint;
 
 public class StopPointAdapter implements JsonDeserializer<StopPoint> {
@@ -19,6 +18,15 @@ public class StopPointAdapter implements JsonDeserializer<StopPoint> {
 
         JsonObject json = jsonElement.getAsJsonObject();
 
-        return JsonToObject.jsonToStopPoint(json);
+        String freeText = "";
+        float easting = json.get("easting").getAsFloat();
+        float northing = json.get("northing").getAsFloat();
+        String type = json.get("type").getAsString();
+        String uuid = json.get("uuid").getAsString();
+        if (json.get("freeText") != null) {
+            freeText = json.get("freeText").getAsString();
+        }
+
+        return new StopPoint(easting, northing, type, uuid, freeText);
     }
 }

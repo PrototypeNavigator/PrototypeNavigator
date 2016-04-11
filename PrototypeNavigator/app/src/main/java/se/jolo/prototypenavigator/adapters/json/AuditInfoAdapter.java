@@ -8,8 +8,9 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import se.jolo.prototypenavigator.adapters.JsonToObject;
 import se.jolo.prototypenavigator.model.AuditInfo;
 
 /*  */
@@ -18,15 +19,16 @@ public class AuditInfoAdapter implements JsonDeserializer<AuditInfo> {
     @Override
     public AuditInfo deserialize(JsonElement jsonElement, Type typeOfT,
                                  JsonDeserializationContext context) throws JsonParseException {
+        JsonObject json = jsonElement.getAsJsonObject();
+
+        Date createdAt = null;
+
         try {
-            JsonObject json = jsonElement.getAsJsonObject();
+            createdAt = new SimpleDateFormat("yyyy-MM-dd").parse(json.get("createdAt").getAsString());
+        } catch (ParseException e) { e.printStackTrace(); }
 
-            return JsonToObject.jsonToAuditInfo(json);
+        String createdBy = json.get("createdBy").getAsString();
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return new AuditInfo(createdAt, createdBy);
     }
 }

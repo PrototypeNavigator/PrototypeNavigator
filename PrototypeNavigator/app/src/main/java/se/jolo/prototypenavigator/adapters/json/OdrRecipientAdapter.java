@@ -8,7 +8,6 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-import se.jolo.prototypenavigator.adapters.JsonToObject;
 import se.jolo.prototypenavigator.model.OdrRecipient;
 
 public class OdrRecipientAdapter implements JsonDeserializer<OdrRecipient> {
@@ -19,6 +18,9 @@ public class OdrRecipientAdapter implements JsonDeserializer<OdrRecipient> {
 
         JsonObject json = jsonElement.getAsJsonObject();
 
-        return JsonToObject.jsonToOdrRecipient(json);
+        int amount = json.get("amount").getAsInt();
+        String type = json.get("type").getAsString();
+
+        return new OdrRecipient(amount, type);
     }
 }

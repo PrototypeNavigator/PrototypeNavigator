@@ -1,5 +1,7 @@
 package se.jolo.prototypenavigator.adapters;
 
+import android.util.Log;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -103,7 +105,8 @@ public final class JsonToObject {
             }
         } else {
             JsonObject jsonOdrRecipientsAsObject = jsonOdrRecipients.getAsJsonObject("odrRecipient");
-            odrRecipients.add(jsonToOdrRecipient(jsonOdrRecipientsAsObject));
+            //odrRecipients.add(jsonToOdrRecipient(jsonOdrRecipientsAsObject));
+            odrRecipients.add(JsonMapper.getGson().fromJson(jsonOdrRecipientsAsObject, OdrRecipient.class));
         }
 
         JsonObject jsonResident = null;
@@ -123,16 +126,18 @@ public final class JsonToObject {
                     JsonArray jsonResidentArray = jsonResident.getAsJsonArray("resident");
                     for (int i = 0; i < jsonResidentArray.size(); i++) {
                         JsonObject jsonObject = jsonResidentArray.get(i).getAsJsonObject();
-                        residents.add(jsonToResident(jsonObject));
+                        //residents.add(jsonToResident(jsonObject));
+                        residents.add(JsonMapper.getGson().fromJson(jsonObject, Resident.class));
                     }
                 } else {
                     JsonObject jsonObjectResident = jsonResident.getAsJsonObject("resident");
-                    residents.add(jsonToResident(jsonObjectResident));
+                    //residents.add(jsonToResident(jsonObjectResident));
+                    residents.add(JsonMapper.getGson().fromJson(jsonObjectResident, Resident.class));
                 }
             }
         }
 
-
+        Log.d("JsonToObject", "resident size: " + residents.size());
         return new DeliveryPoint(odr, odrRecipients, residents);
     }
 
@@ -174,15 +179,18 @@ public final class JsonToObject {
                 JsonArray jsonDeliverPointArray = jsonDeliveryPoint.getAsJsonArray("deliveryPoint");
                 for (int i = 0; i < jsonDeliverPointArray.size(); i++) {
                     JsonObject jsonObject = jsonDeliverPointArray.get(i).getAsJsonObject();
-                    deliveryPoints.add(jsonToDeliveryPoint(jsonObject));
+                    //deliveryPoints.add(jsonToDeliveryPoint(jsonObject));
+                    deliveryPoints.add(JsonMapper.getGson().fromJson(jsonObject, DeliveryPoint.class));
                 }
             } else {
                 JsonObject jsonDeliveryPoints = jsonDeliveryPoint.getAsJsonObject("deliveryPoint");
-                deliveryPoints.add(jsonToDeliveryPoint(jsonDeliveryPoints));
+                //deliveryPoints.add(jsonToDeliveryPoint(jsonDeliveryPoints));
+                deliveryPoints.add(JsonMapper.getGson().fromJson(jsonDeliveryPoints, DeliveryPoint.class));
             }
         }
         if (json.get("service") != null) {
-            service = jsonToService(json.getAsJsonObject("service"));
+            //service = jsonToService(json.getAsJsonObject("service"));
+            service = JsonMapper.getGson().fromJson(json.getAsJsonObject("servie"), Service.class);
         }
 
         return new StopPointItem(uuid, type, name, deliveryAddress, deliveryPostalCode,

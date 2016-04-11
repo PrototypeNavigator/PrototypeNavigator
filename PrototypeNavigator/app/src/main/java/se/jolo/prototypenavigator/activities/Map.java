@@ -159,7 +159,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         if (mapView != null && routeManager != null) {
 
             if (Locator.ableToGetLocation) {
-                animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
+                //animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
                 routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
                 textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());
             }

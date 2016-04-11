@@ -27,7 +27,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,7 +66,9 @@ public class Map extends AppCompatActivity implements LocationListener {
     private final static String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicHJvdG90eXBldGVhbSIsImEiOiJjaWs2bXQ3Y3owMDRqd2JtMTZsdjhvbzVnIn0.NBH7u7RG-lqxGq_PEIjFjw";
 
     private FloatingActionButton findMeBtn;
-    private TextView textViewInstruction;
+    private TextView textViewInstruction, loadText;
+    private ImageView loadImage = null;
+
     private Toolbar toolbar;
     private Button plus, minus;
 
@@ -107,7 +112,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         plus = initPlusBtn();
         minus = initMinusBtn();
         centroid = setCentroid(locator);
-
+        initProgress();
         setSupportActionBar(toolbar);
 
         addMarkers();
@@ -119,28 +124,27 @@ public class Map extends AppCompatActivity implements LocationListener {
 
         if (RouteHolder.INSTANCE.getMarkers() == null
                 || RouteHolder.INSTANCE.getMarkers().isEmpty()) {
-
-            LocalBroadcastManager.getInstance(this).registerReceiver(
-                    broadcastReceiver, new IntentFilter("markers"));
-
+            showProgerss();
             Intent markerServiceIntent = new Intent(this, MarkerService.class);
             this.startService(markerServiceIntent);
+            LocalBroadcastManager.getInstance(this).registerReceiver(
+                    broadcastReceiver, new IntentFilter("markers"));
         } else {
-
             List<MarkerOptions> markers;
+            showProgerss();
             markers = RouteHolder.INSTANCE.getMarkers();
             Log.d(LOG_TAG, markers.size() + " markers added");
 
             mapView.addMarkers(markers);
+            hideProgress();
         }
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            hideProgress();
             addMarkers();
-            String result = getResultData();
-            Log.d(LOG_TAG, "is this a loop? any reslult: " + result);
         }
     };
 
@@ -157,13 +161,8 @@ public class Map extends AppCompatActivity implements LocationListener {
         this.location = location;
 
         if (mapView != null && routeManager != null) {
-
-            if (Locator.ableToGetLocation) {
-                //animateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
-                routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
-                textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());
-            }
-
+            routeManager.checkStopPointProximity().updateStopPointsRemaining().loadPolylineNextStop();
+            textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());
             Log.d(LOG_TAG, "Location changed to ::: "
                     + location.getLatitude()
                     + " "
@@ -235,6 +234,27 @@ public class Map extends AppCompatActivity implements LocationListener {
         return (ViewGroup) findViewById(R.id.textAndMenu);
     }
 
+    private void initProgress() {
+        loadText = (TextView) findViewById(R.id.loadText);
+        loadImage = (ImageView) findViewById(R.id.loadImage);
+        final Animation animation = AnimationUtils.loadAnimation(this, R.anim.together);
+        loadImage.startAnimation(animation);
+        loadImage.setVisibility(View.INVISIBLE);
+        loadText.setVisibility(View.INVISIBLE);
+    }
+
+    private void showProgerss() {
+        loadImage.setVisibility(View.VISIBLE);
+        loadText.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgress() {
+        loadImage.clearAnimation();
+        loadImage.setVisibility(View.INVISIBLE);
+        loadText.setVisibility(View.INVISIBLE);
+    }
+
+
     private Toolbar makeToolbar() {
         toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         return toolbar;
@@ -268,12 +288,7 @@ public class Map extends AppCompatActivity implements LocationListener {
         findMeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animateCamera(new LatLng(mapView.getLatLng()));
-
-                Toast.makeText(v.getContext(), "at: "
-                                + routeManager.getNextStop().getOrder() + " "
-                                + routeManager.getNextStop().getStopPoint().getType(),
-                        Toast.LENGTH_LONG).show();
+                animateCamera(new LatLng(locator.getLocation()));
             }
         });
 
@@ -389,7 +404,7 @@ public class Map extends AppCompatActivity implements LocationListener {
             }
 
             enableMapViewLocation();
-            toggleMapViewTracking();
+            //toggleMapViewTracking();
 
             mapView.addPolyline(routeManager.getPolylineToNextStop());
             textViewInstruction.setText(routeManager.getInstruction().getReadableInstruction());
@@ -428,10 +443,10 @@ public class Map extends AppCompatActivity implements LocationListener {
 
     /*Set camera position, angle and zoom.*/
     public void animateCamera(LatLng latLng) {
-        if (Locator.ableToGetLocation) {
+        if (Locator.ableToGetLocation && mapView != null) {
             mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                     getCameraPosition(latLng, 80f, 15f)));
-        } else {
+        } else if (!Locator.ableToGetLocation && mapView != null) {
             mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
                     getCameraPosition(latLng, 0f, 14f)));
         }
